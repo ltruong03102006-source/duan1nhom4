@@ -9,10 +9,9 @@ class ProductController
         $this->modelProduct = new ProductModel();
     }
 
-    public function Home()
+    public function home()
     {
-        $title = "Đây là trang chủ nhé hahaa";
-        $thoiTiet = "Hôm nay trời có vẻ là mưa";
-        require_once './views/home.php';
+        $viewFile = './views/home.php';
+        include './views/layout.php';
     }
 }
