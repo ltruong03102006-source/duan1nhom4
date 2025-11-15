@@ -9,11 +9,13 @@ require_once './commons/function.php'; // Hàm hỗ trợ
 require_once './controllers/ProductController.php';
 require_once './controllers/danhMuctourController.php';
 require_once './controllers/tourController.php';
+require_once './controllers/LichTrinhController.php';
 
 // Require toàn bộ file Models
 require_once './models/ProductModel.php';
 require_once './models/danhMuctourModel.php';
 require_once './models/tourModel.php';
+require_once './models/LichTrinhModel.php';
 
 // Route
 $act = $_GET['act'] ?? '/';
@@ -35,5 +37,12 @@ match ($act) {
 
     // Quản lý tour
     'tour' => (new tourController())->tour(),
-    
+    // Lich trinh 
+    'listLichTrinh' => (new LichTrinhController())->list(),
+    'addLichTrinh' => (new LichTrinhController())->add(),
+    'addLichTrinhProcess' => (new LichTrinhController())->addProcess(),
+    'editLichTrinh' => (new LichTrinhController())->edit(),
+    'editLichTrinhProcess' => (new LichTrinhController())->editProcess(),
+    'deleteLichTrinh' => (new LichTrinhController())->delete(),
+
 };
