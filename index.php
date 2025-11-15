@@ -37,12 +37,13 @@ match ($act) {
 
     // Quản lý tour
     'tour' => (new tourController())->tour(),
-    // Lich trinh 
-    'listLichTrinh' => (new LichTrinhController())->list(),
-    'addLichTrinh' => (new LichTrinhController())->add(),
-    'addLichTrinhProcess' => (new LichTrinhController())->addProcess(),
-    'editLichTrinh' => (new LichTrinhController())->edit(),
-    'editLichTrinhProcess' => (new LichTrinhController())->editProcess(),
-    'deleteLichTrinh' => (new LichTrinhController())->delete(),
+
+    'addTour' => (new tourController())->addTour(),
+    'addTourProcess' => (new tourController())->addTourProcess(),
+    'xemTour' => (new tourController())->viewTour(),
+    'editTour' => (new tourController())->editTour(),
+    'editTourProcess' => (new tourController())->editTourProcess(),
+    'deleteTour' => (new tourController())->deleteTour(),
+    
 
 };
