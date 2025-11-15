@@ -35,5 +35,11 @@ match ($act) {
 
     // Quản lý tour
     'tour' => (new tourController())->tour(),
+    'addTour' => (new tourController())->addTour(),
+    'addTourProcess' => (new tourController())->addTourProcess(),
+    'xemTour' => (new tourController())->viewTour(),
+    'editTour' => (new tourController())->editTour(),
+    'editTourProcess' => (new tourController())->editTourProcess(),
+    'deleteTour' => (new tourController())->deleteTour(),
     
 };
