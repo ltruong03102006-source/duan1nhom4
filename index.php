@@ -9,11 +9,15 @@ require_once './commons/function.php'; // Hàm hỗ trợ
 require_once './controllers/ProductController.php';
 require_once './controllers/danhMuctourController.php';
 require_once './controllers/tourController.php';
+require_once './controllers/TaiKhoanController.php';
+require_once './controllers/huongDanVienController.php';
 
 // Require toàn bộ file Models
 require_once './models/ProductModel.php';
 require_once './models/danhMuctourModel.php';
 require_once './models/tourModel.php';
+require_once './models/taiKhoanModel.php';
+require_once './models/huongDanVienModel.php';
 
 // Route
 $act = $_GET['act'] ?? '/';
@@ -32,8 +36,24 @@ match ($act) {
     'deleteDanhMucTour' => (new danhMuctourController())->deleteDanhMucTour(),
     'editDanhMucTour' => (new danhMuctourController())->editDanhMucTour(),
     'updateDanhMucTour' => (new danhMuctourController())->updateDanhMucTour(),
+    
 
     // Quản lý tour
     'tour' => (new tourController())->tour(),
     
+    // Quản lý Tài khoản (Phần 13: Admin)
+    'taiKhoan' => (new TaiKhoanController())->homeTaiKhoan(),
+    'addTaiKhoan' => (new TaiKhoanController())->addTaiKhoan(),
+    'addTaiKhoanProcess' => (new TaiKhoanController())->addTaiKhoanProcess(),
+    'toggleTrangThaiTaiKhoan' => (new TaiKhoanController())->toggleTrangThai(),
+    'editTaiKhoan' => (new TaiKhoanController())->editTaiKhoan(), 
+    'updateTaiKhoanProcess' => (new TaiKhoanController())->updateTaiKhoanProcess(),
+
+    // Giao diện Hướng dẫn viên (HDV) <--- PHẦN MỚI
+    'hdvHome' => (new huongDanVienController())->homeHDV(),
+    'hdvDoanDetail' => (new huongDanVienController())->viewDoanDetail(),
+    'hdvLichTrinh' => (new huongDanVienController())->viewLichTrinh(),
+    
+    // Xử lý các case còn lại (nếu có)
+    default => (new ProductController())->Home(),
 };
