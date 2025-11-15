@@ -13,13 +13,13 @@ class danhMuctourController
     {
 
         $dmTour = $this->modelDanhmuctour->getAlltour();
-        $viewFile = './views/danhMuctour.php';
+        $viewFile = './views/tour/danhMuctour.php';
         include './views/layout.php';
     }
 
     public function addDanhMucTour()
     {
-        $viewFile = './views/danhMuctour.php';
+        $viewFile = './views/tour/danhMuctour.php';
         include './views/layout.php';
     }
     public function addDanhMucTourProcess()
@@ -44,7 +44,7 @@ class danhMuctourController
         $id = $_GET['id'];
         $danhmuc = $this->modelDanhmuctour->getDanhMucById($id);
 
-        $viewFile = "./views/suaDanhMucTour.php";
+        $viewFile = "./views/tour/suaDanhMucTour.php";
         include "./views/layout.php";
     }
 
