@@ -12,6 +12,7 @@ require_once './controllers/tourController.php';
 require_once './controllers/LichTrinhController.php';
 require_once './controllers/GiaTourController.php';
 require_once './controllers/DuToanChiPhiController.php';
+require_once './controllers/khachHangController.php';
 
 // Require toàn bộ file Models
 require_once './models/ProductModel.php';
@@ -20,6 +21,7 @@ require_once './models/tourModel.php';
 require_once './models/LichTrinhModel.php';
 require_once './models/GiaTourModel.php';
 require_once './models/DuToanChiPhiModel.php';
+require_once './models/khachHangModel.php';
 
 // Route
 $act = $_GET['act'] ?? '/';
@@ -73,6 +75,13 @@ match ($act) {
     'editDuToanProcess' => (new DuToanChiPhiController())->editDuToanProcess(),
     'deleteDuToan' => (new DuToanChiPhiController())->deleteDuToan(),
 
+    // Quản lý Khách Hàng (PHẦN BẠN YÊU CẦU)
+    'listKhachHang' => (new KhachHangController())->listKhachHang(),
+    'addKhachHang' => (new KhachHangController())->addKhachHang(),
+    'addKhachHangProcess' => (new KhachHangController())->addKhachHangProcess(),
+    'editKhachHang' => (new KhachHangController())->editKhachHang(),
+    'updateKhachHangProcess' => (new KhachHangController())->updateKhachHangProcess(),
+    'deleteKhachHang' => (new KhachHangController())->deleteKhachHang(),
 
     // Mặc định
     default => (new ProductController())->Home()
