@@ -9,11 +9,17 @@ require_once './commons/function.php'; // Hàm hỗ trợ
 require_once './controllers/ProductController.php';
 require_once './controllers/danhMuctourController.php';
 require_once './controllers/tourController.php';
+require_once './controllers/LichTrinhController.php';
+require_once './controllers/GiaTourController.php';
+require_once './controllers/DuToanChiPhiController.php';
 
 // Require toàn bộ file Models
 require_once './models/ProductModel.php';
 require_once './models/danhMuctourModel.php';
 require_once './models/tourModel.php';
+require_once './models/LichTrinhModel.php';
+require_once './models/GiaTourModel.php';
+require_once './models/DuToanChiPhiModel.php';
 
 // Route
 $act = $_GET['act'] ?? '/';
@@ -35,11 +41,39 @@ match ($act) {
 
     // Quản lý tour
     'tour' => (new tourController())->tour(),
+    
     'addTour' => (new tourController())->addTour(),
     'addTourProcess' => (new tourController())->addTourProcess(),
     'xemTour' => (new tourController())->viewTour(),
     'editTour' => (new tourController())->editTour(),
     'editTourProcess' => (new tourController())->editTourProcess(),
     'deleteTour' => (new tourController())->deleteTour(),
-    
+
+    //Quản lý lịch trình chi tiết tour
+    'lichTour' => (new LichTrinhController())->lichTour(),
+    'addLichTrinhProcess' => (new LichTrinhController())->addLichTrinhProcess(),
+    'editLichTrinh' => (new LichTrinhController())->editLichTrinh(),
+    'editLichTrinhProcess' => (new LichTrinhController())->editLichTrinhProcess(),
+    'deleteLichTrinh' => (new LichTrinhController())->deleteLichTrinh(),
+
+
+    // Quản lý giá tour
+    'giaTour' => (new GiaTourController())->giaTour(),
+    'addGiaTour' => (new GiaTourController())->addGiaTour(),
+    'addGiaTourProcess' => (new GiaTourController())->addGiaTourProcess(),
+    'editGiaTour' => (new GiaTourController())->editGiaTour(),
+    'editGiaTourProcess' => (new GiaTourController())->editGiaTourProcess(),
+    'deleteGiaTour' => (new GiaTourController())->deleteGiaTour(),
+
+     // Quản lý dự toán chi phí
+    'duToanChiPhi' => (new DuToanChiPhiController())->duToanChiPhi(),
+    'addDuToan' => (new DuToanChiPhiController())->addDuToan(),
+    'addDuToanProcess' => (new DuToanChiPhiController())->addDuToanProcess(),
+    'editDuToan' => (new DuToanChiPhiController())->editDuToan(),
+    'editDuToanProcess' => (new DuToanChiPhiController())->editDuToanProcess(),
+    'deleteDuToan' => (new DuToanChiPhiController())->deleteDuToan(),
+
+
+    // Mặc định
+    default => (new ProductController())->Home()
 };

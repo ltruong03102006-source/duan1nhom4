@@ -36,6 +36,8 @@
             font-weight: bold;
             cursor: pointer;
             margin-bottom: 20px;
+            text-decoration: none;
+            display: inline-block;
         }
 
         .btn-add:hover {
@@ -67,12 +69,23 @@
             background: #f1f1f1;
         }
 
+        .actions {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .actions a {
+            text-decoration: none;
+        }
+
         .actions button {
-            padding: 6px 10px;
+            padding: 6px 12px;
             color: #fff;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 13px;
         }
 
         .btn-edit {
@@ -97,6 +110,30 @@
 
         .btn-view:hover {
             background: #2e7d32;
+        }
+
+        .btn-price {
+            background: #9c27b0;
+        }
+
+        .btn-price:hover {
+            background: #7b1fa2;
+        }
+
+        .btn-schedule {
+            background: #00acc1;
+        }
+
+        .btn-schedule:hover {
+            background: #00838f;
+        }
+
+        .btn-budget {
+            background: #ff5722;
+        }
+
+        .btn-budget:hover {
+            background: #e64a19;
         }
 
         img.thumb {
@@ -128,9 +165,7 @@
     <div class="header">Quản Lý Tour Du Lịch</div>
 
     <div class="container">
-        <a href="?act=addTour">
-            <button class="btn-add">+ Thêm Tour Mới</button>
-        </a>
+        <a href="?act=addTour" class="btn-add">+ Thêm Tour Mới</a>
 
         <table>
             <thead>
@@ -166,7 +201,6 @@
                         <td><?= htmlspecialchars($tour['MaCodeTour']) ?></td>
                         <td><?= htmlspecialchars($tour['TenTour']) ?></td>
 
-                    
                         <td><?= $tour['TenDanhMuc'] ?></td>
 
                         <td><?= $tour['SoNgay'] ?>N - <?= $tour['SoDem'] ?>Đ</td>
@@ -189,6 +223,15 @@
                         <td class="actions">
                             <a href="?act=xemTour&id=<?= $tour['MaTour'] ?>">
                                 <button class="btn-view">Xem</button>
+                            </a>
+                            <a href="?act=lichTour&maTour=<?= $tour['MaTour'] ?>">
+                                <button class="btn-schedule">Lịch trình</button>
+                            </a>
+                            <a href="?act=giaTour&maTour=<?= $tour['MaTour'] ?>">
+                                <button class="btn-price">Giá Tour</button>
+                            </a>
+                            <a href="?act=duToanChiPhi&maTour=<?= $tour['MaTour'] ?>">
+                                <button class="btn-budget">Dự toán</button>
                             </a>
                             <a href="?act=editTour&id=<?= $tour['MaTour'] ?>">
                                 <button class="btn-edit">Sửa</button>
