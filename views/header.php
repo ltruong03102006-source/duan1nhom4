@@ -61,7 +61,7 @@
                             </nav>
                         </div>
                         
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseKhachHang" aria-expanded="false" aria-controls="collapseKhachHang">
+                       <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseKhachHang" aria-expanded="false" aria-controls="collapseKhachHang">
                             <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
                             Quản Lý Khách Hàng
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -72,6 +72,19 @@
                                 <a class="nav-link" href="?act=addKhachHang">Thêm Khách Hàng</a>
                             </nav>
                         </div>
+                        
+                       <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseNhanSu" aria-expanded="false" aria-controls="collapseNhanSu">
+                            <div class="sb-nav-link-icon"><i class="fas fa-user-tie"></i></div>
+                            Quản Lý Nhân Sự
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseNhanSu" aria-labelledby="headingThree" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="?act=listNhanVien">Danh sách Nhân Viên</a>
+                                <a class="nav-link" href="?act=addNhanVien">Thêm Nhân Viên</a>
+                                <a class="nav-link" href="?act=listLichLamViec">Lịch Làm Việc</a>  </nav>
+                        </div>
+                       
                         
                         <div class="sb-sidenav-menu-heading">Addons</div>
                         <a class="nav-link" href="charts.html">

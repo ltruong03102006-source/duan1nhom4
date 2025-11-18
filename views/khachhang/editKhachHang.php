@@ -1,4 +1,50 @@
-// File: vuanh-duan/duan1nhom4/views/khachhang/editKhachHang.php
+<style>
+    /* CSS đồng bộ với Tour pages */
+    :root {
+        --primary-color: #2563eb;
+        --primary-hover: #1d4ed8;
+        --bg-color: #f1f5f9;
+        --card-bg: #ffffff;
+        --text-main: #1e293b;
+        --text-secondary: #64748b;
+        --border-color: #e2e8f0;
+        --success-color: #10b981;
+        --danger-color: #ef4444;
+    }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-main); font-size: 14px; }
+    .container-fluid { max-width: 1400px; margin: 0 auto; }
+    h1.mt-4 { font-size: 20px; color: var(--primary-color); margin-bottom: 20px !important; font-weight: 600; }
+
+    /* Card overrides */
+    .card { background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: none; }
+    .card-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); background-color: #f8fafc; border-radius: 8px 8px 0 0; font-size: 16px; font-weight: 600; color: var(--text-main); }
+    .card-body { padding: 20px; }
+
+    /* Form control consistency */
+    .form-control, .form-select {
+        padding: 8px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        font-size: 14px;
+        transition: border-color 0.2s;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: none;
+        outline: none;
+    }
+    .form-label { font-weight: 500; color: var(--text-main); margin-bottom: 5px; }
+
+    /* Button styles */
+    .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+    .btn-primary { background-color: var(--primary-color); color: white; }
+    .btn-primary:hover { background-color: var(--primary-hover); }
+    .btn-success { background-color: var(--success-color); color: white; }
+    .btn-success:hover { background-color: #0b9e6f; }
+    .btn-secondary { background-color: #6c757d; color: white; }
+    .btn-secondary:hover { background-color: #545b62; }
+</style>
+
 <div class="container-fluid px-4">
     <h1 class="mt-4">Sửa Khách Hàng: <?= htmlspecialchars($khachHang['HoTen']) ?></h1>
     <ol class="breadcrumb mb-4">

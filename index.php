@@ -13,6 +13,8 @@ require_once './controllers/LichTrinhController.php';
 require_once './controllers/GiaTourController.php';
 require_once './controllers/DuToanChiPhiController.php';
 require_once './controllers/khachHangController.php';
+require_once './controllers/NhanVienController.php';
+require_once './controllers/LichLamViecController.php';
 
 // Require toàn bộ file Models
 require_once './models/ProductModel.php';
@@ -22,6 +24,8 @@ require_once './models/LichTrinhModel.php';
 require_once './models/GiaTourModel.php';
 require_once './models/DuToanChiPhiModel.php';
 require_once './models/khachHangModel.php';
+require_once './models/NhanVienModel.php';
+require_once './models/LichLamViecModel.php';
 
 // Route
 $act = $_GET['act'] ?? '/';
@@ -82,6 +86,19 @@ match ($act) {
     'editKhachHang' => (new KhachHangController())->editKhachHang(),
     'updateKhachHangProcess' => (new KhachHangController())->updateKhachHangProcess(),
     'deleteKhachHang' => (new KhachHangController())->deleteKhachHang(),
+
+    // Quản lý Nhân Viên (PHẦN MỚI THÊM)
+'listNhanVien' => (new NhanVienController())->listNhanVien(),
+'addNhanVien' => (new NhanVienController())->addNhanVien(),
+'addNhanVienProcess' => (new NhanVienController())->addNhanVienProcess(),
+'editNhanVien' => (new NhanVienController())->editNhanVien(),
+'updateNhanVienProcess' => (new NhanVienController())->updateNhanVienProcess(),
+'deleteNhanVien' => (new NhanVienController())->deleteNhanVien(),
+
+// Quản lý Lịch Làm Việc (PHẦN MỚI THÊM)
+    'listLichLamViec' => (new LichLamViecController())->listLichLamViec(),
+    'addLichLamViecProcess' => (new LichLamViecController())->addLichLamViecProcess(),
+    'deleteLichLamViec' => (new LichLamViecController())->deleteLichLamViec(),
 
     // Mặc định
     default => (new ProductController())->Home()
