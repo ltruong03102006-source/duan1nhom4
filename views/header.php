@@ -70,6 +70,17 @@
                                 <a class="nav-link" href="?act=taiKhoan">Danh sách tài khoản</a>
                             </nav>
                         </div>
+
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseNhaCungCap" aria-expanded="false" aria-controls="collapseNhaCungCap">
+                            <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
+                            Quản lý Nhà Cung Cấp
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseNhaCungCap" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="?act=listNhaCungCap">Danh sách NCC</a>
+                            </nav>
+                        </div>
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
                             <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
                             Pages
@@ -114,7 +125,7 @@
                 </div>
                 <div class="sb-sidenav-footer">
                     <div class="small">Logged in as:</div>
-                    Start Bootstrap
+                    Start Bootstrap 
                 </div>
             </nav>
         </div>

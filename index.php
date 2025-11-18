@@ -11,6 +11,7 @@ require_once './controllers/danhMuctourController.php';
 require_once './controllers/tourController.php';
 require_once './controllers/TaiKhoanController.php';
 require_once './controllers/huongDanVienController.php';
+require_once './controllers/nhaCungCapController.php'; // <--- Thêm dòng này
 
 // Require toàn bộ file Models
 require_once './models/ProductModel.php';
@@ -18,6 +19,7 @@ require_once './models/danhMuctourModel.php';
 require_once './models/tourModel.php';
 require_once './models/taiKhoanModel.php';
 require_once './models/huongDanVienModel.php';
+require_once './models/nhaCungCapModel.php'; // <--- Thêm dòng này
 
 // Route
 $act = $_GET['act'] ?? '/';
@@ -54,6 +56,16 @@ match ($act) {
     'hdvDoanDetail' => (new huongDanVienController())->viewDoanDetail(),
     'hdvLichTrinh' => (new huongDanVienController())->viewLichTrinh(),
     
+    
+
+   // Quản lý Nhà Cung Cấp (Phần 7: Admin) <--- PHẦN MỚI
+    'listNhaCungCap' => (new nhaCungCapController())->homeNhaCungCap(),
+    'addNhaCungCap' => (new nhaCungCapController())->addNhaCungCap(),
+    'addNhaCungCapProcess' => (new nhaCungCapController())->addNhaCungCapProcess(),
+    'editNhaCungCap' => (new nhaCungCapController())->editNhaCungCap(),
+    'updateNhaCungCapProcess' => (new nhaCungCapController())->updateNhaCungCapProcess(),
+    'deleteNhaCungCap' => (new nhaCungCapController())->deleteNhaCungCap(),
+
     // Xử lý các case còn lại (nếu có)
     default => (new ProductController())->Home(),
 };

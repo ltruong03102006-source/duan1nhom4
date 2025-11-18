@@ -1,5 +1,5 @@
 <style>
-    /* Bổ sung CSS cho view này, sử dụng lại style từ DanhMuctour để đồng bộ */
+    /* Chỉ giữ lại các class bổ trợ nút bấm, xóa phần style cho table */
     .btn-add {
         background: #198754;
         color: #fff;
@@ -14,6 +14,9 @@
     .btn-add:hover {
         background: #146c43;
     }
+    
+    /* XÓA HOẶC COMMENT ĐOẠN NÀY ĐỂ BẢNG GIỐNG TRANG NHÀ CUNG CẤP */
+    /*
     table {
         width: 100%;
         border-collapse: collapse;
@@ -35,6 +38,9 @@
     tr:nth-child(even) {
         background: #f1f1f1;
     }
+    */
+
+    /* Giữ lại phần style cho các nút hành động */
     .actions button, .actions a button {
         padding: 6px 12px;
         color: #fff;
@@ -52,7 +58,6 @@
     .status-active { color: #198754; font-weight: bold; }
     .status-locked { color: #dc3545; font-weight: bold; }
 </style>
-
 <div class="container-fluid px-4">
     <h1 class="mt-4">Quản Lý Tài Khoản Nhân Viên</h1>
     <ol class="breadcrumb mb-4">

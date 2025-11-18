@@ -75,6 +75,7 @@ class taikhoanModel
                     tk.TenDangNhap, 
                     tk.MatKhau,
                     tk.VaiTro AS VaiTroTaiKhoan, 
+                    tk.TrangThai,  /* <--- BỔ SUNG DÒNG NÀY */
                     tk.MaNhanVien,
                     nv.HoTen,
                     nv.MaCodeNhanVien
