@@ -77,18 +77,22 @@ class tourController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $MaTour = $_POST['MaTour'];
+            $target_file = $_POST['old_image'];  // giữ ảnh cũ nếu không upload mới
 
-            // Xử lý upload ảnh mới
-            $target_file = $_POST['old_image']; // ảnh cũ giữ nguyên
+            // Nếu có upload ảnh mới
+            if (isset($_FILES['LinkAnhBia']) && $_FILES['LinkAnhBia']['error'] === UPLOAD_ERR_OK) {
 
-            if (isset($_FILES['LinkAnhBia']) && $_FILES['LinkAnhBia']['error'] == 0) {
                 $dir = "./uploads/";
-                if (!file_exists($dir)) mkdir($dir);
-                $target_file = $dir . time() . "_" . basename($_FILES['LinkAnhBia']['name']);
+                if (!is_dir($dir)) mkdir($dir);
+
+                $fileName = time() . "_" . basename($_FILES['LinkAnhBia']['name']);
+                $target_file = $dir . $fileName;
+
+                // Lưu file lên server
                 move_uploaded_file($_FILES['LinkAnhBia']['tmp_name'], $target_file);
             }
 
-            // Gom dữ liệu
+            // Gom data để update
             $data = [
                 ':MaTour' => $MaTour,
                 ':MaCodeTour' => $_POST['MaCodeTour'],
@@ -107,14 +111,13 @@ class tourController
                 ':LinkAnhBia' => $target_file
             ];
 
-            // Cập nhật
             $this->modelTour->updateTour($data);
 
-            // Redirect
             header("Location: ?act=tour");
             exit();
         }
     }
+
     public function deleteTour()
     {
         $id = $_GET['id'];

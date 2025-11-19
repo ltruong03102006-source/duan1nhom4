@@ -15,6 +15,7 @@ require_once './controllers/DuToanChiPhiController.php';
 require_once './controllers/khachHangController.php';
 require_once './controllers/NhanVienController.php';
 require_once './controllers/LichLamViecController.php';
+require_once './controllers/AnhTourController.php';
 
 // Require toàn bộ file Models
 require_once './models/ProductModel.php';
@@ -26,6 +27,7 @@ require_once './models/DuToanChiPhiModel.php';
 require_once './models/khachHangModel.php';
 require_once './models/NhanVienModel.php';
 require_once './models/LichLamViecModel.php';
+require_once './models/AnhTourModel.php';
 
 // Route
 $act = $_GET['act'] ?? '/';
@@ -47,7 +49,7 @@ match ($act) {
 
     // Quản lý tour
     'tour' => (new tourController())->tour(),
-    
+
     'addTour' => (new tourController())->addTour(),
     'addTourProcess' => (new tourController())->addTourProcess(),
     'xemTour' => (new tourController())->viewTour(),
@@ -71,13 +73,22 @@ match ($act) {
     'editGiaTourProcess' => (new GiaTourController())->editGiaTourProcess(),
     'deleteGiaTour' => (new GiaTourController())->deleteGiaTour(),
 
-     // Quản lý dự toán chi phí
+    // Quản lý dự toán chi phí
     'duToanChiPhi' => (new DuToanChiPhiController())->duToanChiPhi(),
     'addDuToan' => (new DuToanChiPhiController())->addDuToan(),
     'addDuToanProcess' => (new DuToanChiPhiController())->addDuToanProcess(),
     'editDuToan' => (new DuToanChiPhiController())->editDuToan(),
     'editDuToanProcess' => (new DuToanChiPhiController())->editDuToanProcess(),
     'deleteDuToan' => (new DuToanChiPhiController())->deleteDuToan(),
+
+    // QUẢN LÝ ẢNH TOUR
+    'anhTour' => (new AnhTourController())->anhTour(),
+    'addAnhTour' => (new AnhTourController())->addAnhTour(),
+    'addAnhTourProcess' => (new AnhTourController())->addAnhTourProcess(),
+    'editAnhTour' => (new AnhTourController())->editAnhTour(),
+    'editAnhTourProcess' => (new AnhTourController())->editAnhTourProcess(),
+    'deleteAnhTour' => (new AnhTourController())->deleteAnhTour(),
+
 
     // Quản lý Khách Hàng (PHẦN BẠN YÊU CẦU)
     'listKhachHang' => (new KhachHangController())->listKhachHang(),
@@ -88,14 +99,14 @@ match ($act) {
     'deleteKhachHang' => (new KhachHangController())->deleteKhachHang(),
 
     // Quản lý Nhân Viên (PHẦN MỚI THÊM)
-'listNhanVien' => (new NhanVienController())->listNhanVien(),
-'addNhanVien' => (new NhanVienController())->addNhanVien(),
-'addNhanVienProcess' => (new NhanVienController())->addNhanVienProcess(),
-'editNhanVien' => (new NhanVienController())->editNhanVien(),
-'updateNhanVienProcess' => (new NhanVienController())->updateNhanVienProcess(),
-'deleteNhanVien' => (new NhanVienController())->deleteNhanVien(),
+    'listNhanVien' => (new NhanVienController())->listNhanVien(),
+    'addNhanVien' => (new NhanVienController())->addNhanVien(),
+    'addNhanVienProcess' => (new NhanVienController())->addNhanVienProcess(),
+    'editNhanVien' => (new NhanVienController())->editNhanVien(),
+    'updateNhanVienProcess' => (new NhanVienController())->updateNhanVienProcess(),
+    'deleteNhanVien' => (new NhanVienController())->deleteNhanVien(),
 
-// Quản lý Lịch Làm Việc (PHẦN MỚI THÊM)
+    // Quản lý Lịch Làm Việc (PHẦN MỚI THÊM)
     'listLichLamViec' => (new LichLamViecController())->listLichLamViec(),
     'addLichLamViecProcess' => (new LichLamViecController())->addLichLamViecProcess(),
     'deleteLichLamViec' => (new LichLamViecController())->deleteLichLamViec(),

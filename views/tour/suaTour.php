@@ -168,9 +168,12 @@
                 <label>Ảnh bìa Tour</label>
                 <input type="file" name="LinkAnhBia" accept="image/*">
 
+                <input type="hidden" name="old_image" value="<?= $tour['LinkAnhBia'] ?>">
+
                 <?php if (!empty($tour['LinkAnhBia'])): ?>
                     <img src="<?= $tour['LinkAnhBia'] ?>" class="preview-img">
                 <?php endif; ?>
+
             </div>
 
             <div class="form-group">

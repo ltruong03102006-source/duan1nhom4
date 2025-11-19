@@ -221,26 +221,45 @@
                         <td><?= $tour['NgayCapNhat'] ?></td>
 
                         <td class="actions">
+
+                            <!-- XEM TOUR -->
                             <a href="?act=xemTour&id=<?= $tour['MaTour'] ?>">
                                 <button class="btn-view">Xem</button>
                             </a>
+
+                            <!-- ẢNH TOUR  (MỚI THÊM) -->
+                            <a href="?act=anhTour&MaTour=<?= $tour['MaTour'] ?>">
+                                <button class="btn-view" style="background:#6a1b9a;">Ảnh Tour</button>
+                            </a>
+
+                            <!-- LỊCH TRÌNH -->
                             <a href="?act=lichTour&maTour=<?= $tour['MaTour'] ?>">
                                 <button class="btn-schedule">Lịch trình</button>
                             </a>
+
+                            <!-- GIÁ TOUR -->
                             <a href="?act=giaTour&maTour=<?= $tour['MaTour'] ?>">
                                 <button class="btn-price">Giá Tour</button>
                             </a>
+
+                            <!-- DỰ TOÁN -->
                             <a href="?act=duToanChiPhi&maTour=<?= $tour['MaTour'] ?>">
                                 <button class="btn-budget">Dự toán</button>
                             </a>
+
+                            <!-- SỬA -->
                             <a href="?act=editTour&id=<?= $tour['MaTour'] ?>">
                                 <button class="btn-edit">Sửa</button>
                             </a>
+
+                            <!-- XOÁ -->
                             <a href="?act=deleteTour&id=<?= $tour['MaTour'] ?>"
                                 onclick="return confirm('Bạn có chắc chắn muốn xóa tour này không?');">
                                 <button class="btn-delete">Xóa</button>
                             </a>
+
                         </td>
+
                     </tr>
                 <?php endforeach; ?>
             </tbody>
