@@ -48,7 +48,7 @@
                             Dashboard
                         </a>
                         <div class="sb-sidenav-menu-heading">Interface</div>
-                        
+
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
                             <div class="sb-nav-link-icon"><i class="fas fa-map-signs"></i></div>
                             Tour và sản phẩm
@@ -60,8 +60,8 @@
                                 <a class="nav-link" href="?act=tour">Quản lý tour</a>
                             </nav>
                         </div>
-                        
-                       <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseKhachHang" aria-expanded="false" aria-controls="collapseKhachHang">
+
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseKhachHang" aria-expanded="false" aria-controls="collapseKhachHang">
                             <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
                             Quản Lý Khách Hàng
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -72,8 +72,8 @@
                                 <a class="nav-link" href="?act=addKhachHang">Thêm Khách Hàng</a>
                             </nav>
                         </div>
-                        
-                       <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseNhanSu" aria-expanded="false" aria-controls="collapseNhanSu">
+
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseNhanSu" aria-expanded="false" aria-controls="collapseNhanSu">
                             <div class="sb-nav-link-icon"><i class="fas fa-user-tie"></i></div>
                             Quản Lý Nhân Sự
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -82,10 +82,22 @@
                             <nav class="sb-sidenav-menu-nested nav">
                                 <a class="nav-link" href="?act=listNhanVien">Danh sách Nhân Viên</a>
                                 <a class="nav-link" href="?act=addNhanVien">Thêm Nhân Viên</a>
-                                <a class="nav-link" href="?act=listLichLamViec">Lịch Làm Việc</a>  </nav>
+                                <a class="nav-link" href="?act=listLichLamViec">Lịch Làm Việc</a>
+                            </nav>
                         </div>
-                       
-                        
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                            data-bs-target="#collapseDoan" aria-expanded="false" aria-controls="collapseDoan">
+                            <div class="sb-nav-link-icon"><i class="fas fa-shuttle-van"></i></div>
+                            Quản Lý Đoàn Khởi Hành
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseDoan" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="?act=listDoan">Danh sách Đoàn Khởi Hành</a>
+                            </nav>
+                        </div>
+
+
                         <div class="sb-sidenav-menu-heading">Addons</div>
                         <a class="nav-link" href="charts.html">
                             <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
@@ -105,4 +117,4 @@
         </div>
         <div id="layoutSidenav_content">
             <main>
-                <div class="container-fluid px-4">      
+                <div class="container-fluid px-4">

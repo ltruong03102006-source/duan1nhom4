@@ -16,6 +16,7 @@ require_once './controllers/khachHangController.php';
 require_once './controllers/NhanVienController.php';
 require_once './controllers/LichLamViecController.php';
 require_once './controllers/AnhTourController.php';
+require_once './controllers/DoanKhoiHanhController.php';
 
 // Require toàn bộ file Models
 require_once './models/ProductModel.php';
@@ -28,6 +29,7 @@ require_once './models/khachHangModel.php';
 require_once './models/NhanVienModel.php';
 require_once './models/LichLamViecModel.php';
 require_once './models/AnhTourModel.php';
+require_once './models/DoanKhoiHanhModel.php';
 
 // Route
 $act = $_GET['act'] ?? '/';
@@ -111,6 +113,14 @@ match ($act) {
     'addLichLamViecProcess' => (new LichLamViecController())->addLichLamViecProcess(),
     'deleteLichLamViec' => (new LichLamViecController())->deleteLichLamViec(),
 
+
+    // QUẢN LÝ ĐOÀN KHỞI HÀNH
+    'listDoan' => (new DoanKhoiHanhController())->listDoan(),
+    'addDoan' => (new DoanKhoiHanhController())->addDoan(),
+    'addDoanProcess' => (new DoanKhoiHanhController())->addDoanProcess(),
+    'editDoan' => (new DoanKhoiHanhController())->editDoan(),
+    'editDoanProcess' => (new DoanKhoiHanhController())->editDoanProcess(),
+    'deleteDoan' => (new DoanKhoiHanhController())->deleteDoan(),
     // Mặc định
     default => (new ProductController())->Home()
 };
