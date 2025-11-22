@@ -24,7 +24,7 @@ require_once './controllers/TaiKhoanController.php';
 require_once './controllers/huongDanVienController.php';
 require_once './controllers/nhaCungCapController.php'; // <--- Thêm dòng này
 require_once './controllers/DichVuCuaDoanController.php';
-
+require_once './controllers/TaiChinhTourController.php'; // <--- Mới
 
 // Require toàn bộ file Models
 require_once './models/ProductModel.php';
@@ -45,6 +45,7 @@ require_once './models/taiKhoanModel.php';
 require_once './models/huongDanVienModel.php';
 require_once './models/nhaCungCapModel.php'; // <--- Thêm dòng này
 require_once './models/DichVuCuaDoanModel.php';
+require_once './models/TaiChinhTourModel.php'; // <--- Mới
 
 
 // Route
@@ -188,6 +189,14 @@ match ($act) {
 'editDichVu' => (new DichVuCuaDoanController())->editDichVu(),
 'editDichVuProcess' => (new DichVuCuaDoanController())->editDichVuProcess(),
 'deleteDichVu' => (new DichVuCuaDoanController())->deleteDichVu(),
+
+// Quản lý Tài Chính Tour (Phần 9)
+    'listTaiChinh' => (new TaiChinhTourController())->listTaiChinh(),
+    'addTaiChinh' => (new TaiChinhTourController())->addTaiChinh(),
+    'addTaiChinhProcess' => (new TaiChinhTourController())->addTaiChinhProcess(),
+    'editTaiChinh' => (new TaiChinhTourController())->editTaiChinh(),
+    'updateTaiChinhProcess' => (new TaiChinhTourController())->updateTaiChinhProcess(),
+    'deleteTaiChinh' => (new TaiChinhTourController())->deleteTaiChinh(),
 
     // Xử lý các case còn lại (nếu có)
     default => (new ProductController())->Home(),

@@ -191,12 +191,14 @@
                             ?>
                         </td>
                         <td class="actions">
-                             <a href="?act=listDichVu&maDoan=<?= $d['MaDoan'] ?>">
-                                <button class="btn-view" style="background:#0ea5e9;">Dịch vụ</button>
-                            </a>
                             <a href="?act=editDoan&MaDoan=<?= $d['MaDoan'] ?>">
                                 <button class="btn-edit">Sửa</button>
                             </a>
+
+                            <a href="?act=listTaiChinh&MaDoan=<?= $d['MaDoan'] ?>">
+                                <button class="btn-view" style="background-color: #17a2b8;">Tài chính</button>
+                            </a>
+
                             <a href="?act=deleteDoan&MaDoan=<?= $d['MaDoan'] ?>"
                                 onclick="return confirm('Bạn có chắc chắn muốn xóa đoàn này không?');">
                                 <button class="btn-delete">Xóa</button>
