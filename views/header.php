@@ -65,8 +65,16 @@
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseKhachHang" aria-expanded="false" aria-controls="collapseKhachHang">
                             <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
                             Quản Lý Khách Hàng
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseKhachHang" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="?act=listKhachHang">Danh sách Khách Hàng</a>
+                                <a class="nav-link" href="?act=addKhachHang">Thêm Khách Hàng</a>
+                            </nav>
+                        </div>
 
-                        
+
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseTaiKhoan" aria-expanded="false" aria-controls="collapseTaiKhoan">
                             <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
                             Hệ thống Tài khoản
@@ -86,17 +94,6 @@
                         <div class="collapse" id="collapseNhaCungCap" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
                                 <a class="nav-link" href="?act=listNhaCungCap">Danh sách NCC</a>
-                            </nav>
-                        </div>
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
-                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                            Pages
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapseKhachHang" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
-                            <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="?act=listKhachHang">Danh sách Khách Hàng</a>
-                                <a class="nav-link" href="?act=addKhachHang">Thêm Khách Hàng</a>
                             </nav>
                         </div>
 
@@ -129,11 +126,23 @@
                             Quản Lý Booking
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
-
                         <div class="collapse" id="collapseBooking" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
                                 <a class="nav-link" href="?act=listBooking">Danh Sách Booking</a>
                                 <a class="nav-link" href="?act=addBooking">Tạo Booking Mới</a>
+                            </nav>
+                        </div>
+
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                            data-bs-target="#collapseThanhToan" aria-expanded="false" aria-controls="collapseThanhToan">
+                            <div class="sb-nav-link-icon"><i class="fas fa-money-bill-wave"></i></div>
+                            Quản Lý Thanh Toán
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseThanhToan" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="?act=listThanhToan">Danh Sách Thanh Toán</a>
+                                <a class="nav-link" href="?act=addThanhToan">Thêm Thanh Toán</a>
                             </nav>
                         </div>
 
@@ -151,7 +160,7 @@
                 </div>
                 <div class="sb-sidenav-footer">
                     <div class="small">Logged in as:</div>
-                    Start Bootstrap 
+                    Start Bootstrap
                 </div>
             </nav>
         </div>

@@ -22,9 +22,15 @@ require_once './controllers/BookingController.php';
 
 require_once './controllers/TaiKhoanController.php';
 require_once './controllers/huongDanVienController.php';
+
 require_once './controllers/nhaCungCapController.php'; // <--- Thêm dòng này
 require_once './controllers/DichVuCuaDoanController.php';
 require_once './controllers/TaiChinhTourController.php'; // <--- Mới
+
+require_once './controllers/nhaCungCapController.php';
+require_once './controllers/ThanhToanController.php';
+
+
 
 // Require toàn bộ file Models
 require_once './models/ProductModel.php';
@@ -43,9 +49,14 @@ require_once './models/BookingModel.php';
 
 require_once './models/taiKhoanModel.php';
 require_once './models/huongDanVienModel.php';
+
 require_once './models/nhaCungCapModel.php'; // <--- Thêm dòng này
 require_once './models/DichVuCuaDoanModel.php';
 require_once './models/TaiChinhTourModel.php'; // <--- Mới
+
+require_once './models/nhaCungCapModel.php';
+require_once './models/ThanhToanModel.php';
+
 
 
 // Route
@@ -182,13 +193,14 @@ match ($act) {
     'updateNhaCungCapProcess' => (new nhaCungCapController())->updateNhaCungCapProcess(),
     'deleteNhaCungCap' => (new nhaCungCapController())->deleteNhaCungCap(),
 
+
      // QUẢN LÝ DỊCH VỤ CỦA ĐOÀN (MỚI THÊM)
-'listDichVu' => (new DichVuCuaDoanController())->listDichVu(),
-'addDichVu' => (new DichVuCuaDoanController())->addDichVu(),
-'addDichVuProcess' => (new DichVuCuaDoanController())->addDichVuProcess(),
-'editDichVu' => (new DichVuCuaDoanController())->editDichVu(),
-'editDichVuProcess' => (new DichVuCuaDoanController())->editDichVuProcess(),
-'deleteDichVu' => (new DichVuCuaDoanController())->deleteDichVu(),
+    'listDichVu' => (new DichVuCuaDoanController())->listDichVu(),
+    'addDichVu' => (new DichVuCuaDoanController())->addDichVu(),
+    'addDichVuProcess' => (new DichVuCuaDoanController())->addDichVuProcess(),
+    'editDichVu' => (new DichVuCuaDoanController())->editDichVu(),
+    'editDichVuProcess' => (new DichVuCuaDoanController())->editDichVuProcess(),
+    'deleteDichVu' => (new DichVuCuaDoanController())->deleteDichVu(),
 
 // Quản lý Tài Chính Tour (Phần 9)
     'listTaiChinh' => (new TaiChinhTourController())->listTaiChinh(),
@@ -197,6 +209,15 @@ match ($act) {
     'editTaiChinh' => (new TaiChinhTourController())->editTaiChinh(),
     'updateTaiChinhProcess' => (new TaiChinhTourController())->updateTaiChinhProcess(),
     'deleteTaiChinh' => (new TaiChinhTourController())->deleteTaiChinh(),
+
+    // QUẢN LÝ THANH TOÁN
+    'listThanhToan' => (new ThanhToanController())->listThanhToan(),
+    'addThanhToan' => (new ThanhToanController())->addThanhToan(),
+    'addThanhToanProcess' => (new ThanhToanController())->addThanhToanProcess(),
+    'editThanhToan' => (new ThanhToanController())->editThanhToan(),
+    'editThanhToanProcess' => (new ThanhToanController())->editThanhToanProcess(),
+    'deleteThanhToan' => (new ThanhToanController())->deleteThanhToan(),
+
 
     // Xử lý các case còn lại (nếu có)
     default => (new ProductController())->Home(),
