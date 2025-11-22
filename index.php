@@ -9,6 +9,7 @@ require_once './commons/function.php'; // Hàm hỗ trợ
 require_once './controllers/ProductController.php';
 require_once './controllers/danhMuctourController.php';
 require_once './controllers/tourController.php';
+
 require_once './controllers/LichTrinhController.php';
 require_once './controllers/GiaTourController.php';
 require_once './controllers/DuToanChiPhiController.php';
@@ -19,10 +20,16 @@ require_once './controllers/AnhTourController.php';
 require_once './controllers/DoanKhoiHanhController.php';
 require_once './controllers/BookingController.php';
 
+require_once './controllers/TaiKhoanController.php';
+require_once './controllers/huongDanVienController.php';
+require_once './controllers/nhaCungCapController.php'; // <--- Thêm dòng này
+
+
 // Require toàn bộ file Models
 require_once './models/ProductModel.php';
 require_once './models/danhMuctourModel.php';
 require_once './models/tourModel.php';
+
 require_once './models/LichTrinhModel.php';
 require_once './models/GiaTourModel.php';
 require_once './models/DuToanChiPhiModel.php';
@@ -32,6 +39,11 @@ require_once './models/LichLamViecModel.php';
 require_once './models/AnhTourModel.php';
 require_once './models/DoanKhoiHanhModel.php';
 require_once './models/BookingModel.php';
+
+require_once './models/taiKhoanModel.php';
+require_once './models/huongDanVienModel.php';
+require_once './models/nhaCungCapModel.php'; // <--- Thêm dòng này
+
 
 // Route
 $act = $_GET['act'] ?? '/';
@@ -50,9 +62,11 @@ match ($act) {
     'deleteDanhMucTour' => (new danhMuctourController())->deleteDanhMucTour(),
     'editDanhMucTour' => (new danhMuctourController())->editDanhMucTour(),
     'updateDanhMucTour' => (new danhMuctourController())->updateDanhMucTour(),
+    
 
     // Quản lý tour
     'tour' => (new tourController())->tour(),
+
 
     'addTour' => (new tourController())->addTour(),
     'addTourProcess' => (new tourController())->addTourProcess(),
@@ -141,6 +155,31 @@ match ($act) {
     // Điểm danh khách (HDV)
     'diemDanhProcess' => (new BookingController())->diemDanhProcess(),
 
-    // Mặc định
-    default => (new ProductController())->Home()
+    
+    // Quản lý Tài khoản (Phần 13: Admin)
+    'taiKhoan' => (new TaiKhoanController())->homeTaiKhoan(),
+    'addTaiKhoan' => (new TaiKhoanController())->addTaiKhoan(),
+    'addTaiKhoanProcess' => (new TaiKhoanController())->addTaiKhoanProcess(),
+    'toggleTrangThaiTaiKhoan' => (new TaiKhoanController())->toggleTrangThai(),
+    'editTaiKhoan' => (new TaiKhoanController())->editTaiKhoan(), 
+    'updateTaiKhoanProcess' => (new TaiKhoanController())->updateTaiKhoanProcess(),
+
+    // Giao diện Hướng dẫn viên (HDV) <--- PHẦN MỚI
+    'hdvHome' => (new huongDanVienController())->homeHDV(),
+    'hdvDoanDetail' => (new huongDanVienController())->viewDoanDetail(),
+    'hdvLichTrinh' => (new huongDanVienController())->viewLichTrinh(),
+    
+    
+
+   // Quản lý Nhà Cung Cấp (Phần 7: Admin) <--- PHẦN MỚI
+    'listNhaCungCap' => (new nhaCungCapController())->homeNhaCungCap(),
+    'addNhaCungCap' => (new nhaCungCapController())->addNhaCungCap(),
+    'addNhaCungCapProcess' => (new nhaCungCapController())->addNhaCungCapProcess(),
+    'editNhaCungCap' => (new nhaCungCapController())->editNhaCungCap(),
+    'updateNhaCungCapProcess' => (new nhaCungCapController())->updateNhaCungCapProcess(),
+    'deleteNhaCungCap' => (new nhaCungCapController())->deleteNhaCungCap(),
+
+    // Xử lý các case còn lại (nếu có)
+    default => (new ProductController())->Home(),
 };
+

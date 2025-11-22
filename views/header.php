@@ -61,9 +61,36 @@
                             </nav>
                         </div>
 
+
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseKhachHang" aria-expanded="false" aria-controls="collapseKhachHang">
                             <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
                             Quản Lý Khách Hàng
+
+                        
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseTaiKhoan" aria-expanded="false" aria-controls="collapseTaiKhoan">
+                            <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
+                            Hệ thống Tài khoản
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseTaiKhoan" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="?act=taiKhoan">Danh sách tài khoản</a>
+                            </nav>
+                        </div>
+
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseNhaCungCap" aria-expanded="false" aria-controls="collapseNhaCungCap">
+                            <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
+                            Quản lý Nhà Cung Cấp
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseNhaCungCap" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="?act=listNhaCungCap">Danh sách NCC</a>
+                            </nav>
+                        </div>
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+                            Pages
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
                         <div class="collapse" id="collapseKhachHang" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
@@ -124,7 +151,7 @@
                 </div>
                 <div class="sb-sidenav-footer">
                     <div class="small">Logged in as:</div>
-                    Start Bootstrap
+                    Start Bootstrap 
                 </div>
             </nav>
         </div>
