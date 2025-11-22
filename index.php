@@ -17,6 +17,7 @@ require_once './controllers/NhanVienController.php';
 require_once './controllers/LichLamViecController.php';
 require_once './controllers/AnhTourController.php';
 require_once './controllers/DoanKhoiHanhController.php';
+require_once './controllers/BookingController.php';
 
 // Require toàn bộ file Models
 require_once './models/ProductModel.php';
@@ -30,6 +31,7 @@ require_once './models/NhanVienModel.php';
 require_once './models/LichLamViecModel.php';
 require_once './models/AnhTourModel.php';
 require_once './models/DoanKhoiHanhModel.php';
+require_once './models/BookingModel.php';
 
 // Route
 $act = $_GET['act'] ?? '/';
@@ -121,6 +123,24 @@ match ($act) {
     'editDoan' => (new DoanKhoiHanhController())->editDoan(),
     'editDoanProcess' => (new DoanKhoiHanhController())->editDoanProcess(),
     'deleteDoan' => (new DoanKhoiHanhController())->deleteDoan(),
+
+    // QUẢN LÝ BOOKING
+    'listBooking' => (new BookingController())->listBooking(),
+    'addBooking' => (new BookingController())->addBooking(),
+    'addBookingProcess' => (new BookingController())->addBookingProcess(),
+    'editBooking' => (new BookingController())->editBooking(),
+    'editBookingProcess' => (new BookingController())->editBookingProcess(),
+    'deleteBooking' => (new BookingController())->deleteBooking(),
+
+    // Quản lý khách trong booking
+    'khachTrongBooking' => (new BookingController())->khachTrongBooking(),
+    'addKhachTrongBooking' => (new BookingController())->addKhachTrongBooking(),
+    'addKhachTrongBookingProcess' => (new BookingController())->addKhachTrongBookingProcess(),
+    'deleteKhachTrongBooking' => (new BookingController())->deleteKhachTrongBooking(),
+
+    // Điểm danh khách (HDV)
+    'diemDanhProcess' => (new BookingController())->diemDanhProcess(),
+
     // Mặc định
     default => (new ProductController())->Home()
 };

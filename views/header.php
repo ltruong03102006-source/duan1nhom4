@@ -96,6 +96,19 @@
                                 <a class="nav-link" href="?act=listDoan">Danh sách Đoàn Khởi Hành</a>
                             </nav>
                         </div>
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                            data-bs-target="#collapseBooking" aria-expanded="false" aria-controls="collapseBooking">
+                            <div class="sb-nav-link-icon"><i class="fas fa-shuttle-van"></i></div>
+                            Quản Lý Booking
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+
+                        <div class="collapse" id="collapseBooking" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="?act=listBooking">Danh Sách Booking</a>
+                                <a class="nav-link" href="?act=addBooking">Tạo Booking Mới</a>
+                            </nav>
+                        </div>
 
 
                         <div class="sb-sidenav-menu-heading">Addons</div>
