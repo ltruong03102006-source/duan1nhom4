@@ -23,6 +23,7 @@ require_once './controllers/BookingController.php';
 require_once './controllers/TaiKhoanController.php';
 require_once './controllers/huongDanVienController.php';
 require_once './controllers/nhaCungCapController.php'; // <--- Thêm dòng này
+require_once './controllers/DichVuCuaDoanController.php';
 
 
 // Require toàn bộ file Models
@@ -43,6 +44,7 @@ require_once './models/BookingModel.php';
 require_once './models/taiKhoanModel.php';
 require_once './models/huongDanVienModel.php';
 require_once './models/nhaCungCapModel.php'; // <--- Thêm dòng này
+require_once './models/DichVuCuaDoanModel.php';
 
 
 // Route
@@ -178,6 +180,14 @@ match ($act) {
     'editNhaCungCap' => (new nhaCungCapController())->editNhaCungCap(),
     'updateNhaCungCapProcess' => (new nhaCungCapController())->updateNhaCungCapProcess(),
     'deleteNhaCungCap' => (new nhaCungCapController())->deleteNhaCungCap(),
+
+     // QUẢN LÝ DỊCH VỤ CỦA ĐOÀN (MỚI THÊM)
+'listDichVu' => (new DichVuCuaDoanController())->listDichVu(),
+'addDichVu' => (new DichVuCuaDoanController())->addDichVu(),
+'addDichVuProcess' => (new DichVuCuaDoanController())->addDichVuProcess(),
+'editDichVu' => (new DichVuCuaDoanController())->editDichVu(),
+'editDichVuProcess' => (new DichVuCuaDoanController())->editDichVuProcess(),
+'deleteDichVu' => (new DichVuCuaDoanController())->deleteDichVu(),
 
     // Xử lý các case còn lại (nếu có)
     default => (new ProductController())->Home(),

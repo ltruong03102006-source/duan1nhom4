@@ -191,6 +191,9 @@
                             ?>
                         </td>
                         <td class="actions">
+                             <a href="?act=listDichVu&maDoan=<?= $d['MaDoan'] ?>">
+                                <button class="btn-view" style="background:#0ea5e9;">Dịch vụ</button>
+                            </a>
                             <a href="?act=editDoan&MaDoan=<?= $d['MaDoan'] ?>">
                                 <button class="btn-edit">Sửa</button>
                             </a>
