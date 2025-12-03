@@ -89,4 +89,13 @@ public function getAllActiveTours()
         $stmt->bindParam(':id', $id);
         return $stmt->execute();
     }
+    public function existsLichLamViec($MaNhanVien, $NgayLamViec)
+{
+    $sql = "SELECT 1 FROM LichLamViec WHERE MaNhanVien = :nv AND NgayLamViec = :ngay LIMIT 1";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([':nv' => $MaNhanVien, ':ngay' => $NgayLamViec]);
+    return (bool)$stmt->fetchColumn();
+}
+
+    
 }

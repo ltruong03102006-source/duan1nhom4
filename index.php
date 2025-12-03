@@ -1,15 +1,21 @@
 <?php
-// Require toàn bộ các file khai báo môi trường, thực thi,...(không require view)
+session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 
-// Require file Common
-require_once './commons/env.php'; // Khai báo biến môi trường
-require_once './commons/function.php'; // Hàm hỗ trợ
+// ======================================================
+// 1️⃣  Require các file môi trường và hàm chung
+// ======================================================
+require_once './commons/env.php';
+require_once './commons/function.php';
 
-// Require toàn bộ file Controllers
+// ======================================================
+// 2️⃣  Require Controllers
+// ======================================================
 require_once './controllers/ProductController.php';
 require_once './controllers/danhMuctourController.php';
 require_once './controllers/tourController.php';
-
 require_once './controllers/LichTrinhController.php';
 require_once './controllers/GiaTourController.php';
 require_once './controllers/DuToanChiPhiController.php';
@@ -19,24 +25,21 @@ require_once './controllers/LichLamViecController.php';
 require_once './controllers/AnhTourController.php';
 require_once './controllers/DoanKhoiHanhController.php';
 require_once './controllers/BookingController.php';
-
 require_once './controllers/TaiKhoanController.php';
 require_once './controllers/huongDanVienController.php';
-
-require_once './controllers/nhaCungCapController.php'; // <--- Thêm dòng này
-require_once './controllers/DichVuCuaDoanController.php';
-require_once './controllers/TaiChinhTourController.php'; // <--- Mới
-
 require_once './controllers/nhaCungCapController.php';
+require_once './controllers/DichVuCuaDoanController.php';
+require_once './controllers/TaiChinhTourController.php';
 require_once './controllers/ThanhToanController.php';
+require_once './controllers/AuthController.php';
+require_once './controllers/NhatKyTourController.php';
 
-
-
-// Require toàn bộ file Models
+// ======================================================
+// 3️⃣  Require Models
+// ======================================================
 require_once './models/ProductModel.php';
 require_once './models/danhMuctourModel.php';
 require_once './models/tourModel.php';
-
 require_once './models/LichTrinhModel.php';
 require_once './models/GiaTourModel.php';
 require_once './models/DuToanChiPhiModel.php';
@@ -46,180 +49,555 @@ require_once './models/LichLamViecModel.php';
 require_once './models/AnhTourModel.php';
 require_once './models/DoanKhoiHanhModel.php';
 require_once './models/BookingModel.php';
-
 require_once './models/taiKhoanModel.php';
 require_once './models/huongDanVienModel.php';
-
-require_once './models/nhaCungCapModel.php'; // <--- Thêm dòng này
-require_once './models/DichVuCuaDoanModel.php';
-require_once './models/TaiChinhTourModel.php'; // <--- Mới
-
 require_once './models/nhaCungCapModel.php';
+require_once './models/DichVuCuaDoanModel.php';
+require_once './models/TaiChinhTourModel.php';
 require_once './models/ThanhToanModel.php';
+require_once './models/NhatKyTourModel.php';
 
-
-
-// Route
+// ======================================================
+// 4️⃣  Route xử lý yêu cầu
+// ======================================================
 $act = $_GET['act'] ?? '/';
 
+// Router chính sử dụng switch
+switch ($act) {
 
-// Để bảo bảo tính chất chỉ gọi 1 hàm Controller để xử lý request thì mình sử dụng match
+    // ====================== PUBLIC ======================
+    case '/':
+        (new ProductController())->Home();
+        break;
 
-match ($act) {
-    // Trang chủ
-    '/' => (new ProductController())->Home(),
+    case 'login':
+        (new AuthController())->login();
+        break;
 
-    // Quản lý danh mục tour
-    'danhMuctour' => (new danhMuctourController())->homeDanhMucTour(),
-    'addDanhMucTour' => (new danhMuctourController())->addDanhMucTour(),
-    'addDanhMucTourProcess' => (new danhMuctourController())->addDanhMucTourProcess(),
-    'deleteDanhMucTour' => (new danhMuctourController())->deleteDanhMucTour(),
-    'editDanhMucTour' => (new danhMuctourController())->editDanhMucTour(),
-    'updateDanhMucTour' => (new danhMuctourController())->updateDanhMucTour(),
-    
+    case 'loginProcess':
+        (new AuthController())->loginProcess();
+        break;
 
-    // Quản lý tour
-    'tour' => (new tourController())->tour(),
-
-
-    'addTour' => (new tourController())->addTour(),
-    'addTourProcess' => (new tourController())->addTourProcess(),
-    'xemTour' => (new tourController())->viewTour(),
-    'editTour' => (new tourController())->editTour(),
-    'editTourProcess' => (new tourController())->editTourProcess(),
-    'deleteTour' => (new tourController())->deleteTour(),
-
-    //Quản lý lịch trình chi tiết tour
-    'lichTour' => (new LichTrinhController())->lichTour(),
-    'addLichTrinhProcess' => (new LichTrinhController())->addLichTrinhProcess(),
-    'editLichTrinh' => (new LichTrinhController())->editLichTrinh(),
-    'editLichTrinhProcess' => (new LichTrinhController())->editLichTrinhProcess(),
-    'deleteLichTrinh' => (new LichTrinhController())->deleteLichTrinh(),
+    case 'logout':
+        (new AuthController())->logout();
+        break;
 
 
-    // Quản lý giá tour
-    'giaTour' => (new GiaTourController())->giaTour(),
-    'addGiaTour' => (new GiaTourController())->addGiaTour(),
-    'addGiaTourProcess' => (new GiaTourController())->addGiaTourProcess(),
-    'editGiaTour' => (new GiaTourController())->editGiaTour(),
-    'editGiaTourProcess' => (new GiaTourController())->editGiaTourProcess(),
-    'deleteGiaTour' => (new GiaTourController())->deleteGiaTour(),
+    // ====================== ADMIN ======================
 
-    // Quản lý dự toán chi phí
-    'duToanChiPhi' => (new DuToanChiPhiController())->duToanChiPhi(),
-    'addDuToan' => (new DuToanChiPhiController())->addDuToan(),
-    'addDuToanProcess' => (new DuToanChiPhiController())->addDuToanProcess(),
-    'editDuToan' => (new DuToanChiPhiController())->editDuToan(),
-    'editDuToanProcess' => (new DuToanChiPhiController())->editDuToanProcess(),
-    'deleteDuToan' => (new DuToanChiPhiController())->deleteDuToan(),
+    // ---- DANH MỤC TOUR ----
+    case 'danhMuctour':
+        onlyAdmin();
+        (new danhMuctourController())->homeDanhMucTour();
+        break;
 
-    // QUẢN LÝ ẢNH TOUR
-    'anhTour' => (new AnhTourController())->anhTour(),
-    'addAnhTour' => (new AnhTourController())->addAnhTour(),
-    'addAnhTourProcess' => (new AnhTourController())->addAnhTourProcess(),
-    'editAnhTour' => (new AnhTourController())->editAnhTour(),
-    'editAnhTourProcess' => (new AnhTourController())->editAnhTourProcess(),
-    'deleteAnhTour' => (new AnhTourController())->deleteAnhTour(),
+    case 'addDanhMucTour':
+        onlyAdmin();
+        (new danhMuctourController())->addDanhMucTour();
+        break;
 
+    case 'addDanhMucTourProcess':
+        onlyAdmin();
+        (new danhMuctourController())->addDanhMucTourProcess();
+        break;
 
-    // Quản lý Khách Hàng (PHẦN BẠN YÊU CẦU)
-    'listKhachHang' => (new KhachHangController())->listKhachHang(),
-    'addKhachHang' => (new KhachHangController())->addKhachHang(),
-    'addKhachHangProcess' => (new KhachHangController())->addKhachHangProcess(),
-    'editKhachHang' => (new KhachHangController())->editKhachHang(),
-    'updateKhachHangProcess' => (new KhachHangController())->updateKhachHangProcess(),
-    'deleteKhachHang' => (new KhachHangController())->deleteKhachHang(),
+    case 'editDanhMucTour':
+        onlyAdmin();
+        (new danhMuctourController())->editDanhMucTour();
+        break;
 
-    // Quản lý Nhân Viên (PHẦN MỚI THÊM)
-    'listNhanVien' => (new NhanVienController())->listNhanVien(),
-    'addNhanVien' => (new NhanVienController())->addNhanVien(),
-    'addNhanVienProcess' => (new NhanVienController())->addNhanVienProcess(),
-    'editNhanVien' => (new NhanVienController())->editNhanVien(),
-    'updateNhanVienProcess' => (new NhanVienController())->updateNhanVienProcess(),
-    'deleteNhanVien' => (new NhanVienController())->deleteNhanVien(),
+    case 'updateDanhMucTour':
+        onlyAdmin();
+        (new danhMuctourController())->updateDanhMucTour();
+        break;
 
-    // Quản lý Lịch Làm Việc (PHẦN MỚI THÊM)
-    'listLichLamViec' => (new LichLamViecController())->listLichLamViec(),
-    'addLichLamViecProcess' => (new LichLamViecController())->addLichLamViecProcess(),
-    'deleteLichLamViec' => (new LichLamViecController())->deleteLichLamViec(),
+    case 'deleteDanhMucTour':
+        onlyAdmin();
+        (new danhMuctourController())->deleteDanhMucTour();
+        break;
 
 
-    // QUẢN LÝ ĐOÀN KHỞI HÀNH
-    'listDoan' => (new DoanKhoiHanhController())->listDoan(),
-    'addDoan' => (new DoanKhoiHanhController())->addDoan(),
-    'addDoanProcess' => (new DoanKhoiHanhController())->addDoanProcess(),
-    'editDoan' => (new DoanKhoiHanhController())->editDoan(),
-    'editDoanProcess' => (new DoanKhoiHanhController())->editDoanProcess(),
-    'deleteDoan' => (new DoanKhoiHanhController())->deleteDoan(),
+    // ---- TOUR ----
+    case 'tour':
+        onlyAdmin();
+        (new tourController())->tour();
+        break;
 
-    // QUẢN LÝ BOOKING
-    'listBooking' => (new BookingController())->listBooking(),
-    'addBooking' => (new BookingController())->addBooking(),
-    'addBookingProcess' => (new BookingController())->addBookingProcess(),
-    'editBooking' => (new BookingController())->editBooking(),
-    'editBookingProcess' => (new BookingController())->editBookingProcess(),
-    'deleteBooking' => (new BookingController())->deleteBooking(),
+    case 'addTour':
+        onlyAdmin();
+        (new tourController())->addTour();
+        break;
 
-    // Quản lý khách trong booking
-    'khachTrongBooking' => (new BookingController())->khachTrongBooking(),
-    'addKhachTrongBooking' => (new BookingController())->addKhachTrongBooking(),
-    'addKhachTrongBookingProcess' => (new BookingController())->addKhachTrongBookingProcess(),
-    'deleteKhachTrongBooking' => (new BookingController())->deleteKhachTrongBooking(),
+    case 'addTourProcess':
+        onlyAdmin();
+        (new tourController())->addTourProcess();
+        break;
 
-    // Điểm danh khách (HDV)
-    'diemDanhProcess' => (new BookingController())->diemDanhProcess(),
+    case 'xemTour':
+        onlyAdmin();
+        (new tourController())->viewTour();
+        break;
 
-    
-    // Quản lý Tài khoản (Phần 13: Admin)
-    'taiKhoan' => (new TaiKhoanController())->homeTaiKhoan(),
-    'addTaiKhoan' => (new TaiKhoanController())->addTaiKhoan(),
-    'addTaiKhoanProcess' => (new TaiKhoanController())->addTaiKhoanProcess(),
-    'toggleTrangThaiTaiKhoan' => (new TaiKhoanController())->toggleTrangThai(),
-    'editTaiKhoan' => (new TaiKhoanController())->editTaiKhoan(), 
-    'updateTaiKhoanProcess' => (new TaiKhoanController())->updateTaiKhoanProcess(),
+    case 'editTour':
+        onlyAdmin();
+        (new tourController())->editTour();
+        break;
 
-    // Giao diện Hướng dẫn viên (HDV) <--- PHẦN MỚI
-    'hdvHome' => (new huongDanVienController())->homeHDV(),
-    'hdvDoanDetail' => (new huongDanVienController())->viewDoanDetail(),
-    'hdvLichTrinh' => (new huongDanVienController())->viewLichTrinh(),
-    
-    
+    case 'editTourProcess':
+        onlyAdmin();
+        (new tourController())->editTourProcess();
+        break;
 
-   // Quản lý Nhà Cung Cấp (Phần 7: Admin) <--- PHẦN MỚI
-    'listNhaCungCap' => (new nhaCungCapController())->homeNhaCungCap(),
-    'addNhaCungCap' => (new nhaCungCapController())->addNhaCungCap(),
-    'addNhaCungCapProcess' => (new nhaCungCapController())->addNhaCungCapProcess(),
-    'editNhaCungCap' => (new nhaCungCapController())->editNhaCungCap(),
-    'updateNhaCungCapProcess' => (new nhaCungCapController())->updateNhaCungCapProcess(),
-    'deleteNhaCungCap' => (new nhaCungCapController())->deleteNhaCungCap(),
+    case 'deleteTour':
+        onlyAdmin();
+        (new tourController())->deleteTour();
+        break;
 
 
-     // QUẢN LÝ DỊCH VỤ CỦA ĐOÀN (MỚI THÊM)
-    'listDichVu' => (new DichVuCuaDoanController())->listDichVu(),
-    'addDichVu' => (new DichVuCuaDoanController())->addDichVu(),
-    'addDichVuProcess' => (new DichVuCuaDoanController())->addDichVuProcess(),
-    'editDichVu' => (new DichVuCuaDoanController())->editDichVu(),
-    'editDichVuProcess' => (new DichVuCuaDoanController())->editDichVuProcess(),
-    'deleteDichVu' => (new DichVuCuaDoanController())->deleteDichVu(),
+    // ---- LỊCH TRÌNH ----
+    case 'lichTour':
+        onlyAdmin();
+        (new LichTrinhController())->lichTour();
+        break;
 
-// Quản lý Tài Chính Tour (Phần 9)
-    'listTaiChinh' => (new TaiChinhTourController())->listTaiChinh(),
-    'addTaiChinh' => (new TaiChinhTourController())->addTaiChinh(),
-    'addTaiChinhProcess' => (new TaiChinhTourController())->addTaiChinhProcess(),
-    'editTaiChinh' => (new TaiChinhTourController())->editTaiChinh(),
-    'updateTaiChinhProcess' => (new TaiChinhTourController())->updateTaiChinhProcess(),
-    'deleteTaiChinh' => (new TaiChinhTourController())->deleteTaiChinh(),
+    case 'addLichTrinhProcess':
+        onlyAdmin();
+        (new LichTrinhController())->addLichTrinhProcess();
+        break;
 
-    // QUẢN LÝ THANH TOÁN
-    'listThanhToan' => (new ThanhToanController())->listThanhToan(),
-    'addThanhToan' => (new ThanhToanController())->addThanhToan(),
-    'addThanhToanProcess' => (new ThanhToanController())->addThanhToanProcess(),
-    'editThanhToan' => (new ThanhToanController())->editThanhToan(),
-    'editThanhToanProcess' => (new ThanhToanController())->editThanhToanProcess(),
-    'deleteThanhToan' => (new ThanhToanController())->deleteThanhToan(),
+    case 'editLichTrinh':
+        onlyAdmin();
+        (new LichTrinhController())->editLichTrinh();
+        break;
+
+    case 'editLichTrinhProcess':
+        onlyAdmin();
+        (new LichTrinhController())->editLichTrinhProcess();
+        break;
+
+    case 'deleteLichTrinh':
+        onlyAdmin();
+        (new LichTrinhController())->deleteLichTrinh();
+        break;
 
 
-    // Xử lý các case còn lại (nếu có)
-    default => (new ProductController())->Home(),
-};
+    // ---- GIÁ TOUR ----
+    case 'giaTour':
+        onlyAdmin();
+        (new GiaTourController())->giaTour();
+        break;
 
+    case 'addGiaTour':
+        onlyAdmin();
+        (new GiaTourController())->addGiaTour();
+        break;
+
+    case 'addGiaTourProcess':
+        onlyAdmin();
+        (new GiaTourController())->addGiaTourProcess();
+        break;
+
+    case 'editGiaTour':
+        onlyAdmin();
+        (new GiaTourController())->editGiaTour();
+        break;
+
+    case 'editGiaTourProcess':
+        onlyAdmin();
+        (new GiaTourController())->editGiaTourProcess();
+        break;
+
+    case 'deleteGiaTour':
+        onlyAdmin();
+        (new GiaTourController())->deleteGiaTour();
+        break;
+
+
+    // ---- DỰ TOÁN CHI PHÍ ----
+    case 'duToanChiPhi':
+        onlyAdmin();
+        (new DuToanChiPhiController())->duToanChiPhi();
+        break;
+
+    case 'addDuToan':
+        onlyAdmin();
+        (new DuToanChiPhiController())->addDuToan();
+        break;
+
+    case 'addDuToanProcess':
+        onlyAdmin();
+        (new DuToanChiPhiController())->addDuToanProcess();
+        break;
+
+    case 'editDuToan':
+        onlyAdmin();
+        (new DuToanChiPhiController())->editDuToan();
+        break;
+
+    case 'editDuToanProcess':
+        onlyAdmin();
+        (new DuToanChiPhiController())->editDuToanProcess();
+        break;
+
+    case 'deleteDuToan':
+        onlyAdmin();
+        (new DuToanChiPhiController())->deleteDuToan();
+        break;
+
+
+    // ---- KHÁCH HÀNG ----
+    case 'listKhachHang':
+        onlyAdmin();
+        (new KhachHangController())->listKhachHang();
+        break;
+
+    case 'addKhachHang':
+        onlyAdmin();
+        (new KhachHangController())->addKhachHang();
+        break;
+
+    case 'addKhachHangProcess':
+        onlyAdmin();
+        (new KhachHangController())->addKhachHangProcess();
+        break;
+
+    case 'editKhachHang':
+        onlyAdmin();
+        (new KhachHangController())->editKhachHang();
+        break;
+
+    case 'updateKhachHangProcess':
+        onlyAdmin();
+        (new KhachHangController())->updateKhachHangProcess();
+        break;
+
+    case 'deleteKhachHang':
+        onlyAdmin();
+        (new KhachHangController())->deleteKhachHang();
+        break;
+
+
+    // ---- NHÂN VIÊN ----
+    case 'listNhanVien':
+        onlyAdmin();
+        (new NhanVienController())->listNhanVien();
+        break;
+
+    case 'addNhanVien':
+        onlyAdmin();
+        (new NhanVienController())->addNhanVien();
+        break;
+
+    case 'addNhanVienProcess':
+        onlyAdmin();
+        (new NhanVienController())->addNhanVienProcess();
+        break;
+
+    case 'editNhanVien':
+        onlyAdmin();
+        (new NhanVienController())->editNhanVien();
+        break;
+
+    case 'updateNhanVienProcess':
+        onlyAdmin();
+        (new NhanVienController())->updateNhanVienProcess();
+        break;
+
+    case 'deleteNhanVien':
+        onlyAdmin();
+        (new NhanVienController())->deleteNhanVien();
+        break;
+
+
+    // ---- LỊCH LÀM VIỆC ----
+    case 'listLichLamViec':
+        onlyAdmin();
+        (new LichLamViecController())->listLichLamViec();
+        break;
+
+    case 'addLichLamViecProcess':
+        onlyAdmin();
+        (new LichLamViecController())->addLichLamViecProcess();
+        break;
+
+    case 'deleteLichLamViec':
+        onlyAdmin();
+        (new LichLamViecController())->deleteLichLamViec();
+        break;
+
+
+    // ---- ĐOÀN KHỞI HÀNH ----
+    case 'listDoan':
+        onlyAdmin();
+        (new DoanKhoiHanhController())->listDoan();
+        break;
+
+    case 'addDoan':
+        onlyAdmin();
+        (new DoanKhoiHanhController())->addDoan();
+        break;
+
+    case 'addDoanProcess':
+        onlyAdmin();
+        (new DoanKhoiHanhController())->addDoanProcess();
+        break;
+
+    case 'editDoan':
+        onlyAdmin();
+        (new DoanKhoiHanhController())->editDoan();
+        break;
+
+    case 'editDoanProcess':
+        onlyAdmin();
+        (new DoanKhoiHanhController())->editDoanProcess();
+        break;
+
+    case 'deleteDoan':
+        onlyAdmin();
+        (new DoanKhoiHanhController())->deleteDoan();
+        break;
+
+
+    // ---- BOOKING ----
+    case 'listBooking':
+        onlyAdmin();
+        (new BookingController())->listBooking();
+        break;
+
+    case 'addBooking':
+        onlyAdmin();
+        (new BookingController())->addBooking();
+        break;
+
+    case 'addBookingProcess':
+        onlyAdmin();
+        (new BookingController())->addBookingProcess();
+        break;
+
+    case 'editBooking':
+        onlyAdmin();
+        (new BookingController())->editBooking();
+        break;
+
+    case 'editBookingProcess':
+        onlyAdmin();
+        (new BookingController())->editBookingProcess();
+        break;
+
+    case 'deleteBooking':
+        onlyAdmin();
+        (new BookingController())->deleteBooking();
+        break;
+
+
+    // ---- THANH TOÁN ----
+    case 'listThanhToan':
+        onlyAdmin();
+        (new ThanhToanController())->listThanhToan();
+        break;
+
+    case 'addThanhToan':
+        onlyAdmin();
+        (new ThanhToanController())->addThanhToan();
+        break;
+
+    case 'addThanhToanProcess':
+        onlyAdmin();
+        (new ThanhToanController())->addThanhToanProcess();
+        break;
+
+    case 'editThanhToan':
+        onlyAdmin();
+        (new ThanhToanController())->editThanhToan();
+        break;
+
+    case 'editThanhToanProcess':
+        onlyAdmin();
+        (new ThanhToanController())->editThanhToanProcess();
+        break;
+
+    case 'deleteThanhToan':
+        onlyAdmin();
+        (new ThanhToanController())->deleteThanhToan();
+        break;
+
+
+    // ---- NHÀ CUNG CẤP ----
+    case 'listNhaCungCap':
+        onlyAdmin();
+        (new nhaCungCapController())->homeNhaCungCap();
+        break;
+
+    case 'addNhaCungCap':
+        onlyAdmin();
+        (new nhaCungCapController())->addNhaCungCap();
+        break;
+
+    case 'addNhaCungCapProcess':
+        onlyAdmin();
+        (new nhaCungCapController())->addNhaCungCapProcess();
+        break;
+
+    case 'editNhaCungCap':
+        onlyAdmin();
+        (new nhaCungCapController())->editNhaCungCap();
+        break;
+
+    case 'updateNhaCungCapProcess':
+        onlyAdmin();
+        (new nhaCungCapController())->updateNhaCungCapProcess();
+        break;
+
+    case 'deleteNhaCungCap':
+        onlyAdmin();
+        (new nhaCungCapController())->deleteNhaCungCap();
+        break;
+
+
+    // ---- DỊCH VỤ ĐOÀN ----
+    case 'listDichVu':
+        onlyAdmin();
+        (new DichVuCuaDoanController())->listDichVu();
+        break;
+
+    case 'addDichVu':
+        onlyAdmin();
+        (new DichVuCuaDoanController())->addDichVu();
+        break;
+
+    case 'addDichVuProcess':
+        onlyAdmin();
+        (new DichVuCuaDoanController())->addDichVuProcess();
+        break;
+
+    case 'editDichVu':
+        onlyAdmin();
+        (new DichVuCuaDoanController())->editDichVu();
+        break;
+
+    case 'editDichVuProcess':
+        onlyAdmin();
+        (new DichVuCuaDoanController())->editDichVuProcess();
+        break;
+
+    case 'deleteDichVu':
+        onlyAdmin();
+        (new DichVuCuaDoanController())->deleteDichVu();
+        break;
+
+
+    // ---- TÀI CHÍNH TOUR ----
+    case 'listTaiChinh':
+        onlyAdmin();
+        (new TaiChinhTourController())->listTaiChinh();
+        break;
+
+    case 'addTaiChinh':
+        onlyAdmin();
+        (new TaiChinhTourController())->addTaiChinh();
+        break;
+
+    case 'addTaiChinhProcess':
+        onlyAdmin();
+        (new TaiChinhTourController())->addTaiChinhProcess();
+        break;
+
+    case 'editTaiChinh':
+        onlyAdmin();
+        (new TaiChinhTourController())->editTaiChinh();
+        break;
+
+    case 'updateTaiChinhProcess':
+        onlyAdmin();
+        (new TaiChinhTourController())->updateTaiChinhProcess();
+        break;
+
+    case 'deleteTaiChinh':
+        onlyAdmin();
+        (new TaiChinhTourController())->deleteTaiChinh();
+        break;
+
+    // ---- TÀI KHOẢN ----
+    case 'taiKhoan':
+        onlyAdmin();
+        (new TaiKhoanController())->homeTaiKhoan();
+        break;
+
+    case 'addTaiKhoan':
+        onlyAdmin();
+        (new TaiKhoanController())->addTaiKhoan();
+        break;
+
+    case 'addTaiKhoanProcess':
+        onlyAdmin();
+        (new TaiKhoanController())->addTaiKhoanProcess();
+        break;
+
+    case 'toggleTrangThaiTaiKhoan':
+        onlyAdmin();
+        (new TaiKhoanController())->toggleTrangThai();
+        break;
+
+    case 'editTaiKhoan':
+        onlyAdmin();
+        (new TaiKhoanController())->editTaiKhoan();
+        break;
+
+    case 'updateTaiKhoanProcess':
+        onlyAdmin();
+        (new TaiKhoanController())->updateTaiKhoanProcess();
+        break;
+
+
+    // ====================== HDV ======================
+    case 'hdvHome':
+        onlyHDV();
+        (new huongDanVienController())->homeHDV();
+        break;
+
+    case 'xemTourHDV':
+        onlyHDV();
+        (new tourController())->xemTourHDV();
+        break;
+
+    case 'hdvDoanDetail':
+        onlyHDV();
+        (new huongDanVienController())->viewDoanDetail();
+        break;
+
+    case 'hdvLichTrinh':
+        onlyHDV();
+        (new huongDanVienController())->viewLichTrinh();
+        break;
+
+    case 'diemDanhProcess':
+        onlyHDV();
+        (new BookingController())->diemDanhProcess();
+        break;
+    // ================== NHẬT KÝ TOUR ==================
+
+    // ADMIN xem toàn bộ nhật ký
+    case 'nhatky_admin':
+        onlyAdmin();
+        (new NhatKyTourController())->adminList();
+        break;
+
+    // HDV xem nhật ký đoàn mình
+    case 'nhatky_hdv':
+        onlyHDV();
+        (new NhatKyTourController())->hdvList();
+        break;
+
+    // HDV ghi nhật ký
+    case 'nhatky_add':
+        onlyHDV();
+        (new NhatKyTourController())->addProcess();
+        break;
+
+
+
+    // ====================== DEFAULT ======================
+    default:
+        (new ProductController())->Home();
+        break;
+}

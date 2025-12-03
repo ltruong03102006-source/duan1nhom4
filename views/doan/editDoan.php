@@ -159,9 +159,16 @@
                     <select name="MaHuongDanVien">
                         <option value="">-- Chọn HDV --</option>
                         <?php foreach ($listHDV as $h): ?>
+                            <?php
+                            $isSelected = ($h['MaNhanVien'] == ($doan['MaHuongDanVien'] ?? ''));
+                            $isBusy = in_array($h['MaNhanVien'], $busyIds ?? []);
+                            // Nếu đang selected thì vẫn cho chọn (không disable)
+                            $disabled = ($isBusy && !$isSelected) ? 'disabled' : '';
+                            ?>
                             <option value="<?= $h['MaNhanVien'] ?>"
-                                <?= $h['MaNhanVien'] == $doan['MaHuongDanVien'] ? 'selected' : '' ?>>
-                                <?= $h['HoTen'] ?>
+                                <?= $isSelected ? 'selected' : '' ?>
+                                <?= $disabled ?>>
+                                <?= htmlspecialchars($h['HoTen']) ?> <?= ($isBusy && !$isSelected) ? '(Bận)' : '' ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -172,14 +179,22 @@
                     <select name="MaTaiXe">
                         <option value="">-- Chọn tài xế --</option>
                         <?php foreach ($listTaiXe as $x): ?>
+                            <?php
+                            $isSelected = ($x['MaNhanVien'] == ($doan['MaTaiXe'] ?? ''));
+                            $isBusy = in_array($x['MaNhanVien'], $busyIds ?? []);
+                            $disabled = ($isBusy && !$isSelected) ? 'disabled' : '';
+                            ?>
                             <option value="<?= $x['MaNhanVien'] ?>"
-                                <?= $x['MaNhanVien'] == $doan['MaTaiXe'] ? 'selected' : '' ?>>
-                                <?= $x['HoTen'] ?>
+                                <?= $isSelected ? 'selected' : '' ?>
+                                <?= $disabled ?>>
+                                <?= htmlspecialchars($x['HoTen']) ?> <?= ($isBusy && !$isSelected) ? '(Bận)' : '' ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
             </div>
+
+
 
             <div class="form-group">
                 <label>Thông tin xe</label>

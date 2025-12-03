@@ -11,80 +11,224 @@
         --success-color: #10b981;
         --danger-color: #ef4444;
     }
-    * { box-sizing: border-box; }
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 0; font-size: 14px; }
-    .lich-container { padding: 20px; max-width: 1400px; margin: 0 auto; }
-    h1.mt-4 { font-size: 20px; color: var(--primary-color); margin-bottom: 20px !important; font-weight: 600; }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        margin: 0;
+        padding: 0;
+        font-size: 14px;
+    }
+
+    .lich-container {
+        padding: 20px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    h1.mt-4 {
+        font-size: 20px;
+        color: var(--primary-color);
+        margin-bottom: 20px !important;
+        font-weight: 600;
+    }
 
     /* Card overrides */
-    .card { background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: none; }
-    .card-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); background-color: #f8fafc; border-radius: 8px 8px 0 0; font-size: 16px; font-weight: 600; color: var(--text-main); }
-    .card-body { padding: 20px; }
-    .card-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
+    .card {
+        background: var(--card-bg);
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        border: none;
+    }
+
+    .card-header {
+        padding: 15px 20px;
+        border-bottom: 1px solid var(--border-color);
+        background-color: #f8fafc;
+        border-radius: 8px 8px 0 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-main);
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .card-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 20px;
+    }
 
     /* Form control consistency */
-    .form-control, .form-select {
+    .form-control,
+    .form-select {
         padding: 8px 12px;
         border: 1px solid var(--border-color);
         border-radius: 4px;
         font-size: 14px;
         transition: border-color 0.2s;
     }
-    .form-control:focus, .form-select:focus {
+
+    .form-control:focus,
+    .form-select:focus {
         border-color: var(--primary-color);
         box-shadow: none;
         outline: none;
     }
-    .form-label { font-weight: 500; color: var(--text-main); margin-bottom: 5px; }
-    .form-text { font-size: 13px; color: var(--text-secondary); margin-top: 5px; }
+
+    .form-label {
+        font-weight: 500;
+        color: var(--text-main);
+        margin-bottom: 5px;
+    }
+
+    .form-text {
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin-top: 5px;
+    }
 
     /* Table styles for list pages */
-    .table-responsive { overflow-x: auto; }
-    table.table { width: 100%; border-collapse: collapse; }
-    table.table thead th { background-color: var(--primary-color) !important; color: white; padding: 12px 15px; border-bottom: 2px solid var(--border-color); }
-    table.table tbody tr:nth-child(even) { background-color: #f8fafc; }
-    table.table tbody tr:hover { background-color: #eff6ff; }
-    table.table td { padding: 12px 15px; border-bottom: 1px solid var(--border-color); }
-    table.table.table-bordered td { border: 1px solid var(--border-color) !important; }
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    table.table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    table.table thead th {
+        background-color: var(--primary-color) !important;
+        color: white;
+        padding: 12px 15px;
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    table.table tbody tr:nth-child(even) {
+        background-color: #f8fafc;
+    }
+
+    table.table tbody tr:hover {
+        background-color: #eff6ff;
+    }
+
+    table.table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    table.table.table-bordered td {
+        border: 1px solid var(--border-color) !important;
+    }
 
     /* Button styles */
-    .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
-    .btn-primary { background-color: var(--primary-color); color: white; }
-    .btn-primary:hover { background-color: var(--primary-hover); }
-    .btn-danger { background-color: var(--danger-color); color: white; }
-    .btn-danger:hover { background-color: #c43232; }
-    .btn-sm { padding: 6px 10px; font-size: 13px; }
+    .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-hover);
+    }
+
+    .btn-danger {
+        background-color: var(--danger-color);
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background-color: #c43232;
+    }
+
+    .btn-sm {
+        padding: 6px 10px;
+        font-size: 13px;
+    }
 
     /* Statuses (retained from original file) */
-    .status-ranh { color: var(--success-color); font-weight: bold; }
-    .status-ban { color: #ffc107; font-weight: bold; }
-    .status-nghi { color: var(--danger-color); font-weight: bold; }
-    .tour-detail { font-size: 0.8em; color: var(--text-secondary); }
+    .status-ranh {
+        color: var(--success-color);
+        font-weight: bold;
+    }
+
+    .status-ban {
+        color: #ffc107;
+        font-weight: bold;
+    }
+
+    .status-nghi {
+        color: var(--danger-color);
+        font-weight: bold;
+    }
+
+    .tour-detail {
+        font-size: 0.8em;
+        color: var(--text-secondary);
+    }
 
     /* Alert styles (retained/unified from original file) */
-    .alert { padding: 15px; margin-bottom: 20px; border-radius: 5px; }
-    .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-    .alert-danger { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-    
+    .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
     /* Search specific */
     .table-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 15px;
-        flex-wrap: wrap; /* Cho phép xuống dòng trên màn hình nhỏ */
+        flex-wrap: wrap;
+        /* Cho phép xuống dòng trên màn hình nhỏ */
     }
+
     .search-form {
         display: flex;
         gap: 10px;
         align-items: center;
     }
+
     .search-form input.form-control {
         width: 250px;
     }
 
     @media (max-width: 992px) {
-        .card-grid { grid-template-columns: 1fr; }
+        .card-grid {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 
@@ -95,15 +239,19 @@
         <li class="breadcrumb-item active">Lịch làm việc</li>
     </ol>
 
-    <?php 
+    <?php
     // Lấy keyword để hiển thị lại trên thanh tìm kiếm
-    $currentKeyword = htmlspecialchars($_GET['keyword'] ?? ''); 
+    $currentKeyword = htmlspecialchars($_GET['keyword'] ?? '');
     if (isset($_GET['success'])): ?>
         <div class="alert alert-success">
-            <?php 
+            <?php
             switch ($_GET['success']) {
-                case 'add': echo '✅ Thêm lịch làm việc thành công!'; break;
-                case 'delete': echo '✅ Xóa lịch làm việc thành công!'; break;
+                case 'add':
+                    echo '✅ Thêm lịch làm việc thành công!';
+                    break;
+                case 'delete':
+                    echo '✅ Xóa lịch làm việc thành công!';
+                    break;
             }
             ?>
         </div>
@@ -123,7 +271,7 @@
             </div>
             <div class="card-body">
                 <form action="?act=addLichLamViecProcess" method="POST">
-                    
+
                     <div class="mb-3">
                         <label class="form-label">Nhân Viên *</label>
                         <select name="MaNhanVien" class="form-select" required>
@@ -138,9 +286,16 @@
 
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label">Ngày Làm Việc *</label>
-                            <input type="date" name="NgayLamViec" class="form-control" required>
+                            <label class="form-label">Từ ngày *</label>
+                            <input type="date" name="TuNgay" id="TuNgay" class="form-control" required>
                         </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Đến ngày *</label>
+                            <input type="date" name="DenNgay" id="DenNgay" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Trạng Thái *</label>
                             <select name="TrangThai" id="TrangThai" class="form-select" required>
@@ -150,7 +305,8 @@
                             </select>
                         </div>
                     </div>
-                    
+
+
                     <div class="mb-3" id="doanSelect" style="display: none;">
                         <label class="form-label">Chọn Đoàn Tour (Nếu Bận)</label>
                         <select name="MaDoan" class="form-select">
@@ -162,7 +318,7 @@
                             <?php endforeach; ?>
                         </select>
                         <div class="form-text">Chỉ chọn khi trạng thái là **Bận (Đi Tour)**.</div>
-                     
+
                     </div>
 
                     <div class="mb-3">
@@ -180,7 +336,7 @@
                 Danh Sách Lịch Đã Xếp
             </div>
             <div class="card-body">
-                
+
                 <div class="table-header">
                     <h4>Tìm kiếm Nhân viên</h4>
                     <form method="GET" action="?act=listLichLamViec" class="search-form">
@@ -211,21 +367,21 @@
                                     <tr>
                                         <td><?= date('d/m/Y', strtotime($llv['NgayLamViec'])) ?></td>
                                         <td>
-                                            <strong><?= htmlspecialchars($llv['TenNhanVien']) ?></strong> 
+                                            <strong><?= htmlspecialchars($llv['TenNhanVien']) ?></strong>
                                             <span class="tour-detail">(<?= $llv['MaCodeNhanVien'] ?>)</span>
                                         </td>
                                         <td>
                                             <span class="status-<?= $llv['TrangThai'] ?>">
-                                                <?php 
-                                                    if ($llv['TrangThai'] == 'ranh') echo 'Rảnh';
-                                                    else if ($llv['TrangThai'] == 'ban') echo 'Bận';
-                                                    else echo 'Nghỉ';
+                                                <?php
+                                                if ($llv['TrangThai'] == 'ranh') echo 'Rảnh';
+                                                else if ($llv['TrangThai'] == 'ban') echo 'Bận';
+                                                else echo 'Nghỉ';
                                                 ?>
                                             </span>
                                         </td>
                                         <td>
                                             <?php if ($llv['MaDoan'] && $llv['TrangThai'] == 'ban'): ?>
-                                                <?= htmlspecialchars($llv['TenTour']) ?> 
+                                                <?= htmlspecialchars($llv['TenTour']) ?>
                                                 <div class="tour-detail">Mã: <?= $llv['MaCodeTour'] ?> (KH: <?= date('d/m', strtotime($llv['NgayKhoiHanh'])) ?>)</div>
                                             <?php else: ?>
                                                 ---
@@ -233,16 +389,18 @@
                                         </td>
                                         <td><?= htmlspecialchars($llv['GhiChu'] ?? '---') ?></td>
                                         <td>
-                                            <a href="?act=deleteLichLamViec&id=<?= $llv['MaLichLamViec'] ?>" 
-                                               class="btn btn-danger btn-sm" 
-                                               onclick="return confirm('Xóa lịch làm việc này?')">
+                                            <a href="?act=deleteLichLamViec&id=<?= $llv['MaLichLamViec'] ?>"
+                                                class="btn btn-danger btn-sm"
+                                                onclick="return confirm('Xóa lịch làm việc này?')">
                                                 <i class="fas fa-trash-alt"></i>
                                             </a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>
-                                <tr><td colspan="6" class="text-center">Chưa có lịch làm việc nào được xếp hoặc không tìm thấy kết quả.</td></tr>
+                                <tr>
+                                    <td colspan="6" class="text-center">Chưa có lịch làm việc nào được xếp hoặc không tìm thấy kết quả.</td>
+                                </tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
@@ -263,13 +421,26 @@
             } else {
                 doanSelectDiv.style.display = 'none';
                 // Đảm bảo không gửi MaDoan nếu không phải trạng thái bận
-                doanSelectDiv.querySelector('select').value = ""; 
+                doanSelectDiv.querySelector('select').value = "";
             }
         }
 
         trangThaiSelect.addEventListener('change', toggleDoanSelect);
 
         // Khởi tạo trạng thái ban đầu
-        toggleDoanSelect(); 
+        toggleDoanSelect();
     });
+    const tuNgay = document.getElementById('TuNgay');
+    const denNgay = document.getElementById('DenNgay');
+
+    function syncDateRange() {
+        if (!tuNgay || !denNgay) return;
+        denNgay.min = tuNgay.value || '';
+        if (tuNgay.value && denNgay.value && denNgay.value < tuNgay.value) {
+            denNgay.value = tuNgay.value;
+        }
+    }
+    tuNgay && tuNgay.addEventListener('change', syncDateRange);
+    denNgay && denNgay.addEventListener('change', syncDateRange);
+    syncDateRange();
 </script>

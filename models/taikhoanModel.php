@@ -1,6 +1,6 @@
 <?php
 // Có class chứa các function thực thi tương tác với cơ sở dữ liệu 
-class taikhoanModel
+class TaiKhoanModel
 {
     public $conn;
 
@@ -46,7 +46,7 @@ class taikhoanModel
     {
         // Sử dụng password_hash để mã hóa mật khẩu trước khi lưu
         $hashed_password = password_hash($matKhau, PASSWORD_DEFAULT);
-        
+
         $sql = "INSERT INTO taikhoan (TenDangNhap, MatKhau, VaiTro, MaNhanVien, TrangThai) 
                 VALUES (:tenDangNhap, :matKhau, :vaiTro, :maNhanVien, 'hoat_dong')";
         $stmt = $this->conn->prepare($sql);
@@ -56,7 +56,7 @@ class taikhoanModel
         $stmt->bindParam(':maNhanVien', $maNhanVien);
         return $stmt->execute();
     }
-    
+
     // 4. Cập nhật trạng thái (Khóa / Mở khóa)
     public function updateTrangThai($maTaiKhoan, $trangThaiMoi)
     {
@@ -88,28 +88,68 @@ class taikhoanModel
         return $stmt->fetch();
     }
 
+    // Lấy thông tin đầy đủ user khi đăng nhập thành công
+public function getUserWithNhanVien($maTaiKhoan)
+{
+    $sql = "SELECT 
+                tk.MaTaiKhoan, 
+                tk.TenDangNhap, 
+                tk.VaiTro, 
+                tk.MaNhanVien,
+                nv.HoTen,
+                nv.MaCodeNhanVien
+            FROM taikhoan tk
+            LEFT JOIN nhanvien nv ON tk.MaNhanVien = nv.MaNhanVien
+            WHERE tk.MaTaiKhoan = :id";
+    
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bindParam(':id', $maTaiKhoan);
+    $stmt->execute();
+    return $stmt->fetch();
+}
     // 6. Cập nhật tài khoản (Edit)
     public function updateTaiKhoan($maTaiKhoan, $tenDangNhap, $vaiTro, $matKhau = null)
     {
         $sql = "UPDATE taikhoan 
                 SET TenDangNhap = :tenDangNhap, VaiTro = :vaiTro";
-        
+
         if ($matKhau !== null) {
             $sql .= ", MatKhau = :matKhau";
         }
 
         $sql .= " WHERE MaTaiKhoan = :maTaiKhoan";
-        
+
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':maTaiKhoan', $maTaiKhoan);
         $stmt->bindParam(':tenDangNhap', $tenDangNhap);
         $stmt->bindParam(':vaiTro', $vaiTro);
-        
+
         if ($matKhau !== null) {
             $hashed_password = password_hash($matKhau, PASSWORD_DEFAULT);
             $stmt->bindParam(':matKhau', $hashed_password);
         }
-        
+
         return $stmt->execute();
     }
+   public function checkLogin($tenDangNhap, $matKhau)
+    {
+        $sql = "SELECT * FROM taikhoan 
+                WHERE TenDangNhap = :tdn 
+                  AND TrangThai = 'hoat_dong'";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':tdn' => $tenDangNhap]);
+        $user = $stmt->fetch();
+
+        if (!$user) return false; // Sai username hoặc bị khóa
+
+        // Kiểm tra mật khẩu hash
+        if (password_verify($matKhau, $user['MatKhau'])) {
+            return $user;
+        }
+
+        return false;   // Sai mật khẩu
+    }
+
+
 }

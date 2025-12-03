@@ -152,9 +152,13 @@
                     <select name="MaHuongDanVien">
                         <option value="">-- Chọn HDV --</option>
                         <?php foreach ($listHDV as $h): ?>
-                            <option value="<?= $h['MaNhanVien'] ?>"><?= $h['HoTen'] ?></option>
+                            <?php $isBusy = in_array($h['MaNhanVien'], $busyIds ?? []); ?>
+                            <option value="<?= $h['MaNhanVien'] ?>" <?= $isBusy ? 'disabled' : '' ?>>
+                                <?= htmlspecialchars($h['HoTen']) ?> <?= $isBusy ? '(Bận)' : '' ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
+
                 </div>
 
                 <div class="form-group">
@@ -162,7 +166,10 @@
                     <select name="MaTaiXe">
                         <option value="">-- Chọn tài xế --</option>
                         <?php foreach ($listTaiXe as $x): ?>
-                            <option value="<?= $x['MaNhanVien'] ?>"><?= $x['HoTen'] ?></option>
+                            <?php $isBusy = in_array($x['MaNhanVien'], $busyIds ?? []); ?>
+                            <option value="<?= $x['MaNhanVien'] ?>" <?= $isBusy ? 'disabled' : '' ?>>
+                                <?= htmlspecialchars($x['HoTen']) ?> <?= $isBusy ? '(Bận)' : '' ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
                 </div>

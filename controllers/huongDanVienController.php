@@ -54,7 +54,7 @@ class huongDanVienController
         $viewFile = './views/hdv/lichtrinh.php'; 
         include './views/layout.php';
     }
-
+    
     // 4. (Tương lai) Chức năng cập nhật Nhật ký Tour
     // public function addNhatKyTour() { ... }
 }

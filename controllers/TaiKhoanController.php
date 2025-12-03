@@ -1,5 +1,5 @@
 <?php
-// có class chứa các function thực thi xử lý logic 
+
 class TaiKhoanController
 {
     public $modelTaiKhoan;

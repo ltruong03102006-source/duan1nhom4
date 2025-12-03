@@ -11,6 +11,7 @@
 
 <div class="container-fluid px-4">
     <h1 class="mt-4">Chi Tiết Đoàn Khởi Hành (ID: <?= $doanDetail['MaDoan'] ?>)</h1>
+
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="?act=hdvHome">Dashboard HDV</a></li>
         <li class="breadcrumb-item active">Đoàn <?= $doanDetail['MaDoan'] ?></li>
@@ -44,16 +45,36 @@
             </div>
 
             <div class="btn-action-group">
+
+                <!-- XEM LỊCH TRÌNH -->
                 <a href="?act=hdvLichTrinh&id=<?= $doanDetail['MaTour'] ?>">
-                    <button class="btn-action btn-schedule"><i class="fas fa-calendar-alt"></i> Xem Lịch Trình</button>
+                    <button class="btn-action btn-schedule">
+                        <i class="fas fa-calendar-alt"></i> Xem Lịch Trình
+                    </button>
                 </a>
-                <button class="btn-action btn-report"><i class="fas fa-edit"></i> Ghi Nhật Ký Tour</button>
-                <button class="btn-action btn-report" style="background: #e53935;"><i class="fas fa-user-check"></i> Điểm Danh Khách</button>
+
+                <!-- GHI NHẬT KÝ TOUR -->
+                <a href="?act=nhatky_hdv&MaDoan=<?= $doanDetail['MaDoan'] ?>">
+                    <button class="btn-action btn-report">
+                        <i class="fas fa-edit"></i> Ghi Nhật Ký Tour
+                    </button>
+                </a>
+
+                <!-- ĐIỂM DANH -->
+                <a href="?act=diemDanhProcess&MaDoan=<?= $doanDetail['MaDoan'] ?>">
+                    <button class="btn-action btn-report" style="background: #e53935;">
+                        <i class="fas fa-user-check"></i> Điểm Danh Khách
+                    </button>
+                </a>
+
+                <!-- QUAY LẠI -->
                 <a href="?act=hdvHome">
-                    <button class="btn-action btn-back"><i class="fas fa-arrow-left"></i> Quay lại</button>
+                    <button class="btn-action btn-back">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </button>
                 </a>
+
             </div>
         </div>
     </div>
-    
-    </div>
+</div>

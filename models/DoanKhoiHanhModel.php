@@ -100,4 +100,14 @@ class DoanKhoiHanhModel
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function getBusyNhanVienIdsByDate($date)
+{
+    // Nhân viên bận nếu TrangThai = 'ban' trong ngày đó
+    $sql = "SELECT MaNhanVien 
+            FROM lichlamviec
+            WHERE NgayLamViec = :d AND TrangThai = 'ban'";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([':d' => $date]);
+    return array_column($stmt->fetchAll(PDO::FETCH_ASSOC), 'MaNhanVien');
+}
 }
