@@ -118,14 +118,7 @@
                             <option value="cong_ty" <?= $khachHang['LoaiKhach'] == 'cong_ty' ? 'selected' : '' ?>>Công ty</option>
                         </select>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Tên Công Ty</label>
-                        <input type="text" name="TenCongTy" class="form-control" value="<?= htmlspecialchars($khachHang['TenCongTy']) ?>">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Mã Số Thuế</label>
-                        <input type="text" name="MaSoThue" class="form-control" value="<?= htmlspecialchars($khachHang['MaSoThue']) ?>">
-                    </div>
+                   
                 </div>
                 
                 <div class="mb-3">

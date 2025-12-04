@@ -392,7 +392,6 @@
                                     <a href="?act=lichTour&maTour=<?= $tour['MaTour'] ?>">📅 Lịch trình</a>
                                     <a href="?act=giaTour&maTour=<?= $tour['MaTour'] ?>">💰 Giá Tour</a>
                                     <a href="?act=duToanChiPhi&maTour=<?= $tour['MaTour'] ?>">📊 Dự toán</a>
-                                    <a href="?act=xemTourHDV&id=<?= $tour['MaTour'] ?>">📘 Xem HDV</a>
                                 </div>
                             </div>
                         </td>

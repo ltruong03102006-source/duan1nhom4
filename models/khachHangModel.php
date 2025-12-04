@@ -165,4 +165,50 @@ class KhachHangModel
             return [];
         }
     }
+    public function addKhachHangGroup($rows)
+{
+    try {
+        $this->conn->beginTransaction();
+
+        $sql = "INSERT INTO KhachHang (
+                    MaCodeKhachHang, HoTen, SoDienThoai, Email, DiaChi, NgaySinh, GioiTinh,
+                    SoGiayTo, LoaiKhach, TenCongTy, MaSoThue, GhiChu, NgayTao
+                ) VALUES (
+                    :MaCodeKhachHang, :HoTen, :SoDienThoai, :Email, :DiaChi, :NgaySinh, :GioiTinh,
+                    :SoGiayTo, :LoaiKhach, :TenCongTy, :MaSoThue, :GhiChu, CURRENT_TIMESTAMP
+                )";
+        $stmt = $this->conn->prepare($sql);
+
+        foreach ($rows as $r) {
+            $data = [
+                ':MaCodeKhachHang' => trim($r['MaCodeKhachHang'] ?? ''),
+                ':HoTen' => trim($r['HoTen'] ?? ''),
+                ':SoDienThoai' => trim($r['SoDienThoai'] ?? ''),
+                ':Email' => trim($r['Email'] ?? ''),
+                ':DiaChi' => trim($r['DiaChi'] ?? ''),
+                ':NgaySinh' => ($r['NgaySinh'] ?? null) ?: null,
+                ':GioiTinh' => trim($r['GioiTinh'] ?? 'khac'),
+                ':SoGiayTo' => trim($r['SoGiayTo'] ?? ''),
+                ':LoaiKhach' => trim($r['LoaiKhach'] ?? 'ca_nhan'),
+                ':TenCongTy' => ($r['TenCongTy'] ?? null) ?: null,
+                ':MaSoThue' => ($r['MaSoThue'] ?? null) ?: null,
+                ':GhiChu' => trim($r['GhiChu'] ?? ''),
+            ];
+
+            // bắt buộc tối thiểu họ tên + sđt
+            if ($data[':HoTen'] === '' || $data[':SoDienThoai'] === '') continue;
+
+            $stmt->execute($data);
+        }
+
+        $this->conn->commit();
+        return true;
+    } catch (PDOException $e) {
+        $this->conn->rollBack();
+        error_log("Lỗi addKhachHangGroup: " . $e->getMessage());
+        return false;
+    }
+}
+
+
 }

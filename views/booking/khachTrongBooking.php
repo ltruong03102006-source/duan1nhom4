@@ -115,11 +115,6 @@
                     <?php endif; ?>
                 </td>
                 <td class="actions">
-                    <a href="?act=diemDanhProcess&MaKhachTrongBooking=<?= $k['MaKhachTrongBooking'] ?>&MaBooking=<?= $booking['MaBooking'] ?>&status=<?= $k['TrangThaiDiemDanh'] ? 0 : 1 ?>">
-                        <button class="btn-diemdanh">
-                            <?= $k['TrangThaiDiemDanh'] ? 'Bỏ điểm danh' : 'Điểm danh' ?>
-                        </button>
-                    </a>
                     <a href="?act=deleteKhachTrongBooking&MaKhachTrongBooking=<?= $k['MaKhachTrongBooking'] ?>&MaBooking=<?= $booking['MaBooking'] ?>"
                        onclick="return confirm('Xóa khách này khỏi booking?');">
                         <button class="btn-delete">Xóa</button>

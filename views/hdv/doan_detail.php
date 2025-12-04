@@ -61,7 +61,7 @@
                 </a>
 
                 <!-- ĐIỂM DANH -->
-                <a href="?act=diemDanhProcess&MaDoan=<?= $doanDetail['MaDoan'] ?>">
+                <a href="?act=hdvDiemDanh&MaDoan=<?= $doanDetail['MaDoan'] ?>">
                     <button class="btn-action btn-report" style="background: #e53935;">
                         <i class="fas fa-user-check"></i> Điểm Danh Khách
                     </button>

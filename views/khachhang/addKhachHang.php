@@ -116,14 +116,7 @@
                             <option value="cong_ty">Công ty</option>
                         </select>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Tên Công Ty</label>
-                        <input type="text" name="TenCongTy" class="form-control">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Mã Số Thuế</label>
-                        <input type="text" name="MaSoThue" class="form-control">
-                    </div>
+                   
                 </div>
                 
                 <div class="mb-3">

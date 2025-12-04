@@ -159,4 +159,50 @@ class KhachHangController
         }
         exit();
     }
+    // 2b. Thêm nhóm khách hàng (Hiển thị form)
+public function addKhachHangGroup()
+{
+    $viewFile = './views/khachhang/addKhachHangGroup.php';
+    include './views/layout.php';
+}
+
+// 3b. Xử lý thêm nhóm khách hàng
+public function addKhachHangGroupProcess()
+{
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        header("Location: ?act=listKhachHang");
+        exit();
+    }
+
+    $rows = $_POST['khach'] ?? [];
+    if (!is_array($rows) || count($rows) === 0) {
+        header("Location: ?act=addKhachHangGroup&error=empty");
+        exit();
+    }
+
+    // lọc các dòng trống
+    $validRows = [];
+    foreach ($rows as $r) {
+        $hoTen = trim($r['HoTen'] ?? '');
+        $sdt   = trim($r['SoDienThoai'] ?? '');
+        if ($hoTen !== '' && $sdt !== '') {
+            $validRows[] = $r;
+        }
+    }
+
+    if (count($validRows) === 0) {
+        header("Location: ?act=addKhachHangGroup&error=empty");
+        exit();
+    }
+
+    $result = $this->modelKhachHang->addKhachHangGroup($validRows);
+
+    if ($result) {
+        header("Location: ?act=listKhachHang&success=add_group");
+    } else {
+        header("Location: ?act=addKhachHangGroup&error=failed");
+    }
+    exit();
+}
+
 }

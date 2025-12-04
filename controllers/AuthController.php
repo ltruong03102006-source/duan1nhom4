@@ -77,7 +77,7 @@ class AuthController
     public function logout()
     {
         session_destroy();
-        header("Location: ?act=login&success=logout");
+        header("Location: ?act=login");
         exit;
     }
 }

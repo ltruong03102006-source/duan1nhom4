@@ -176,6 +176,31 @@ class BookingController
         $viewFile = './views/booking/khachTrongBooking.php';
         include './views/layout.php';
     }
+    public function hdvKhachTrongBooking()
+    {
+        // 1) Nhận MaBooking hoặc MaDoan
+        $MaBooking = $_GET['MaBooking'] ?? null;
+        $MaDoan = $_GET['MaDoan'] ?? null;
+
+        // 2) Nếu không có MaBooking thì tìm Booking theo MaDoan
+        if (!$MaBooking && $MaDoan) {
+            $MaBooking = $this->bookingModel->getMaBookingByMaDoan($MaDoan);
+        }
+
+        if (!$MaBooking) {
+            header("Location: ?act=hdvHome");
+            exit();
+        }
+
+        // 3) Lấy dữ liệu khách
+        $booking = $this->bookingModel->getBookingDetailWithDoan($MaBooking);
+        $listKhach = $this->bookingModel->getKhachTrongBooking($MaBooking);
+
+        // 4) View riêng HDV (để không dính quyền admin)
+        $viewFile = './views/hdv/khachTrongBooking.php';
+        include './views/layout.php';
+    }
+
 
     public function addKhachTrongBooking()
     {
@@ -230,14 +255,53 @@ class BookingController
     public function diemDanhProcess()
     {
         $MaKhachTrongBooking = $_GET['MaKhachTrongBooking'] ?? null;
-        $status = $_GET['status'] ?? 0;
+        $status = isset($_GET['status']) ? (int)$_GET['status'] : 0;
         $MaBooking = $_GET['MaBooking'] ?? null;
 
         if ($MaKhachTrongBooking && $MaBooking) {
             $this->bookingModel->updateDiemDanh($MaKhachTrongBooking, $status);
         }
 
-        header("Location: ?act=khachTrongBooking&MaBooking=" . $MaBooking);
+        // ✅ Quay về đúng trang HDV
+        header("Location: ?act=hdvKhachTrongBooking&MaBooking=" . $MaBooking);
+        exit();
+    }
+    // ====== HDV: TRANG ĐIỂM DANH RIÊNG THEO ĐOÀN ======
+    public function hdvDiemDanh()
+    {
+        $MaDoan = $_GET['MaDoan'] ?? null;
+        if (!$MaDoan) {
+            header("Location: ?act=hdvHome");
+            exit();
+        }
+
+        // Lấy info đoàn/tour để hiển thị tiêu đề
+        $doanInfo = $this->bookingModel->getDoanInfoForHdv($MaDoan);
+
+        // Lấy toàn bộ khách thuộc các booking của đoàn này
+        $listKhach = $this->bookingModel->getKhachTrongDoan($MaDoan);
+
+        $viewFile = './views/hdv/diemdanh.php';
+        include './views/layout.php';
+    }
+
+    // ====== HDV: XỬ LÝ ĐIỂM DANH (POST) ======
+    public function hdvDiemDanhProcess()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: ?act=hdvHome");
+            exit();
+        }
+
+        $MaDoan = $_POST['MaDoan'] ?? null;
+        $MaKhachTrongBooking = $_POST['MaKhachTrongBooking'] ?? null;
+        $status = isset($_POST['status']) ? (int)$_POST['status'] : 0;
+
+        if ($MaDoan && $MaKhachTrongBooking) {
+            $this->bookingModel->updateDiemDanh($MaKhachTrongBooking, $status);
+        }
+
+        header("Location: ?act=hdvDiemDanh&MaDoan=" . $MaDoan);
         exit();
     }
 }

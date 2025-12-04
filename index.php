@@ -275,6 +275,15 @@ switch ($act) {
         onlyAdmin();
         (new KhachHangController())->deleteKhachHang();
         break;
+    case 'addKhachHangGroup':
+        onlyAdmin();
+        (new KhachHangController())->addKhachHangGroup();
+        break;
+
+    case 'addKhachHangGroupProcess':
+        onlyAdmin();
+        (new KhachHangController())->addKhachHangGroupProcess();
+        break;
 
 
     // ---- NHÂN VIÊN ----
@@ -387,6 +396,22 @@ switch ($act) {
     case 'deleteBooking':
         onlyAdmin();
         (new BookingController())->deleteBooking();
+        break;
+    case 'khachTrongBooking':
+        onlyAdmin();
+        (new BookingController())->khachTrongBooking();
+        break;
+    case 'addKhachTrongBooking':
+        onlyAdmin();
+        (new BookingController())->addKhachTrongBooking();
+        break;
+    case 'addKhachTrongBookingProcess':
+        onlyAdmin();
+        (new BookingController())->addKhachTrongBookingProcess();
+        break;
+    case 'deleteKhachTrongBooking':
+        onlyAdmin();
+        (new BookingController())->deleteKhachTrongBooking();
         break;
 
 
@@ -569,10 +594,14 @@ switch ($act) {
         onlyHDV();
         (new huongDanVienController())->viewLichTrinh();
         break;
-
-    case 'diemDanhProcess':
+    case 'hdvDiemDanh':
         onlyHDV();
-        (new BookingController())->diemDanhProcess();
+        (new BookingController())->hdvDiemDanh();
+        break;
+
+    case 'hdvDiemDanhProcess':
+        onlyHDV();
+        (new BookingController())->hdvDiemDanhProcess();
         break;
     // ================== NHẬT KÝ TOUR ==================
 
