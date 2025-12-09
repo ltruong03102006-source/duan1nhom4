@@ -127,7 +127,7 @@
             top: 100%;
             background: white;
             min-width: 180px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
             border-radius: 6px;
             z-index: 9999;
             margin-top: 5px;
@@ -168,6 +168,7 @@
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -196,38 +197,6 @@
 
         .btn-view:hover {
             background: #2e7d32;
-        }
-
-        .btn-price {
-            background: #9c27b0;
-        }
-
-        .btn-price:hover {
-            background: #7b1fa2;
-        }
-
-        .btn-schedule {
-            background: #00acc1;
-        }
-
-        .btn-schedule:hover {
-            background: #00838f;
-        }
-
-        .btn-budget {
-            background: #ff5722;
-        }
-
-        .btn-budget:hover {
-            background: #e64a19;
-        }
-
-        .btn-guide {
-            background: #009688;
-        }
-
-        .btn-guide:hover {
-            background: #00796b;
         }
 
         .tour-info-card {
@@ -271,17 +240,16 @@
             color: #444;
         }
 
-        img.thumb {
-            width: 80px;
-            height: 55px;
-            object-fit: cover;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-        }
-
         .price {
             color: #e53935;
             font-weight: bold;
+        }
+
+        td .label {
+            font-weight: 700;
+            color: #444;
+            display: inline-block;
+            width: 56px;
         }
 
         .status-active {
@@ -303,7 +271,7 @@
         <?php if (isset($_GET['success'])): ?>
             <div style="padding: 15px; margin-bottom: 20px; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 6px;">
                 <?php
-                switch($_GET['success']) {
+                switch ($_GET['success']) {
                     case 'add':
                         echo '✅ Thêm tour mới thành công!';
                         break;
@@ -325,8 +293,8 @@
                 <tr>
                     <th>ID</th>
                     <th>Thông Tin Tour</th>
-                    <th>Giá Vốn</th>
-                    <th>Giá Bán</th>
+                    <th>Dự toán chi phí</th>
+                    <th>Giá bán (NL/TE/EB)</th>
                     <th>Trạng Thái</th>
                     <th>Ngày Tạo</th>
                     <th>Ngày Cập Nhật</th>
@@ -345,7 +313,7 @@
                                 <?php else: ?>
                                     <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='80'%3E%3Crect fill='%23ddd' width='120' height='80'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%23999' font-family='Arial' font-size='14'%3ENo Image%3C/text%3E%3C/svg%3E" alt="No image">
                                 <?php endif; ?>
-                                
+
                                 <div class="tour-details">
                                     <div class="tour-name"><?= htmlspecialchars($tour['TenTour']) ?></div>
                                     <div class="tour-meta">
@@ -358,8 +326,34 @@
                             </div>
                         </td>
 
-                        <td class="price"><?= number_format($tour['GiaVonDuKien'], 0, ',', '.') ?>đ</td>
-                        <td class="price"><?= number_format($tour['GiaBanMacDinh'], 0, ',', '.') ?>đ</td>
+                        <!-- Dự toán chi phí (thay cho Giá vốn) -->
+                        <td class="price">
+                            <?= number_format($tour['TongDuToan'] ?? 0, 0, ',', '.') ?>đ
+                        </td>
+
+                        <!-- Giá bán tách theo NL / TE / EB -->
+                        <td>
+                            <div style="line-height:1.7">
+                                <div>
+                                    <span class="label">👤 NL:</span>
+                                    <span class="price">
+                                        <?= $tour['GiaNguoiLon'] !== null ? number_format($tour['GiaNguoiLon'], 0, ',', '.') . 'đ' : '—' ?>
+                                    </span>
+                                </div>
+                                <div>
+                                    <span class="label">🧒 TE:</span>
+                                    <span class="price">
+                                        <?= $tour['GiaTreEm'] !== null ? number_format($tour['GiaTreEm'], 0, ',', '.') . 'đ' : '—' ?>
+                                    </span>
+                                </div>
+                                <div>
+                                    <span class="label">👶 EB:</span>
+                                    <span class="price">
+                                        <?= $tour['GiaEmBe'] !== null ? number_format($tour['GiaEmBe'], 0, ',', '.') . 'đ' : '—' ?>
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
 
                         <td>
                             <?php if ($tour['TrangThai'] === 'hoat_dong'): ?>
@@ -372,29 +366,28 @@
                         <td><?= $tour['NgayTao'] ?></td>
                         <td><?= $tour['NgayCapNhat'] ?></td>
 
-                        <td class="actions">
-                            <a href="?act=xemTour&id=<?= $tour['MaTour'] ?>">
-                                <button class="btn-view">Xem</button>
-                            </a>
-                            
-                            <a href="?act=editTour&id=<?= $tour['MaTour'] ?>">
-                                <button class="btn-edit">Sửa</button>
-                            </a>
-                            
-                            <a href="?act=deleteTour&id=<?= $tour['MaTour'] ?>"
-                                onclick="return confirm('Bạn có chắc chắn muốn xóa tour này không?');">
-                                <button class="btn-delete">Xóa</button>
-                            </a>
+                     <td class="text-center align-middle">
+    <div class="btn-group btn-group-sm" role="group">
+        <a href="?act=xemTour&id=<?= $tour['MaTour'] ?>" class="btn btn-outline-primary" title="Xem chi tiết">
+            <i class="fas fa-eye"></i>
+        </a>
 
-                            <div class="dropdown">
-                                <button class="dropdown-toggle">⚙️ Khác</button>
-                                <div class="dropdown-menu">
-                                    <a href="?act=lichTour&maTour=<?= $tour['MaTour'] ?>">📅 Lịch trình</a>
-                                    <a href="?act=giaTour&maTour=<?= $tour['MaTour'] ?>">💰 Giá Tour</a>
-                                    <a href="?act=duToanChiPhi&maTour=<?= $tour['MaTour'] ?>">📊 Dự toán</a>
-                                </div>
-                            </div>
-                        </td>
+        <a href="?act=editTour&id=<?= $tour['MaTour'] ?>" class="btn btn-outline-warning" title="Sửa">
+            <i class="fas fa-edit"></i>
+        </a>
+
+        <a href="?act=lichTour&maTour=<?= $tour['MaTour'] ?>" class="btn btn-outline-info" title="Lịch trình">
+            <i class="fas fa-calendar-alt"></i>
+        </a>
+
+        <a href="?act=deleteTour&id=<?= $tour['MaTour'] ?>" 
+           class="btn btn-outline-danger" 
+           onclick="return confirm('Xác nhận xóa tour?');" 
+           title="Xóa">
+            <i class="fas fa-trash-alt"></i>
+        </a>
+    </div>
+</td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -403,35 +396,27 @@
 </body>
 
 <script>
-// Script xử lý dropdown click
-document.addEventListener('DOMContentLoaded', function() {
-    const dropdowns = document.querySelectorAll('.dropdown');
-    
-    dropdowns.forEach(dropdown => {
-        const toggle = dropdown.querySelector('.dropdown-toggle');
-        
-        toggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            
-            // Đóng tất cả dropdown khác
-            dropdowns.forEach(d => {
-                if (d !== dropdown) {
-                    d.classList.remove('active');
-                }
-            });
-            
-            // Toggle dropdown hiện tại
-            dropdown.classList.toggle('active');
-        });
-    });
-    
-    // Đóng dropdown khi click ra ngoài
-    document.addEventListener('click', function() {
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropdowns = document.querySelectorAll('.dropdown');
+
         dropdowns.forEach(dropdown => {
-            dropdown.classList.remove('active');
+            const toggle = dropdown.querySelector('.dropdown-toggle');
+
+            toggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+
+                dropdowns.forEach(d => {
+                    if (d !== dropdown) d.classList.remove('active');
+                });
+
+                dropdown.classList.toggle('active');
+            });
+        });
+
+        document.addEventListener('click', function() {
+            dropdowns.forEach(dropdown => dropdown.classList.remove('active'));
         });
     });
-});
 </script>
 
 </html>

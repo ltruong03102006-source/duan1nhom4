@@ -49,6 +49,7 @@
         border-radius: 10px;
         border: 1px solid #ccc;
         margin-bottom: 25px;
+        background: #eee;
     }
 
     .section-title {
@@ -88,16 +89,20 @@
         border-radius: 6px;
         text-decoration: none;
         font-weight: bold;
+        display: inline-block;
     }
 
     .price {
-        font-size: 20px;
+        font-size: 18px;
         font-weight: bold;
         color: #e53935;
     }
 
     .status-active { color: #2e7d32; font-weight: bold; }
     .status-inactive { color: #c62828; font-weight: bold; }
+
+    .price-line { display:flex; justify-content:space-between; gap:12px; align-items:baseline; }
+    .price-label { font-weight:700; color:#444; }
 
 </style>
 </head>
@@ -109,11 +114,16 @@
 <div class="container">
 
     <!-- Tên tour -->
-    <div class="tour-title"><?= $tour['TenTour'] ?></div>
-    <div class="tour-code">Mã Tour: <strong><?= $tour['MaCodeTour'] ?></strong></div>
+    <div class="tour-title"><?= htmlspecialchars($tour['TenTour'] ?? '') ?></div>
+    <div class="tour-code">Mã Tour: <strong><?= htmlspecialchars($tour['MaCodeTour'] ?? '') ?></strong></div>
 
     <!-- Ảnh bìa -->
-    <img src="<?= $tour['LinkAnhBia'] ?>" class="tour-image">
+    <?php if (!empty($tour['LinkAnhBia'])): ?>
+        <img src="<?= htmlspecialchars($tour['LinkAnhBia']) ?>" class="tour-image" alt="Ảnh bìa tour">
+    <?php else: ?>
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='350'%3E%3Crect fill='%23e0e0e0' width='1200' height='350'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%23999' font-family='Arial' font-size='28'%3ENo Image%3C/text%3E%3C/svg%3E"
+             class="tour-image" alt="No image">
+    <?php endif; ?>
 
     <!-- Thông tin tổng quan -->
     <div class="section-title">Thông Tin Tổng Quan</div>
@@ -121,41 +131,71 @@
     <div class="grid">
         <div class="info-box">
             <strong>Danh Mục:</strong><br>
-            <?= $tour['MaDanhMuc'] == 1 ? "Tour trong nước" : ($tour['MaDanhMuc']==2 ? "Tour quốc tế" : "Tour theo yêu cầu") ?>
+            <?= htmlspecialchars($tour['TenDanhMuc'] ?? '—') ?>
         </div>
 
         <div class="info-box">
             <strong>Số Ngày - Đêm:</strong><br>
-            <?= $tour['SoNgay'] ?> ngày - <?= $tour['SoDem'] ?> đêm
+            <?= (int)($tour['SoNgay'] ?? 0) ?> ngày - <?= (int)($tour['SoDem'] ?? 0) ?> đêm
         </div>
 
         <div class="info-box">
             <strong>Điểm Khởi Hành:</strong><br>
-            <?= $tour['DiemKhoiHanh'] ?>
+            <?= htmlspecialchars($tour['DiemKhoiHanh'] ?? '—') ?>
         </div>
 
         <div class="info-box">
             <strong>Trạng Thái:</strong><br>
-            <?= $tour['TrangThai'] == 'hoat_dong' 
-                ? "<span class='status-active'>Hoạt động</span>" 
+            <?= ($tour['TrangThai'] ?? '') === 'hoat_dong'
+                ? "<span class='status-active'>Hoạt động</span>"
                 : "<span class='status-inactive'>Không hoạt động</span>" ?>
         </div>
 
+        <!-- MỚI: Tổng dự toán (thay Giá vốn) -->
         <div class="info-box">
-            <strong>Giá Vốn Dự Kiến:</strong><br>
-            <span class="price"><?= number_format($tour['GiaVonDuKien'],0,',','.') ?>đ</span>
+            <strong>Tổng Dự Toán Chi Phí:</strong><br>
+            <span class="price">
+                <?= number_format((float)($tour['TongDuToan'] ?? 0), 0, ',', '.') ?>đ
+            </span>
         </div>
 
+        <!-- MỚI: Giá bán tách NL/TE/EB -->
         <div class="info-box">
-            <strong>Giá Bán Mặc Định:</strong><br>
-            <span class="price"><?= number_format($tour['GiaBanMacDinh'],0,',','.') ?>đ</span>
+            <strong>Giá Bán (NL / TE / EB):</strong><br><br>
+
+            <div class="price-line">
+                <span class="price-label">👤 Người lớn</span>
+                <span class="price">
+                    <?= isset($tour['GiaNguoiLon']) && $tour['GiaNguoiLon'] !== null
+                        ? number_format((float)$tour['GiaNguoiLon'],0,',','.') . "đ"
+                        : "—" ?>
+                </span>
+            </div>
+
+            <div class="price-line">
+                <span class="price-label">🧒 Trẻ em</span>
+                <span class="price">
+                    <?= isset($tour['GiaTreEm']) && $tour['GiaTreEm'] !== null
+                        ? number_format((float)$tour['GiaTreEm'],0,',','.') . "đ"
+                        : "—" ?>
+                </span>
+            </div>
+
+            <div class="price-line">
+                <span class="price-label">👶 Em bé</span>
+                <span class="price">
+                    <?= isset($tour['GiaEmBe']) && $tour['GiaEmBe'] !== null
+                        ? number_format((float)$tour['GiaEmBe'],0,',','.') . "đ"
+                        : "—" ?>
+                </span>
+            </div>
         </div>
     </div>
 
     <!-- Mô tả -->
     <div class="section-title">Mô Tả Tour</div>
     <div class="policy-box">
-        <?= nl2br($tour['MoTa'] ?? "") ?>
+        <?= nl2br(htmlspecialchars($tour['MoTa'] ?? "")) ?>
     </div>
 
     <!-- Chính sách -->
@@ -163,17 +203,22 @@
 
     <div class="policy-box">
         <strong>✔ Bao gồm:</strong><br><br>
-        <?= nl2br($tour['ChinhSachBaoGom'] ?? "") ?>
+        <?= nl2br(htmlspecialchars($tour['ChinhSachBaoGom'] ?? "")) ?>
     </div>
 
     <div class="policy-box">
         <strong>✘ Không bao gồm:</strong><br><br>
-        <?= nl2br($tour['ChinhSachKhongBaoGom'] ?? "") ?>
+        <?= nl2br(htmlspecialchars($tour['ChinhSachKhongBaoGom'] ?? "")) ?>
     </div>
 
     <div class="policy-box">
         <strong>❗ Chính sách hủy:</strong><br><br>
-        <?= nl2br($tour['ChinhSachHuy'] ?? "") ?>
+        <?= nl2br(htmlspecialchars($tour['ChinhSachHuy'] ?? "")) ?>
+    </div>
+
+    <div class="policy-box">
+        <strong>💵 Chính sách hoàn tiền:</strong><br><br>
+        <?= nl2br(htmlspecialchars($tour['ChinhSachHoanTien'] ?? "")) ?>
     </div>
 
     <!-- Thời gian -->
@@ -181,16 +226,16 @@
     <div class="grid">
         <div class="info-box">
             <strong>Ngày tạo:</strong><br>
-            <?= $tour['NgayTao'] ?>
+            <?= htmlspecialchars($tour['NgayTao'] ?? '') ?>
         </div>
 
         <div class="info-box">
             <strong>Ngày cập nhật:</strong><br>
-            <?= $tour['NgayCapNhat'] ?>
+            <?= htmlspecialchars($tour['NgayCapNhat'] ?? '') ?>
         </div>
     </div>
+
     <br>
-    <!-- Nút quay lại -->
     <a class="back-btn" href="?act=tour">← Quay lại danh sách tour</a>
 
 </div>

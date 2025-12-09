@@ -24,9 +24,60 @@ class BookingModel
 
     public function getAllTour()
     {
-        $sql = "SELECT * FROM Tour ORDER BY MaTour DESC";
+        $sql = "
+        SELECT 
+            t.*,
+
+            nl.GiaTien AS GiaNguoiLon,
+            te.GiaTien AS GiaTreEm,
+            eb.GiaTien AS GiaEmBe
+
+        FROM Tour t
+
+        LEFT JOIN (
+            SELECT gt1.MaTour, gt1.GiaTien
+            FROM GiaTour gt1
+            INNER JOIN (
+                SELECT MaTour, MAX(COALESCE(ApDungTuNgay, '1000-01-01')) AS maxDate
+                FROM GiaTour
+                WHERE LoaiKhach = 'nguoi_lon'
+                GROUP BY MaTour
+            ) x ON x.MaTour = gt1.MaTour 
+               AND COALESCE(gt1.ApDungTuNgay, '1000-01-01') = x.maxDate
+            WHERE gt1.LoaiKhach = 'nguoi_lon'
+        ) nl ON nl.MaTour = t.MaTour
+
+        LEFT JOIN (
+            SELECT gt1.MaTour, gt1.GiaTien
+            FROM GiaTour gt1
+            INNER JOIN (
+                SELECT MaTour, MAX(COALESCE(ApDungTuNgay, '1000-01-01')) AS maxDate
+                FROM GiaTour
+                WHERE LoaiKhach = 'tre_em'
+                GROUP BY MaTour
+            ) x ON x.MaTour = gt1.MaTour 
+               AND COALESCE(gt1.ApDungTuNgay, '1000-01-01') = x.maxDate
+            WHERE gt1.LoaiKhach = 'tre_em'
+        ) te ON te.MaTour = t.MaTour
+
+        LEFT JOIN (
+            SELECT gt1.MaTour, gt1.GiaTien
+            FROM GiaTour gt1
+            INNER JOIN (
+                SELECT MaTour, MAX(COALESCE(ApDungTuNgay, '1000-01-01')) AS maxDate
+                FROM GiaTour
+                WHERE LoaiKhach = 'em_be'
+                GROUP BY MaTour
+            ) x ON x.MaTour = gt1.MaTour 
+               AND COALESCE(gt1.ApDungTuNgay, '1000-01-01') = x.maxDate
+            WHERE gt1.LoaiKhach = 'em_be'
+        ) eb ON eb.MaTour = t.MaTour
+
+        ORDER BY t.MaTour DESC
+    ";
         return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
+
 
     public function getAllDoan()
     {
@@ -43,22 +94,24 @@ class BookingModel
         return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function addBooking($data)
+     public function addBooking($data)
     {
         $sql = "INSERT INTO Booking (
-                    MaCodeBooking, MaTour, MaDoan, MaKhachHang, LoaiBooking,
-                    TongNguoiLon, TongTreEm, TongEmBe,
-                    TongTien, SoTienDaCoc, SoTienDaTra, SoTienConLai,
-                    YeuCauDacBiet, MaNguoiTao
-                ) VALUES (
-                    :MaCodeBooking, :MaTour, :MaDoan, :MaKhachHang, :LoaiBooking,
-                    :TongNguoiLon, :TongTreEm, :TongEmBe,
-                    :TongTien, :SoTienDaCoc, :SoTienDaTra, :SoTienConLai,
-                    :YeuCauDacBiet, :MaNguoiTao
-                )";
+                MaCodeBooking, MaTour, MaDoan, MaKhachHang, LoaiBooking,
+                TongNguoiLon, TongTreEm, TongEmBe,
+                TongTien, SoTienDaCoc, SoTienDaTra, SoTienConLai,
+                YeuCauDacBiet, MaNguoiTao
+            ) VALUES (
+                :MaCodeBooking, :MaTour, :MaDoan, :MaKhachHang, :LoaiBooking,
+                :TongNguoiLon, :TongTreEm, :TongEmBe,
+                :TongTien, :SoTienDaCoc, :SoTienDaTra, :SoTienConLai,
+                :YeuCauDacBiet, :MaNguoiTao
+            )";
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute($data);
     }
+
+
 
     public function getOneBooking($id)
     {
@@ -197,5 +250,143 @@ class BookingModel
         $stmt->execute([':MaDoan' => $MaDoan]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
+    // BookingModel.php (hoặc nơi bạn đang query DB của booking)
+    public function getGiaHienTaiByTour($maTour)
+    {
+        $sql = "
+        SELECT
+            t.MaTour,
+
+            nl.GiaTien AS GiaNguoiLon,
+            te.GiaTien AS GiaTreEm,
+            eb.GiaTien AS GiaEmBe
+
+        FROM Tour t
+
+        LEFT JOIN (
+            SELECT gt1.MaTour, gt1.GiaTien
+            FROM GiaTour gt1
+            INNER JOIN (
+                SELECT MaTour, MAX(COALESCE(ApDungTuNgay, '1000-01-01')) AS maxDate
+                FROM GiaTour
+                WHERE LoaiKhach = 'nguoi_lon'
+                GROUP BY MaTour
+            ) x ON x.MaTour = gt1.MaTour
+               AND COALESCE(gt1.ApDungTuNgay, '1000-01-01') = x.maxDate
+            WHERE gt1.LoaiKhach = 'nguoi_lon'
+        ) nl ON nl.MaTour = t.MaTour
+
+        LEFT JOIN (
+            SELECT gt1.MaTour, gt1.GiaTien
+            FROM GiaTour gt1
+            INNER JOIN (
+                SELECT MaTour, MAX(COALESCE(ApDungTuNgay, '1000-01-01')) AS maxDate
+                FROM GiaTour
+                WHERE LoaiKhach = 'tre_em'
+                GROUP BY MaTour
+            ) x ON x.MaTour = gt1.MaTour
+               AND COALESCE(gt1.ApDungTuNgay, '1000-01-01') = x.maxDate
+            WHERE gt1.LoaiKhach = 'tre_em'
+        ) te ON te.MaTour = t.MaTour
+
+        LEFT JOIN (
+            SELECT gt1.MaTour, gt1.GiaTien
+            FROM GiaTour gt1
+            INNER JOIN (
+                SELECT MaTour, MAX(COALESCE(ApDungTuNgay, '1000-01-01')) AS maxDate
+                FROM GiaTour
+                WHERE LoaiKhach = 'em_be'
+                GROUP BY MaTour
+            ) x ON x.MaTour = gt1.MaTour
+               AND COALESCE(gt1.ApDungTuNgay, '1000-01-01') = x.maxDate
+            WHERE gt1.LoaiKhach = 'em_be'
+        ) eb ON eb.MaTour = t.MaTour
+
+        WHERE t.MaTour = :maTour
+        LIMIT 1
+    ";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':maTour' => $maTour]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    public function recalcPaymentByBooking($MaBooking)
+    {
+        // Tổng tiền đã trả = tổng các thanh toán thành công
+        $sqlPaid = "SELECT COALESCE(SUM(SoTien),0) AS Paid
+               FROM ThanhToan
+               WHERE MaBooking = :mb AND TrangThai = 'thanh_cong'";
+        $st = $this->conn->prepare($sqlPaid);
+        $st->execute([':mb' => $MaBooking]);
+        $paid = (float)($st->fetch(PDO::FETCH_ASSOC)['Paid'] ?? 0);
+
+        // Lấy tổng tiền booking
+        $sqlBk = "SELECT TongTien FROM Booking WHERE MaBooking = :mb";
+        $st2 = $this->conn->prepare($sqlBk);
+        $st2->execute([':mb' => $MaBooking]);
+        $tongTien = (float)($st2->fetch(PDO::FETCH_ASSOC)['TongTien'] ?? 0);
+
+        $conLai = max(0, $tongTien - $paid);
+
+        // Set trạng thái booking theo số tiền đã trả
+        // (Bạn có thể đổi logic theo ý bạn)
+        if ($paid <= 0) $trangThai = 'cho_coc';
+        else if ($conLai > 0) $trangThai = 'da_coc';
+        else $trangThai = 'hoan_tat';
+
+        $sqlUp = "UPDATE Booking
+              SET SoTienDaTra = :paid,
+                  SoTienConLai = :conlai,
+                  TrangThai = :st,
+                  NgayCapNhat = CURRENT_TIMESTAMP
+              WHERE MaBooking = :mb";
+        $st3 = $this->conn->prepare($sqlUp);
+        return $st3->execute([
+            ':paid' => $paid,
+            ':conlai' => $conLai,
+            ':st' => $trangThai,
+            ':mb' => $MaBooking
+        ]);
+    }
+     public function updateTrangThaiDoanBySoKhach($MaDoan)
+    {
+        if (empty($MaDoan)) return;
+
+        // 1) Tổng khách của đoàn = tổng số người của các booking thuộc đoàn (booking chưa huỷ)
+        $sql = "SELECT COALESCE(SUM(TongNguoiLon + TongTreEm + TongEmBe),0) AS TongKhach
+            FROM Booking
+            WHERE MaDoan = :md AND TrangThai <> 'da_huy'";
+        $st = $this->conn->prepare($sql);
+        $st->execute([':md' => $MaDoan]);
+        $tongKhach = (int)($st->fetch(PDO::FETCH_ASSOC)['TongKhach'] ?? 0);
+
+        // 2) Lấy sức chứa đoàn
+        $st2 = $this->conn->prepare("SELECT SoChoToiDa FROM DoanKhoiHanh WHERE MaDoan = :md LIMIT 1");
+        $st2->execute([':md' => $MaDoan]);
+        $soChoToiDa = (int)($st2->fetch(PDO::FETCH_ASSOC)['SoChoToiDa'] ?? 0);
+
+        // 3) Quy tắc trạng thái
+        if ($tongKhach < 10) {
+            $new = 'da_huy';
+        } else if ($soChoToiDa > 0 && $tongKhach >= $soChoToiDa) {
+            $new = 'het_cho';
+        } else {
+            $new = 'con_cho';
+        }
+
+        $st3 = $this->conn->prepare("UPDATE DoanKhoiHanh SET TrangThai = :st WHERE MaDoan = :md");
+        $st3->execute([':st' => $new, ':md' => $MaDoan]);
+    }
+
+    public function getBookingByKhachTrongBooking($MaKhachTrongBooking)
+    {
+        $sql = "SELECT b.*
+            FROM KhachTrongBooking ktb
+            JOIN Booking b ON ktb.MaBooking = b.MaBooking
+            WHERE ktb.MaKhachTrongBooking = :id
+            LIMIT 1";
+        $st = $this->conn->prepare($sql);
+        $st->execute([':id' => $MaKhachTrongBooking]);
+        return $st->fetch(PDO::FETCH_ASSOC);
+    }
 }

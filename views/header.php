@@ -132,7 +132,7 @@
                                 <a class="nav-link" href="?act=addBooking">Tạo Booking Mới</a>
                             </nav>
                         </div>
-
+<!-- 
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
                             data-bs-target="#collapseThanhToan" aria-expanded="false" aria-controls="collapseThanhToan">
                             <div class="sb-nav-link-icon"><i class="fas fa-money-bill-wave"></i></div>
@@ -144,7 +144,7 @@
                                 <a class="nav-link" href="?act=listThanhToan">Danh Sách Thanh Toán</a>
                                 <a class="nav-link" href="?act=addThanhToan">Thêm Thanh Toán</a>
                             </nav>
-                        </div>
+                        </div> -->
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
                             data-bs-target="#collapseNhatKy" aria-expanded="false" aria-controls="collapseNhatKy">
                             <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>

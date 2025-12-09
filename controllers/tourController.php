@@ -38,7 +38,8 @@ class tourController
     public function addTourProcess()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            // Nhận dữ liệu từ form
+
+            // ===== A) Thông tin tour (như bạn đang làm) =====
             $MaCodeTour = $_POST['MaCodeTour'];
             $TenTour = $_POST['TenTour'];
             $MaDanhMuc = $_POST['MaDanhMuc'];
@@ -55,42 +56,69 @@ class tourController
             $DuongDanDatTour = $_POST['DuongDanDatTour'] ?? null;
             $TrangThai = $_POST['TrangThai'];
 
-            // Xử lý upload ảnh
+            // ===== Upload ảnh (như bạn) =====
             $LinkAnhBia = null;
             if (!empty($_FILES['LinkAnhBia']['name'])) {
                 $uploadDir = "uploads/";
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0777, true);
-                }
+                if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
                 $fileName = time() . "_" . basename($_FILES['LinkAnhBia']['name']);
                 $targetPath = $uploadDir . $fileName;
+
                 if (move_uploaded_file($_FILES['LinkAnhBia']['tmp_name'], $targetPath)) {
                     $LinkAnhBia = $targetPath;
                 }
             }
 
-            // Gọi model để thêm tour
-            $this->modelTour->addTour(
-                $MaCodeTour,
-                $TenTour,
-                $MaDanhMuc,
-                $SoNgay,
-                $SoDem,
-                $DiemKhoiHanh,
-                $MoTa,
-                $GiaVonDuKien,
-                $GiaBanMacDinh,
-                $LinkAnhBia,
-                $ChinhSachBaoGom,
-                $ChinhSachKhongBaoGom,
-                $ChinhSachHuy,
-                $ChinhSachHoanTien,
-                $DuongDanDatTour,
-                $TrangThai
-            );
+            // ===== B) Nhận list giá tour & dự toán từ form =====
+            $listGia = $_POST['gia'] ?? [];        // gia[0][LoaiKhach]...
+            $listDuToan = $_POST['dutoan'] ?? [];  // dutoan[0][HangMucChi]...
 
-            header("Location: ?act=tour&success=add");
-            exit();
+            try {
+                // Transaction để “hoàn hảo”: lỗi 1 cái rollback tất cả
+                $this->modelTour->conn->beginTransaction();
+
+                // 1) Insert tour -> lấy MaTour
+                $maTourNew = $this->modelTour->addTour(
+                    $MaCodeTour,
+                    $TenTour,
+                    $MaDanhMuc,
+                    $SoNgay,
+                    $SoDem,
+                    $DiemKhoiHanh,
+                    $MoTa,
+                    $GiaVonDuKien,
+                    $GiaBanMacDinh,
+                    $LinkAnhBia,
+                    $ChinhSachBaoGom,
+                    $ChinhSachKhongBaoGom,
+                    $ChinhSachHuy,
+                    $ChinhSachHoanTien,
+                    $DuongDanDatTour,
+                    $TrangThai
+                );
+
+                if (!$maTourNew) {
+                    throw new Exception("Không thêm được tour");
+                }
+
+                // 2) Insert giá tour
+                $this->modelTour->addGiaTourBulk($maTourNew, $listGia);
+
+                // 3) Insert dự toán
+                $this->modelTour->addDuToanBulk($maTourNew, $listDuToan);
+
+                $this->modelTour->conn->commit();
+
+                header("Location: ?act=tour&success=add");
+                exit();
+            } catch (Throwable $e) {
+                $this->modelTour->conn->rollBack();
+                // debug nhanh:
+                // die($e->getMessage());
+                header("Location: ?act=addTour&error=add");
+                exit();
+            }
         }
     }
 
@@ -100,6 +128,10 @@ class tourController
         $id = $_GET['id'];
         $tour = $this->modelTour->getOneTourEdit($id);
         $listDanhMuc = $this->modelTour->getDanhMucTour();
+
+        $giaTour = $this->modelTour->getGiaTourByTourId($id);
+        $duToan  = $this->modelTour->getDuToanByTourId($id);
+
         $viewFile = './views/tour/suaTour.php';
         include './views/layout.php';
     }
@@ -108,11 +140,11 @@ class tourController
     public function editTourProcess()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $MaTour = $_POST['MaTour'];
 
-            // Xử lý upload ảnh mới
-            $target_file = $_POST['old_image']; // ảnh cũ giữ nguyên
+            $MaTour = (int)$_POST['MaTour'];
 
+            // upload ảnh mới (giữ ảnh cũ nếu không chọn)
+            $target_file = $_POST['old_image'] ?? null;
             if (isset($_FILES['LinkAnhBia']) && $_FILES['LinkAnhBia']['error'] == 0) {
                 $dir = "./uploads/";
                 if (!file_exists($dir)) mkdir($dir, 0777, true);
@@ -120,7 +152,6 @@ class tourController
                 move_uploaded_file($_FILES['LinkAnhBia']['tmp_name'], $target_file);
             }
 
-            // Gom dữ liệu đầy đủ
             $data = [
                 ':MaTour' => $MaTour,
                 ':MaCodeTour' => $_POST['MaCodeTour'],
@@ -131,7 +162,7 @@ class tourController
                 ':DiemKhoiHanh' => $_POST['DiemKhoiHanh'] ?? null,
                 ':MoTa' => $_POST['MoTa'] ?? null,
                 ':GiaVonDuKien' => $_POST['GiaVonDuKien'] ?? 0,
-                ':GiaBanMacDinh' => $_POST['GiaBanMacDinh'],
+                ':GiaBanMacDinh' => $_POST['GiaBanMacDinh'] ?? 0,
                 ':ChinhSachBaoGom' => $_POST['ChinhSachBaoGom'] ?? null,
                 ':ChinhSachKhongBaoGom' => $_POST['ChinhSachKhongBaoGom'] ?? null,
                 ':ChinhSachHuy' => $_POST['ChinhSachHuy'] ?? null,
@@ -141,14 +172,37 @@ class tourController
                 ':LinkAnhBia' => $target_file
             ];
 
-            // Cập nhật
-            $this->modelTour->updateTour($data);
+            // ✅ list giá + dự toán từ form (giống add)
+            $listGia = $_POST['gia'] ?? [];
+            $listDuToan = $_POST['dutoan'] ?? [];
 
-            // Redirect
-            header("Location: ?act=tour&success=update");
-            exit();
+            try {
+                $this->modelTour->conn->beginTransaction();
+
+                // 1) update tour
+                $ok = $this->modelTour->updateTour($data);
+                if (!$ok) throw new Exception("Update tour failed");
+
+                // 2) replace giá
+                $this->modelTour->replaceGiaTour($MaTour, $listGia);
+
+                // 3) replace dự toán
+                $this->modelTour->replaceDuToan($MaTour, $listDuToan);
+
+                $this->modelTour->conn->commit();
+
+                header("Location: ?act=tour&success=update");
+                exit();
+            } catch (Throwable $e) {
+                $this->modelTour->conn->rollBack();
+                // debug nếu cần:
+                // die($e->getMessage());
+                header("Location: ?act=editTour&id=" . $MaTour . "&error=update");
+                exit();
+            }
         }
     }
+
 
     // Xóa tour
     public function deleteTour()
@@ -163,19 +217,19 @@ class tourController
     public function xemTourHDV()
     {
         $id = $_GET['id'];
-        
+
         // Lấy thông tin tour
         $tour = $this->modelTour->getOneTour($id);
-        
+
         // Lấy lịch trình
         $lichTrinh = $this->modelTour->getLichTrinhByTourId($id);
-        
+
         // Lấy giá tour
         $giaTour = $this->modelTour->getGiaTourByTourId($id);
-        
+
         // Lấy dự toán chi phí
         $duToan = $this->modelTour->getDuToanByTourId($id);
-        
+
         $viewFile = './views/tour/xemTourHDV.php';
         include './views/layout.php';
     }

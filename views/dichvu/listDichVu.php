@@ -107,7 +107,6 @@
                             <th>Tên Dịch Vụ</th>
                             <th>NCC</th>
                             <th>Ngày S/D</th>
-                            <th>Đơn Giá</th>
                             <th>Số Lượng</th>
                             <th>Tổng Tiền</th>
                             <th>Trạng Thái</th>
@@ -123,7 +122,7 @@
                                     <td><?= htmlspecialchars($dv['TenDichVu']) ?></td>
                                     <td><?= htmlspecialchars($dv['TenNhaCungCap'] ?? '---') ?></td>
                                     <td><?= date('d/m/Y', strtotime($dv['NgaySuDung'])) ?></td>
-                                    <td><?= number_format($dv['DonGia']) ?> đ</td>
+                                    <!-- <td><?= number_format($dv['DonGia']) ?> đ</td> -->
                                     <td class="text-center"><?= $dv['SoLuong'] ?></td>
                                     <td class="money"><?= number_format($dv['TongTien']) ?> đ</td>
                                     <td>

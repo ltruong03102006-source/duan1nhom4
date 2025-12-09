@@ -152,8 +152,7 @@ switch ($act) {
         onlyAdmin();
         (new tourController())->deleteTour();
         break;
-
-
+    
     // ---- LỊCH TRÌNH ----
     case 'lichTour':
         onlyAdmin();

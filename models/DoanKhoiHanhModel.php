@@ -9,14 +9,24 @@ class DoanKhoiHanhModel
     }
 
     // Lấy danh sách đoàn
+    // File: duAn1Nhom4/models/DoanKhoiHanhModel.php
+
     public function getAllDoan()
     {
-        $sql = "SELECT dk.*, t.TenTour, nv1.HoTen AS TenHDV, nv2.HoTen AS TenTaiXe
-                FROM DoanKhoiHanh dk
-                JOIN Tour t ON dk.MaTour = t.MaTour
-                LEFT JOIN NhanVien nv1 ON dk.MaHuongDanVien = nv1.MaNhanVien
-                LEFT JOIN NhanVien nv2 ON dk.MaTaiXe = nv2.MaNhanVien
-                ORDER BY dk.MaDoan DESC";
+        // Thêm sub-query đếm tổng số khách (NguoiLon + TreEm + EmBe) từ bảng Booking
+        // Chỉ đếm các booking chưa bị hủy
+        $sql = "SELECT dk.*, t.TenTour, nv1.HoTen AS TenHDV, nv2.HoTen AS TenTaiXe,
+            (
+                SELECT COALESCE(SUM(b.TongNguoiLon + b.TongTreEm + b.TongEmBe), 0)
+                FROM Booking b
+                WHERE b.MaDoan = dk.MaDoan AND b.TrangThai != 'da_huy'
+            ) AS DaDat
+            FROM DoanKhoiHanh dk
+            JOIN Tour t ON dk.MaTour = t.MaTour
+            LEFT JOIN NhanVien nv1 ON dk.MaHuongDanVien = nv1.MaNhanVien
+            LEFT JOIN NhanVien nv2 ON dk.MaTaiXe = nv2.MaNhanVien
+            ORDER BY dk.MaDoan DESC";
+
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -101,13 +111,13 @@ class DoanKhoiHanhModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     public function getBusyNhanVienIdsByDate($date)
-{
-    // Nhân viên bận nếu TrangThai = 'ban' trong ngày đó
-    $sql = "SELECT MaNhanVien 
+    {
+        // Nhân viên bận nếu TrangThai = 'ban' trong ngày đó
+        $sql = "SELECT MaNhanVien 
             FROM lichlamviec
             WHERE NgayLamViec = :d AND TrangThai = 'ban'";
-    $stmt = $this->conn->prepare($sql);
-    $stmt->execute([':d' => $date]);
-    return array_column($stmt->fetchAll(PDO::FETCH_ASSOC), 'MaNhanVien');
-}
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':d' => $date]);
+        return array_column($stmt->fetchAll(PDO::FETCH_ASSOC), 'MaNhanVien');
+    }
 }
