@@ -71,8 +71,12 @@ class huongDanVienModel
     // Tạm thời, tôi sẽ tạo một hàm giả lập:
     public function getMaNhanVienHienTai()
     {
-        // GIẢ LẬP: ID nhân viên 2 (Trần Thị B - Vai trò huong_dan_vien)
-        // Bạn cần thay thế logic này bằng việc đọc từ $_SESSION khi đã có chức năng đăng nhập.
-        return 2; 
+        // Kiểm tra xem session có tồn tại và có chứa thông tin user không
+        if (isset($_SESSION['user']) && isset($_SESSION['user']['MaNhanVien'])) {
+            return $_SESSION['user']['MaNhanVien'];
+        }
+        
+        // Trả về 0 hoặc null nếu chưa đăng nhập
+        return 0; 
     }
 }

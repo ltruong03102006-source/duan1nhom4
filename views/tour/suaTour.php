@@ -192,17 +192,6 @@
             <textarea name="ChinhSachHoanTien"><?= htmlspecialchars($tour['ChinhSachHoanTien'] ?? '') ?></textarea>
           </div>
 
-          <div class="field">
-            <label>Giá vốn dự kiến</label>
-            <input type="number" name="GiaVonDuKien" step="0.01" min="0" value="<?= htmlspecialchars($tour['GiaVonDuKien'] ?? 0) ?>">
-            <div class="hint">Có thể để 0 nếu bạn dùng dự toán chi phí.</div>
-          </div>
-
-          <div class="field">
-            <label>Giá bán mặc định</label>
-            <input type="number" name="GiaBanMacDinh" step="0.01" min="0" value="<?= htmlspecialchars($tour['GiaBanMacDinh'] ?? 0) ?>">
-          </div>
-
         </div>
       </div>
 
@@ -234,8 +223,7 @@
             </thead>
             <tbody id="giaBody"></tbody>
           </table>
-        </div>
-        <div class="hint">Các dòng giá sẽ submit theo dạng <b>gia[index][...]</b> giống trang Add.</div>
+
 
         <script>
           window.__GIA_OLD__ = <?= json_encode($giaTour ?? [], JSON_UNESCAPED_UNICODE) ?>;

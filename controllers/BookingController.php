@@ -305,41 +305,84 @@ class BookingController
         exit();
     }
     // ====== HDV: TRANG ĐIỂM DANH RIÊNG THEO ĐOÀN ======
-    public function hdvDiemDanh()
-    {
-        $MaDoan = $_GET['MaDoan'] ?? null;
-        if (!$MaDoan) {
-            header("Location: ?act=hdvHome");
-            exit();
+    // File: controllers/BookingController.php
+// Trong hàm hdvDiemDanh()
+
+public function hdvDiemDanh() {
+    onlyHDV();
+    $MaDoan = $_GET['MaDoan'] ?? null;
+    $NgayDiemDanh = $_GET['date'] ?? date('Y-m-d');
+
+    if ($MaDoan) {
+        $doanModel = new DoanKhoiHanhModel();
+        $thongTinDoan = $doanModel->getDetail($MaDoan);
+        
+        // 1. Lấy danh sách check-in cho ngày đang chọn (Code cũ)
+        $danhSachKhach = $this->bookingModel->getDanhSachKhachVaDiemDanh($MaDoan, $NgayDiemDanh);
+
+        // 2. [MỚI] Lấy toàn bộ lịch sử để vẽ bảng ma trận
+        $historyRaw = $this->bookingModel->getHistoryDiemDanh($MaDoan);
+        
+        // Xử lý dữ liệu ma trận (Pivot Data)
+        $matrixDates = []; // Mảng chứa các ngày đã điểm danh
+        $matrixData = [];  // Mảng chứa dữ liệu [MaKhach][Ngay] = Trạng thái
+
+        foreach ($historyRaw as $row) {
+            $d = date('d/m', strtotime($row['NgayDiemDanh'])); // Lấy ngày tháng ngắn gọn
+            $matrixDates[$d] = $d; // Lưu key để không trùng
+            $matrixData[$row['MaKhachTrongBooking']][$d] = [
+                'status' => $row['TrangThai'],
+                'note' => $row['GhiChu']
+            ];
         }
+        ksort($matrixDates); // Sắp xếp ngày tăng dần
 
-        // Lấy info đoàn/tour để hiển thị tiêu đề
-        $doanInfo = $this->bookingModel->getDoanInfoForHdv($MaDoan);
-
-        // Lấy toàn bộ khách thuộc các booking của đoàn này
-        $listKhach = $this->bookingModel->getKhachTrongDoan($MaDoan);
-
-        $viewFile = './views/hdv/diemdanh.php';
-        include './views/layout.php';
+        require_once 'views/hdv/diemdanh.php';
+    } else {
+        header("Location: ?act=homeHDV");
     }
+}
 
-    // ====== HDV: XỬ LÝ ĐIỂM DANH (POST) ======
     public function hdvDiemDanhProcess()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header("Location: ?act=hdvHome");
+        onlyHDV();
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $MaDoan = $_POST['MaDoan'];
+            $NgayDiemDanh = $_POST['NgayDiemDanh']; // Ngày được chọn từ form
+            
+            $statuses = $_POST['status'] ?? []; // Mảng trạng thái [MaKhach => 1/0]
+            $notes = $_POST['note'] ?? [];      // Mảng ghi chú [MaKhach => 'text']
+
+            foreach ($statuses as $MaKhach => $TrangThai) {
+                $GhiChu = $notes[$MaKhach] ?? '';
+                
+                // Gọi model để lưu vào bảng diemdanh
+                $this->bookingModel->saveDiemDanh($MaDoan, $MaKhach, $NgayDiemDanh, $TrangThai, $GhiChu);
+            }
+
+            // Chuyển hướng lại trang điểm danh đúng ngày đó và thông báo thành công
+            header("Location: ?act=hdvDiemDanh&MaDoan=$MaDoan&date=$NgayDiemDanh&msg=success");
             exit();
         }
-
-        $MaDoan = $_POST['MaDoan'] ?? null;
-        $MaKhachTrongBooking = $_POST['MaKhachTrongBooking'] ?? null;
-        $status = isset($_POST['status']) ? (int)$_POST['status'] : 0;
-
-        if ($MaDoan && $MaKhachTrongBooking) {
-            $this->bookingModel->updateDiemDanh($MaKhachTrongBooking, $status);
-        }
-
-        header("Location: ?act=hdvDiemDanh&MaDoan=" . $MaDoan);
-        exit();
     }
+    // Thêm hàm này vào BookingController
+
+public function hdvUpdateInfoKhach() {
+    onlyHDV();
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $MaDoan = $_POST['MaDoan'];
+        $MaKhach = $_POST['MaKhach'];
+        $GhiChu = $_POST['GhiChuDacBiet'];
+        $LoaiPhong = $_POST['LoaiPhong'];
+        $currentDate = $_POST['currentDate'];
+
+        // Gọi Model cập nhật
+        $sql = "UPDATE KhachTrongBooking SET GhiChuDacBiet = ?, LoaiPhong = ? WHERE MaKhachTrongBooking = ?";
+        $stmt = $this->bookingModel->conn->prepare($sql);
+        $stmt->execute([$GhiChu, $LoaiPhong, $MaKhach]);
+
+        // Quay lại trang cũ
+        header("Location: ?act=hdvDiemDanh&MaDoan=$MaDoan&date=$currentDate&msg=update_ok");
+    }
+}
 }

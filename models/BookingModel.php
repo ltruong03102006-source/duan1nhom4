@@ -389,4 +389,81 @@ class BookingModel
         $st->execute([':id' => $MaKhachTrongBooking]);
         return $st->fetch(PDO::FETCH_ASSOC);
     }
+    // 1. Lấy danh sách khách trong đoàn KÈM THEO trạng thái điểm danh của ngày cụ thể
+    public function getDanhSachKhachVaDiemDanh($MaDoan, $NgayXem)
+    {
+        // Chúng ta join bảng Khach với bảng DiemDanh (Left Join vì có thể chưa điểm danh)
+        // DATE(d.NgayDiemDanh) để so sánh chỉ ngày tháng năm
+        $sql = "SELECT k.*, 
+                       d.TrangThai as TrangThaiDiemDanh, 
+                       d.GhiChu as GhiChuDiemDanh,
+                       d.NgayDiemDanh
+                FROM KhachTrongBooking k
+                JOIN Booking b ON k.MaBooking = b.MaBooking
+                LEFT JOIN diemdanh d ON k.MaKhachTrongBooking = d.MaKhachTrongBooking 
+                                     AND DATE(d.NgayDiemDanh) = :NgayXem
+                WHERE b.MaDoan = :MaDoan";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([
+            ':MaDoan' => $MaDoan,
+            ':NgayXem' => $NgayXem
+        ]);
+        return $stmt->fetchAll();
+    }
+
+    // 2. Lưu hoặc Cập nhật điểm danh
+    public function saveDiemDanh($MaDoan, $MaKhach, $NgayDiemDanh, $TrangThai, $GhiChu)
+    {
+        // Bước 1: Kiểm tra xem khách này ngày hôm đó đã có bản ghi điểm danh chưa
+        $sqlCheck = "SELECT MaDiemDanh FROM diemdanh 
+                     WHERE MaKhachTrongBooking = :MaKhach 
+                     AND DATE(NgayDiemDanh) = :NgayCheck";
+        
+        $stmtCheck = $this->conn->prepare($sqlCheck);
+        $stmtCheck->execute([
+            ':MaKhach' => $MaKhach, 
+            ':NgayCheck' => $NgayDiemDanh
+        ]);
+        $exists = $stmtCheck->fetch();
+
+        if ($exists) {
+            // Nếu đã tồn tại -> Update (Sửa lại trạng thái)
+            $sql = "UPDATE diemdanh 
+                    SET TrangThai = :TrangThai, GhiChu = :GhiChu, NgayDiemDanh = :NgayFull
+                    WHERE MaDiemDanh = :MaDiemDanh";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([
+                ':TrangThai' => $TrangThai,
+                ':GhiChu' => $GhiChu,
+                ':NgayFull' => $NgayDiemDanh . ' ' . date('H:i:s'), // Cập nhật lại giờ hiện tại
+                ':MaDiemDanh' => $exists['MaDiemDanh']
+            ]);
+        } else {
+            // Nếu chưa tồn tại -> Insert (Thêm mới)
+            $sql = "INSERT INTO diemdanh (MaDoan, MaKhachTrongBooking, NgayDiemDanh, TrangThai, GhiChu) 
+                    VALUES (:MaDoan, :MaKhach, :NgayFull, :TrangThai, :GhiChu)";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([
+                ':MaDoan' => $MaDoan,
+                ':MaKhach' => $MaKhach,
+                ':NgayFull' => $NgayDiemDanh . ' ' . date('H:i:s'), // Lưu cả ngày giờ
+                ':TrangThai' => $TrangThai,
+                ':GhiChu' => $GhiChu
+            ]);
+        }
+    }
+    // File: models/BookingModel.php
+
+// Thêm hàm này vào cuối class
+public function getHistoryDiemDanh($MaDoan) {
+    $sql = "SELECT d.*, k.HoTen, k.MaKhachTrongBooking 
+            FROM diemdanh d 
+            JOIN KhachTrongBooking k ON d.MaKhachTrongBooking = k.MaKhachTrongBooking
+            WHERE d.MaDoan = :MaDoan
+            ORDER BY d.NgayDiemDanh ASC";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([':MaDoan' => $MaDoan]);
+    return $stmt->fetchAll();
+}
 }

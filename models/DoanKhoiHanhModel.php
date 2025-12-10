@@ -120,4 +120,9 @@ class DoanKhoiHanhModel
         $stmt->execute([':d' => $date]);
         return array_column($stmt->fetchAll(PDO::FETCH_ASSOC), 'MaNhanVien');
     }
+    public function getDetail($MaDoan)
+    {
+        // Tận dụng luôn hàm getOneDoan đã có sẵn để đỡ phải viết lại SQL
+        return $this->getOneDoan($MaDoan);
+    }
 }

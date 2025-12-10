@@ -622,7 +622,10 @@ switch ($act) {
         onlyHDV();
         (new NhatKyTourController())->addProcess();
         break;
-
+        
+        case 'hdvUpdateInfoKhach':
+    (new BookingController())->hdvUpdateInfoKhach();
+    break;
 
 
     // ====================== DEFAULT ======================
