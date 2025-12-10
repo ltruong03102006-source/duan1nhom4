@@ -285,6 +285,12 @@
                 ?>
             </div>
         <?php endif; ?>
+        
+        <?php if (isset($_GET['error']) && $_GET['error'] == 'in_use'): ?>
+            <div style="padding: 15px; margin-bottom: 20px; background: #f8d7da; color: #721c24; border: 1px solid #f5c2c7; border-radius: 6px;">
+                ❌ Không thể xóa Tour này vì đang có Booking hoặc Đoàn khởi hành sử dụng. Vui lòng xóa hoặc chuyển Booking/Đoàn sang Tour khác trước.
+            </div>
+        <?php endif; ?>
 
         <a href="?act=addTour" class="btn-add">+ Thêm Tour Mới</a>
 
@@ -326,12 +332,10 @@
                             </div>
                         </td>
 
-                        <!-- Dự toán chi phí (thay cho Giá vốn) -->
                         <td class="price">
                             <?= number_format($tour['TongDuToan'] ?? 0, 0, ',', '.') ?>đ
                         </td>
 
-                        <!-- Giá bán tách theo NL / TE / EB -->
                         <td>
                             <div style="line-height:1.7">
                                 <div>

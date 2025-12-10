@@ -173,8 +173,32 @@
                 <i class="fas fa-arrow-left"></i> Quay lại
             </a>
         </header>
+        // File: duan1nhom4/views/tour/suaLichTrinh.php
 
+// ...
+        <?php if (isset($_GET['error'])): ?>
+            <div class="alert alert-danger" style="margin-bottom: 20px;">
+                ❌ 
+                <?php
+                    switch ($_GET['error']) {
+                        case 'validation':
+                            echo 'Vui lòng nhập đầy đủ Tiêu đề ngày và Ngày thứ (phải > 0).';
+                            break;
+                        case 'ngay_trung':
+                            echo 'Ngày thứ này đã tồn tại trong lịch trình của tour. Vui lòng chọn ngày khác.';
+                            break;
+                      
+                        default:
+                            echo 'Có lỗi xảy ra khi cập nhật lịch trình.';
+                            break;
+                    }
+                ?>
+            </div>
+        <?php endif; ?>
+// ...
+        
         <div class="content-grid">
+       
             
             <div class="card form-section">
                 <div class="card-header">

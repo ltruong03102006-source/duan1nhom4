@@ -91,23 +91,16 @@
                 </div>
                 
                 <div class="row mb-3">
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label">Ngày Sinh</label>
                         <input type="date" name="NgaySinh" class="form-control">
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label">Giới Tính</label>
                         <select name="GioiTinh" class="form-select">
                             <option value="nam">Nam</option>
                             <option value="nu">Nữ</option>
                             <option value="khac">Khác</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Trạng Thái</label>
-                        <select name="TrangThai" class="form-select">
-                            <option value="dang_lam">Đang làm</option>
-                            <option value="da_nghi">Đã nghỉ</option>
                         </select>
                     </div>
                 </div>

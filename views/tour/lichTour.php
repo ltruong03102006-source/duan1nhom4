@@ -203,6 +203,32 @@
                 </form>
             </div>
         </header>
+                            <?php if (isset($_GET['success'])): ?>
+            <div class="alert alert-success" style="margin-bottom: 20px;">
+                ✅ Cập nhật lịch trình thành công!
+            </div>
+        <?php endif; ?>
+        
+        <?php if (isset($_GET['error'])): ?>
+            <div class="alert alert-danger" style="margin-bottom: 20px;">
+                ❌ 
+                <?php
+                    switch ($_GET['error']) {
+                        case 'validation':
+                            echo 'Vui lòng nhập đầy đủ Tiêu đề ngày và Ngày thứ (phải > 0).';
+                            break;
+                        case 'ngay_trung':
+                            echo 'Ngày thứ này đã tồn tại trong lịch trình. Vui lòng chọn ngày khác.';
+                            break;
+                       
+                        default:
+                            echo 'Có lỗi xảy ra khi thêm/sửa lịch trình.';
+                            break;
+                    }
+                ?>
+            </div>
+        <?php endif; ?>
+
 
         <div class="content-grid">
             

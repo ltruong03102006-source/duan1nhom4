@@ -41,6 +41,9 @@
     }
     .alert-danger{background:#ffebee;border:1px solid #ffcdd2;color:#b71c1c}
     .alert-success{background:#d4edda;border:1px solid #c3e6cb;color:#155724}
+    
+    /* Class hiển thị lỗi validation */
+    .text-danger { color: #e53935; font-size: 12px; font-weight: 600; font-style: italic; margin-top: 4px; display: block; }
 
     table{width:100%;border-collapse:collapse}
     th,td{padding:10px 10px;text-align:left;font-size:13px;border-bottom:1px solid #eee;vertical-align:top}
@@ -68,21 +71,14 @@
 
   <div class="container">
 
-    <?php if (isset($_GET['error'])): ?>
+    <?php if (isset($errors['system'])): ?>
       <div class="alert alert-danger">
-        <?php
-          switch($_GET['error']){
-            case 'missing': echo '⚠️ Thiếu thông tin bắt buộc. Vui lòng kiểm tra lại.'; break;
-            case 'code_exists': echo '⚠️ Mã tour đã tồn tại. Hãy dùng mã khác.'; break;
-            default: echo '⚠️ Có lỗi hệ thống khi thêm tour. Vui lòng thử lại.'; break;
-          }
-        ?>
+        <?= htmlspecialchars($errors['system']) ?>
       </div>
     <?php endif; ?>
 
     <form action="?act=addTourProcess" method="POST" enctype="multipart/form-data">
 
-      <!-- A) THÔNG TIN TOUR -->
       <div class="card">
         <div class="actions-bar">
           <h2 style="margin:0">A) Thông tin tour</h2>
@@ -92,51 +88,77 @@
         <div class="grid" style="margin-top:12px">
           <div class="field">
             <label>Mã Tour (MaCodeTour) *</label>
-            <input name="MaCodeTour" required placeholder="VD: TOUR2025_001">
-            <div class="hint">Mã duy nhất, không trùng.</div>
+            <input name="MaCodeTour" placeholder="VD: TOUR2025_001" 
+                   value="<?= isset($oldData['MaCodeTour']) ? htmlspecialchars($oldData['MaCodeTour']) : '' ?>">
+            
+            <?php if (isset($errors['MaCodeTour'])): ?>
+                <span class="text-danger"><?= $errors['MaCodeTour'] ?></span>
+            <?php endif; ?>
           </div>
 
           <div class="field">
             <label>Tên Tour *</label>
-            <input name="TenTour" required placeholder="VD: Đà Nẵng - Hội An 3N2Đ">
+            <input name="TenTour" placeholder="VD: Đà Nẵng - Hội An 3N2Đ"
+                   value="<?= isset($oldData['TenTour']) ? htmlspecialchars($oldData['TenTour']) : '' ?>">
+            
+            <?php if (isset($errors['TenTour'])): ?>
+                <span class="text-danger"><?= $errors['TenTour'] ?></span>
+            <?php endif; ?>
           </div>
 
           <div class="field">
             <label>Danh Mục *</label>
-            <select name="MaDanhMuc" required>
+            <select name="MaDanhMuc">
               <option value="">-- Chọn danh mục --</option>
               <?php foreach ($listDanhMuc as $dm): ?>
-                <option value="<?= $dm['MaDanhMuc'] ?>"><?= htmlspecialchars($dm['TenDanhMuc']) ?></option>
+                <option value="<?= $dm['MaDanhMuc'] ?>" 
+                    <?= (isset($oldData['MaDanhMuc']) && $oldData['MaDanhMuc'] == $dm['MaDanhMuc']) ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($dm['TenDanhMuc']) ?>
+                </option>
               <?php endforeach; ?>
             </select>
+            <?php if (isset($errors['MaDanhMuc'])): ?>
+                <span class="text-danger"><?= $errors['MaDanhMuc'] ?></span>
+            <?php endif; ?>
           </div>
 
           <div class="field">
             <label>Số Ngày</label>
-            <input type="number" name="SoNgay" min="0" value="0">
+            <input type="number" name="SoNgay" min="0" 
+                   value="<?= isset($oldData['SoNgay']) ? $oldData['SoNgay'] : '0' ?>">
+            
+            <?php if (isset($errors['SoNgay'])): ?>
+                <span class="text-danger"><?= $errors['SoNgay'] ?></span>
+            <?php endif; ?>
           </div>
 
           <div class="field">
             <label>Số Đêm</label>
-            <input type="number" name="SoDem" min="0" value="0">
+            <input type="number" name="SoDem" min="0" 
+                   value="<?= isset($oldData['SoDem']) ? $oldData['SoDem'] : '0' ?>">
+            
+            <?php if (isset($errors['SoDem'])): ?>
+                <span class="text-danger"><?= $errors['SoDem'] ?></span>
+            <?php endif; ?>
           </div>
 
           <div class="field">
             <label>Điểm Khởi Hành</label>
-            <input name="DiemKhoiHanh" placeholder="VD: Hà Nội / TP.HCM">
+            <input name="DiemKhoiHanh" placeholder="VD: Hà Nội / TP.HCM"
+                   value="<?= isset($oldData['DiemKhoiHanh']) ? htmlspecialchars($oldData['DiemKhoiHanh']) : '' ?>">
           </div>
 
           <div class="field">
             <label>Trạng Thái</label>
             <select name="TrangThai">
-              <option value="hoat_dong">Hoạt động</option>
-              <option value="khong_hoat_dong">Không hoạt động</option>
+              <option value="hoat_dong" <?= (isset($oldData['TrangThai']) && $oldData['TrangThai'] == 'hoat_dong') ? 'selected' : '' ?>>Hoạt động</option>
+              <option value="khong_hoat_dong" <?= (isset($oldData['TrangThai']) && $oldData['TrangThai'] == 'khong_hoat_dong') ? 'selected' : '' ?>>Không hoạt động</option>
             </select>
           </div>
 
           <div class="field row-2">
             <label>Mô Tả</label>
-            <textarea name="MoTa" placeholder="Mô tả ngắn về tour..."></textarea>
+            <textarea name="MoTa" placeholder="Mô tả ngắn về tour..."><?= isset($oldData['MoTa']) ? htmlspecialchars($oldData['MoTa']) : '' ?></textarea>
           </div>
 
           <div class="field row-1-2">
@@ -145,101 +167,54 @@
             <div class="hint">Chỉ chọn file ảnh (jpg/png/webp...).</div>
           </div>
 
-          <div class="field row-3">
-            <label>Đường Dẫn Đặt Tour</label>
-            <input name="DuongDanDatTour" placeholder="https://...">
-          </div>
+          
 
           <div class="field row-2">
             <label>Chính sách bao gồm</label>
-            <textarea name="ChinhSachBaoGom" placeholder="VD: Vé máy bay, khách sạn, ăn uống..."></textarea>
+            <textarea name="ChinhSachBaoGom"><?= isset($oldData['ChinhSachBaoGom']) ? htmlspecialchars($oldData['ChinhSachBaoGom']) : '' ?></textarea>
           </div>
-
           <div class="field row-2">
             <label>Chính sách không bao gồm</label>
-            <textarea name="ChinhSachKhongBaoGom" placeholder="VD: Chi phí cá nhân..."></textarea>
+            <textarea name="ChinhSachKhongBaoGom"><?= isset($oldData['ChinhSachKhongBaoGom']) ? htmlspecialchars($oldData['ChinhSachKhongBaoGom']) : '' ?></textarea>
           </div>
-
           <div class="field row-2">
             <label>Chính sách hủy</label>
-            <textarea name="ChinhSachHuy" placeholder="Điều kiện hủy tour..."></textarea>
+            <textarea name="ChinhSachHuy"><?= isset($oldData['ChinhSachHuy']) ? htmlspecialchars($oldData['ChinhSachHuy']) : '' ?></textarea>
           </div>
-
           <div class="field row-2">
             <label>Chính sách hoàn tiền</label>
-            <textarea name="ChinhSachHoanTien" placeholder="Điều kiện hoàn tiền..."></textarea>
+            <textarea name="ChinhSachHoanTien"><?= isset($oldData['ChinhSachHoanTien']) ? htmlspecialchars($oldData['ChinhSachHoanTien']) : '' ?></textarea>
           </div>
         </div>
       </div>
 
-      <!-- B) GIÁ TOUR -->
       <div class="card">
         <div class="table-tools">
-          <div>
-            <h3 style="margin:0">B) Giá Tour</h3>
-            <div class="small">Thêm nhiều dòng giá theo loại khách / mùa / khuyến mãi.</div>
-          </div>
-          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-            <span class="badge badge-blue">GiaTour</span>
-            <button type="button" class="btn btn-primary" id="btnAddGia">+ Thêm dòng giá</button>
-          </div>
+          <div><h3 style="margin:0">B) Giá Tour</h3><div class="small">Thêm nhiều dòng giá theo loại khách.</div></div>
+          <div style="display:flex;gap:10px;align-items:center"><span class="badge badge-blue">GiaTour</span><button type="button" class="btn btn-primary" id="btnAddGia">+ Thêm dòng giá</button></div>
         </div>
-
         <div class="table-wrap">
           <table>
-            <thead>
-              <tr>
-                <th>Loại khách</th>
-                <th>Giá tiền</th>
-                <th>Áp dụng từ</th>
-                <th>Áp dụng đến</th>
-                <th>Loại mùa</th>
-                <th>% giảm</th>
-                <th>Tên khuyến mãi</th>
-                <th class="right">Xóa</th>
-              </tr>
-            </thead>
+            <thead><tr><th>Loại khách</th><th>Giá tiền</th><th>Áp dụng từ</th><th>Áp dụng đến</th><th>Loại mùa</th><th>% giảm</th><th>Tên khuyến mãi</th><th class="right">Xóa</th></tr></thead>
             <tbody id="giaBody"></tbody>
           </table>
         </div>
-        <div class="hint">Gợi ý: Tạo ít nhất 1 dòng cho <b>Người lớn</b> để dễ quản lý giá.</div>
       </div>
 
-      <!-- C) DỰ TOÁN -->
       <div class="card">
         <div class="table-tools">
-          <div>
-            <h3 style="margin:0">C) Dự Toán Chi Phí</h3>
-            <div class="small">Ghi các hạng mục chi dự kiến để kiểm soát lợi nhuận.</div>
-          </div>
-          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-            <span class="badge badge-orange">DuToanChiPhiTour</span>
-            <button type="button" class="btn btn-primary" id="btnAddDuToan">+ Thêm hạng mục</button>
-          </div>
+          <div><h3 style="margin:0">C) Dự Toán Chi Phí</h3><div class="small">Ghi các hạng mục chi dự kiến.</div></div>
+          <div style="display:flex;gap:10px;align-items:center"><span class="badge badge-orange">DuToanChiPhiTour</span><button type="button" class="btn btn-primary" id="btnAddDuToan">+ Thêm hạng mục</button></div>
         </div>
-
         <div class="table-wrap">
           <table>
-            <thead>
-              <tr>
-                <th>Hạng mục chi</th>
-                <th>Số tiền dự kiến</th>
-                <th>Ghi chú</th>
-                <th class="right">Xóa</th>
-              </tr>
-            </thead>
+            <thead><tr><th>Hạng mục chi</th><th>Số tiền dự kiến</th><th>Ghi chú</th><th class="right">Xóa</th></tr></thead>
             <tbody id="duToanBody"></tbody>
           </table>
         </div>
-
         <div class="sticky-total">
-          <div style="font-weight:800">
-            Tổng dự toán: <span class="money" id="tongDuToan">0</span> đ
-          </div>
-
-          <button type="submit" class="btn btn-success">
-            ✅ Lưu tour (kèm giá + dự toán)
-          </button>
+          <div style="font-weight:800">Tổng dự toán: <span class="money" id="tongDuToan">0</span> đ</div>
+          <button type="submit" class="btn btn-success">✅ Lưu tour</button>
         </div>
       </div>
 
@@ -250,46 +225,20 @@
   let giaIndex = 0;
   let duToanIndex = 0;
 
-  function formatVN(n){
-    try { return Number(n||0).toLocaleString('vi-VN'); }
-    catch(e){ return n; }
-  }
+  function formatVN(n){ try { return Number(n||0).toLocaleString('vi-VN'); } catch(e){ return n; } }
 
   function addGiaRow(defaultLoai='nguoi_lon'){
     const i = giaIndex++;
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td>
-        <select name="gia[${i}][LoaiKhach]" required style="padding:8px;border:1px solid #ddd;border-radius:8px;width:100%">
-          <option value="nguoi_lon">Người lớn</option>
-          <option value="tre_em">Trẻ em</option>
-          <option value="em_be">Em bé</option>
-        </select>
-      </td>
-      <td>
-        <input type="number" name="gia[${i}][GiaTien]" required min="0" step="0.01"
-               style="padding:8px;border:1px solid #ddd;border-radius:8px;width:100%" placeholder="VD: 3500000">
-      </td>
-      <td><input type="date" name="gia[${i}][ApDungTuNgay]" style="padding:8px;border:1px solid #ddd;border-radius:8px;width:100%"></td>
-      <td><input type="date" name="gia[${i}][ApDungDenNgay]" style="padding:8px;border:1px solid #ddd;border-radius:8px;width:100%"></td>
-      <td>
-        <select name="gia[${i}][LoaiMua]" style="padding:8px;border:1px solid #ddd;border-radius:8px;width:100%">
-          <option value="binh_thuong">Bình thường</option>
-          <option value="cao_diem">Cao điểm</option>
-          <option value="thap_diem">Thấp điểm</option>
-        </select>
-      </td>
-      <td>
-        <input type="number" name="gia[${i}][PhanTramGiamGia]" min="0" max="100" step="0.01" value="0"
-               style="padding:8px;border:1px solid #ddd;border-radius:8px;width:100%">
-      </td>
-      <td>
-        <input type="text" name="gia[${i}][TenKhuyenMai]" placeholder="VD: Summer Sale"
-               style="padding:8px;border:1px solid #ddd;border-radius:8px;width:100%">
-      </td>
-      <td class="right">
-        <button type="button" class="rm-btn rm-btn-danger">Xóa</button>
-      </td>
+      <td><select name="gia[${i}][LoaiKhach]" required style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px"><option value="nguoi_lon">Người lớn</option><option value="tre_em">Trẻ em</option><option value="em_be">Em bé</option></select></td>
+      <td><input type="number" name="gia[${i}][GiaTien]" required min="0" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px"></td>
+      <td><input type="date" name="gia[${i}][ApDungTuNgay]" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px"></td>
+      <td><input type="date" name="gia[${i}][ApDungDenNgay]" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px"></td>
+      <td><select name="gia[${i}][LoaiMua]" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px"><option value="binh_thuong">Bình thường</option><option value="cao_diem">Cao điểm</option><option value="thap_diem">Thấp điểm</option></select></td>
+      <td><input type="number" name="gia[${i}][PhanTramGiamGia]" min="0" max="100" value="0" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px"></td>
+      <td><input type="text" name="gia[${i}][TenKhuyenMai]" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px"></td>
+      <td class="right"><button type="button" class="rm-btn rm-btn-danger">Xóa</button></td>
     `;
     tr.querySelector('select[name^="gia"] option[value="'+defaultLoai+'"]').selected = true;
     tr.querySelector('.rm-btn').onclick = () => tr.remove();
@@ -298,10 +247,7 @@
 
   function calcTong(){
     let sum = 0;
-    document.querySelectorAll('#duToanBody input.money-input').forEach(inp => {
-      const v = Number(inp.value || 0);
-      sum += isNaN(v) ? 0 : v;
-    });
+    document.querySelectorAll('#duToanBody input.money-input').forEach(inp => { const v = Number(inp.value || 0); sum += isNaN(v) ? 0 : v; });
     document.getElementById('tongDuToan').innerText = formatVN(sum);
   }
 
@@ -309,21 +255,10 @@
     const i = duToanIndex++;
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td>
-        <input type="text" name="dutoan[${i}][HangMucChi]" required
-               style="padding:8px;border:1px solid #ddd;border-radius:8px;width:100%" placeholder="VD: Khách sạn / Ăn uống / Vé tham quan">
-      </td>
-      <td>
-        <input type="number" class="money-input" name="dutoan[${i}][SoTienDuKien]" required min="0" step="0.01"
-               style="padding:8px;border:1px solid #ddd;border-radius:8px;width:100%" placeholder="VD: 12000000">
-      </td>
-      <td>
-        <input type="text" name="dutoan[${i}][GhiChu]"
-               style="padding:8px;border:1px solid #ddd;border-radius:8px;width:100%" placeholder="Ghi chú...">
-      </td>
-      <td class="right">
-        <button type="button" class="rm-btn rm-btn-danger">Xóa</button>
-      </td>
+      <td><input type="text" name="dutoan[${i}][HangMucChi]" required style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px"></td>
+      <td><input type="number" class="money-input" name="dutoan[${i}][SoTienDuKien]" required min="0" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px"></td>
+      <td><input type="text" name="dutoan[${i}][GhiChu]" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px"></td>
+      <td class="right"><button type="button" class="rm-btn rm-btn-danger">Xóa</button></td>
     `;
     tr.querySelector('.rm-btn').onclick = () => { tr.remove(); calcTong(); };
     tr.querySelector('.money-input').addEventListener('input', calcTong);
@@ -334,7 +269,6 @@
   document.getElementById('btnAddGia').addEventListener('click', () => addGiaRow());
   document.getElementById('btnAddDuToan').addEventListener('click', () => addDuToanRow());
 
-  // Tạo mặc định 1 dòng giá + 1 dòng dự toán
   addGiaRow('nguoi_lon');
   addDuToanRow();
 </script>

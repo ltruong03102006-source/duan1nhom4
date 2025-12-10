@@ -53,4 +53,17 @@ class danhMuctourModel
         $stmt->bindParam(':moTa', $moTa);
         return $stmt->execute();
     }
+    // ... (các hàm khác)
+
+    // [MỚI] Kiểm tra xem danh mục có đang được Tour nào sử dụng không
+    public function checkIfUsedByTour($id)
+    {
+        // Truy vấn số lượng bản ghi trong bảng Tour có MaDanhMuc = :id
+        $sql = "SELECT COUNT(*) FROM Tour WHERE MaDanhMuc = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        // Trả về TRUE nếu số lượng lớn hơn 0
+        return $stmt->fetchColumn() > 0;
+    }
 }

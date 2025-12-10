@@ -37,6 +37,7 @@ require_once './controllers/NhatKyTourController.php';
 // ======================================================
 // 3️⃣  Require Models
 // ======================================================
+require_once './models/ThongKeModel.php';
 require_once './models/ProductModel.php';
 require_once './models/danhMuctourModel.php';
 require_once './models/tourModel.php';

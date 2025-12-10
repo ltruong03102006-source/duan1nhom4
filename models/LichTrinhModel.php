@@ -18,7 +18,40 @@ class LichTrinhModel
         $stmt->execute();
         return $stmt->fetchAll();
     }
+    // --- BỔ SUNG vào duan1nhom4/models/LichTrinhModel.php ---
 
+    // Kiểm tra NgayThu đã tồn tại cho Tour chưa (ExcludeId dùng cho chức năng sửa)
+    public function isNgayThuExist($maTour, $ngayThu, $excludeId = null)
+    {
+        $sql = "SELECT COUNT(*) FROM LichTrinh 
+                WHERE MaTour = :maTour AND NgayThu = :ngayThu";
+        
+        $params = [
+            ':maTour' => $maTour,
+            ':ngayThu' => $ngayThu
+        ];
+
+        if ($excludeId !== null) {
+            $sql .= " AND MaLichTrinh != :excludeId";
+            $params[':excludeId'] = $excludeId;
+        }
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchColumn() > 0;
+    }
+    public function reorderLichTrinh($maTour, $deletedNgayThu)
+    {
+        // Cập nhật tất cả các bản ghi có NgayThu lớn hơn ngày bị xóa, giảm NgayThu đi 1
+        $sql = "UPDATE LichTrinh 
+                SET NgayThu = NgayThu - 1 
+                WHERE MaTour = :maTour AND NgayThu > :deletedNgayThu";
+                
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':maTour', $maTour);
+        $stmt->bindParam(':deletedNgayThu', $deletedNgayThu);
+        return $stmt->execute();
+    }
     // Lấy thông tin 1 lịch trình theo ID
     public function getLichTrinhById($id)
     {

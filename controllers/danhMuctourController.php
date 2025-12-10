@@ -33,11 +33,21 @@ class danhMuctourController
     public function deleteDanhMucTour()
     {
         $id = $_GET['id'];
+        
+        // [MỚI] 1. Kiểm tra ràng buộc trước khi xóa
+        if ($this->modelDanhmuctour->checkIfUsedByTour($id)) {
+            // Nếu có Tour đang sử dụng, redirect với thông báo lỗi
+            header("Location: ?act=danhMuctour&error=in_use");
+            exit();
+        }
+        
+        // 2. Nếu không có ràng buộc, tiến hành xóa
         $this->modelDanhmuctour->deleteDanhMucTour($id);
 
-        header("Location: ?act=danhMuctour");
+        header("Location: ?act=danhMuctour&success=deleted");
         exit();
     }
+// ...
     // TRANG SỬA
     public function editDanhMucTour()
     {

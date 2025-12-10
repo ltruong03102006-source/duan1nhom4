@@ -41,6 +41,9 @@
     .alert-danger{background:#ffebee;border:1px solid #ffcdd2;color:#b71c1c}
     .alert-success{background:#d4edda;border:1px solid #c3e6cb;color:#155724}
 
+    /* Class hiển thị lỗi validation */
+    .text-danger { color: #e53935; font-size: 12px; font-weight: 600; font-style: italic; margin-top: 4px; display: block; }
+    
     table{width:100%;border-collapse:collapse}
     th,td{padding:10px 10px;text-align:left;font-size:13px;border-bottom:1px solid #eee;vertical-align:top}
     th{background:#0d47a1;color:#fff;font-weight:700}
@@ -68,20 +71,20 @@
 
   <div class="container">
 
+    <?php if (isset($errors['system'])): ?>
+      <div class="alert alert-danger">
+        <?= htmlspecialchars($errors['system']) ?>
+      </div>
+    <?php endif; ?>
+
     <?php if (isset($_GET['success'])): ?>
       <div class="alert alert-success">✅ Cập nhật tour thành công!</div>
     <?php endif; ?>
 
-    <?php if (isset($_GET['error'])): ?>
-      <div class="alert alert-danger">⚠️ Có lỗi khi cập nhật. Vui lòng kiểm tra lại!</div>
-    <?php endif; ?>
-
     <form action="?act=editTourProcess" method="POST" enctype="multipart/form-data">
 
-      <!-- Hidden ID -->
       <input type="hidden" name="MaTour" value="<?= (int)$tour['MaTour'] ?>">
 
-      <!-- A) THÔNG TIN TOUR -->
       <div class="card">
         <div class="actions-bar">
           <h2 style="margin:0">A) Thông tin tour</h2>
@@ -92,11 +95,17 @@
           <div class="field">
             <label>Mã Tour (MaCodeTour) *</label>
             <input name="MaCodeTour" required value="<?= htmlspecialchars($tour['MaCodeTour'] ?? '') ?>" />
+            <?php if (isset($errors['MaCodeTour'])): ?>
+                <span class="text-danger"><?= $errors['MaCodeTour'] ?></span>
+            <?php endif; ?>
           </div>
 
           <div class="field">
             <label>Tên Tour *</label>
             <input name="TenTour" required value="<?= htmlspecialchars($tour['TenTour'] ?? '') ?>" />
+            <?php if (isset($errors['TenTour'])): ?>
+                <span class="text-danger"><?= $errors['TenTour'] ?></span>
+            <?php endif; ?>
           </div>
 
           <div class="field">
@@ -105,21 +114,30 @@
               <option value="">-- Chọn danh mục --</option>
               <?php foreach ($listDanhMuc as $dm): ?>
                 <option value="<?= $dm['MaDanhMuc'] ?>"
-                  <?= ((int)$tour['MaDanhMuc'] === (int)$dm['MaDanhMuc']) ? 'selected' : '' ?>>
+                  <?= ((int)($tour['MaDanhMuc'] ?? 0) === (int)$dm['MaDanhMuc']) ? 'selected' : '' ?>>
                   <?= htmlspecialchars($dm['TenDanhMuc']) ?>
                 </option>
               <?php endforeach; ?>
             </select>
+            <?php if (isset($errors['MaDanhMuc'])): ?>
+                <span class="text-danger"><?= $errors['MaDanhMuc'] ?></span>
+            <?php endif; ?>
           </div>
 
           <div class="field">
             <label>Số Ngày</label>
             <input type="number" name="SoNgay" min="0" value="<?= (int)($tour['SoNgay'] ?? 0) ?>">
+            <?php if (isset($errors['SoNgay'])): ?>
+                <span class="text-danger"><?= $errors['SoNgay'] ?></span>
+            <?php endif; ?>
           </div>
 
           <div class="field">
             <label>Số Đêm</label>
             <input type="number" name="SoDem" min="0" value="<?= (int)($tour['SoDem'] ?? 0) ?>">
+            <?php if (isset($errors['SoDem'])): ?>
+                <span class="text-danger"><?= $errors['SoDem'] ?></span>
+            <?php endif; ?>
           </div>
 
           <div class="field">
@@ -152,12 +170,8 @@
             <div class="hint">Nếu không chọn ảnh mới, hệ thống giữ ảnh cũ.</div>
           </div>
 
-          <div class="field row-3">
-            <label>Đường Dẫn Đặt Tour</label>
-            <input name="DuongDanDatTour" value="<?= htmlspecialchars($tour['DuongDanDatTour'] ?? '') ?>" />
-          </div>
+         
 
-          <!-- (Giữ nguyên fields bạn đang có) -->
           <div class="field row-2">
             <label>Chính sách bao gồm</label>
             <textarea name="ChinhSachBaoGom"><?= htmlspecialchars($tour['ChinhSachBaoGom'] ?? '') ?></textarea>
@@ -178,7 +192,6 @@
             <textarea name="ChinhSachHoanTien"><?= htmlspecialchars($tour['ChinhSachHoanTien'] ?? '') ?></textarea>
           </div>
 
-          <!-- Bạn có thể bỏ 2 field này nếu đã chuyển qua giá + dự toán -->
           <div class="field">
             <label>Giá vốn dự kiến</label>
             <input type="number" name="GiaVonDuKien" step="0.01" min="0" value="<?= htmlspecialchars($tour['GiaVonDuKien'] ?? 0) ?>">
@@ -193,7 +206,6 @@
         </div>
       </div>
 
-      <!-- B) GIÁ TOUR -->
       <div class="card">
         <div class="table-tools">
           <div>
@@ -225,13 +237,11 @@
         </div>
         <div class="hint">Các dòng giá sẽ submit theo dạng <b>gia[index][...]</b> giống trang Add.</div>
 
-        <!-- Đổ dữ liệu cũ từ PHP sang JS -->
         <script>
           window.__GIA_OLD__ = <?= json_encode($giaTour ?? [], JSON_UNESCAPED_UNICODE) ?>;
         </script>
       </div>
 
-      <!-- C) DỰ TOÁN -->
       <div class="card">
         <div class="table-tools">
           <div>

@@ -50,7 +50,8 @@ class NhanVienController
                 ':NgonNgu' => $_POST['NgonNgu'] ?? null,
                 ':SoNamKinhNghiem' => $_POST['SoNamKinhNghiem'] ?? 0,
                 ':ChuyenMon' => $_POST['ChuyenMon'] ?? null,
-                ':TrangThai' => $_POST['TrangThai'] ?? 'dang_lam'
+                // --- SỬA Ở ĐÂY: Gán cứng trạng thái mặc định là đang làm ---
+                ':TrangThai' => 'dang_lam'
             ];
 
             $this->modelNhanVien->addNhanVien($data);
@@ -102,7 +103,8 @@ class NhanVienController
                 ':NgonNgu' => $_POST['NgonNgu'] ?? null,
                 ':SoNamKinhNghiem' => $_POST['SoNamKinhNghiem'] ?? 0,
                 ':ChuyenMon' => $_POST['ChuyenMon'] ?? null,
-                ':TrangThai' => $_POST['TrangThai'] ?? 'dang_lam'
+                // Giữ nguyên dòng này ở phần UPDATE để admin có thể sửa trạng thái
+                ':TrangThai' => $_POST['TrangThai'] ?? 'dang_lam' 
             ];
 
             $this->modelNhanVien->updateNhanVien($data);

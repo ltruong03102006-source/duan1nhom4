@@ -129,7 +129,18 @@
 
     <div class="container">
 
-        <!-- FORM THÊM DANH MỤC -->
+        <?php if (isset($_GET['error']) && $_GET['error'] == 'in_use'): ?>
+            <div style="padding: 15px; margin-bottom: 20px; background: #f8d7da; color: #721c24; border: 1px solid #f5c2c7; border-radius: 6px;">
+                ❌ Không thể xóa danh mục này vì đang có Tour sử dụng. Vui lòng xóa hoặc chuyển Tour sang danh mục khác trước.
+            </div>
+        <?php endif; ?>
+        
+        <?php if (isset($_GET['success']) && $_GET['success'] == 'deleted'): ?>
+            <div style="padding: 15px; margin-bottom: 20px; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 6px;">
+                ✅ Xóa danh mục thành công!
+            </div>
+        <?php endif; ?>
+
         <div class="card">
             <h2>Thêm Danh Mục Tour</h2>
 
