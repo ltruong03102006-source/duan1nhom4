@@ -1,6 +1,6 @@
 <div class="container">
   <h2 class="page-title">💵 Danh Sách Thanh Toán</h2>
-  <a href="?act=addThanhToan" class="btn btn-primary mb-3">+ Thêm Thanh Toán</a>
+  <!-- <a href="?act=addThanhToan" class="btn btn-primary mb-3">+ Thêm Thanh Toán</a> -->
 
   <table class="table">
     <thead>

@@ -81,6 +81,7 @@
                                 <nav class="sb-sidenav-menu-nested nav">
                                     <a class="nav-link" href="?act=listBooking">Danh sách Booking</a>
                                     <a class="nav-link" href="?act=listDoan">Đoàn khởi hành</a>
+                                    <a class="nav-link" href="?act=listThanhToan">Lịch sử thanh toán</a>
                                 </nav>
                             </div>
 
