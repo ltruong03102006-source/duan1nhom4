@@ -320,6 +320,15 @@
             color: var(--danger);
             background: #fef2f2;
         }
+
+        /* Style riêng cho nút Tài chính khi rê chuột */
+        .btn-icon.finance:hover {
+            color: #0891b2;
+            /* Màu xanh cổ vịt đậm (Teal) */
+            background: #ecfeff;
+            /* Nền xanh rất nhạt */
+            border-color: #cffafe;
+        }
     </style>
 </head>
 
@@ -464,10 +473,17 @@
                                         <a href="?act=listDichVu&maDoan=<?= $d['MaDoan'] ?>" class="btn-icon service" title="Dịch vụ">
                                             <i class="fa-solid fa-bell-concierge"></i>
                                         </a>
+
+                                        <a href="?act=listTaiChinh&MaDoan=<?= $d['MaDoan'] ?>" class="btn-icon finance" title="Tài chính">
+                                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                                        </a>
+
                                         <a href="?act=editDoan&MaDoan=<?= $d['MaDoan'] ?>" class="btn-icon edit" title="Sửa">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </a>
-                                        <a href="?act=deleteDoan&MaDoan=<?= $d['MaDoan'] ?>" class="btn-icon delete" onclick="return confirm('Xóa đoàn này?');">
+
+                                        <a href="?act=deleteDoan&MaDoan=<?= $d['MaDoan'] ?>" class="btn-icon delete"
+                                            onclick="return confirm('Xóa đoàn này?');" title="Xóa">
                                             <i class="fa-solid fa-trash-can"></i>
                                         </a>
                                     </div>

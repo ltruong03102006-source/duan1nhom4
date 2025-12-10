@@ -202,16 +202,16 @@
       </div>
 
       <div class="card">
-        <div class="table-tools">
+        <!-- <div class="table-tools">
           <div><h3 style="margin:0">C) Dự Toán Chi Phí</h3><div class="small">Ghi các hạng mục chi dự kiến.</div></div>
           <div style="display:flex;gap:10px;align-items:center"><span class="badge badge-orange">DuToanChiPhiTour</span><button type="button" class="btn btn-primary" id="btnAddDuToan">+ Thêm hạng mục</button></div>
-        </div>
-        <div class="table-wrap">
+        </div> -->
+        <!-- <div class="table-wrap">
           <table>
             <thead><tr><th>Hạng mục chi</th><th>Số tiền dự kiến</th><th>Ghi chú</th><th class="right">Xóa</th></tr></thead>
             <tbody id="duToanBody"></tbody>
           </table>
-        </div>
+        </div> -->
         <div class="sticky-total">
           <div style="font-weight:800">Tổng dự toán: <span class="money" id="tongDuToan">0</span> đ</div>
           <button type="submit" class="btn btn-success">✅ Lưu tour</button>

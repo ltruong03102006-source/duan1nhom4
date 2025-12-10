@@ -231,7 +231,7 @@
       </div>
 
       <div class="card">
-        <div class="table-tools">
+        <!-- <div class="table-tools">
           <div>
             <h3 style="margin:0">C) Dự Toán Chi Phí</h3>
             <div class="small">Sửa / thêm / xóa nhiều hạng mục chi.</div>
@@ -240,8 +240,8 @@
             <span class="badge badge-orange">DuToanChiPhiTour</span>
             <button type="button" class="btn btn-primary" id="btnAddDuToan">+ Thêm hạng mục</button>
           </div>
-        </div>
-
+        </div> -->
+<!-- 
         <div class="table-wrap">
           <table>
             <thead>
@@ -259,7 +259,7 @@
         <div class="sticky-total">
           <div style="font-weight:800">
             Tổng dự toán: <span class="money" id="tongDuToan">0</span> đ
-          </div>
+          </div> -->
 
           <button type="submit" class="btn btn-success">
             ✅ Cập nhật tour (kèm giá + dự toán)

@@ -299,7 +299,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Thông Tin Tour</th>
-                    <th>Dự toán chi phí</th>
+                    <!-- <th>Dự toán chi phí</th> -->
                     <th>Giá bán (NL/TE/EB)</th>
                     <th>Trạng Thái</th>
                     <th>Ngày Tạo</th>
@@ -332,9 +332,9 @@
                             </div>
                         </td>
 
-                        <td class="price">
+                        <!-- <td class="price">
                             <?= number_format($tour['TongDuToan'] ?? 0, 0, ',', '.') ?>đ
-                        </td>
+                        </td> -->
 
                         <td>
                             <div style="line-height:1.7">

@@ -46,15 +46,32 @@ class huongDanVienController
     
     // 3. Xem Lịch trình chi tiết (LichTrinh - cần join)
     public function viewLichTrinh()
-    {
-        // Logic truy vấn lịch trình (sẽ được thêm sau khi có chức năng quản lý lịch trình)
-        $maTour = $_GET['id'] ?? null;
-        // $listLichTrinh = $this->modelHDV->getLichTrinhByTourId($maTour);
-        
-        $viewFile = './views/hdv/lichtrinh.php'; 
-        include './views/layout.php';
+{
+    $maDoan = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+    if ($maDoan <= 0) {
+        header("Location: ?act=hdvHome"); exit();
     }
-    
-    // 4. (Tương lai) Chức năng cập nhật Nhật ký Tour
-    // public function addNhatKyTour() { ... }
+
+    // Lấy đoàn + tour
+    $doanDetail = $this->modelHDV->getChiTietDoan($maDoan);
+    if (!$doanDetail) {
+        header("Location: ?act=hdvHome&error=doan_not_found"); exit();
+    }
+
+    // (Khuyến nghị) chặn HDV xem đoàn không phải của mình
+    if (!empty($doanDetail['MaHuongDanVien']) && $doanDetail['MaHuongDanVien'] != $this->maNhanVien) {
+        header("Location: ?act=hdvHome&error=forbidden"); exit();
+    }
+
+    $maTour = (int)$doanDetail['MaTour'];
+    $listLichTrinh = $this->modelHDV->getLichTrinhByTourId($maTour);
+
+    // Tạo vài biến để view dùng
+    $tourTitle = $doanDetail['TenTour'] ?? '';
+    $tourCode  = $doanDetail['MaCodeTour'] ?? '';
+    $viewFile = './views/hdv/lichtrinh.php';
+    include './views/layout.php';
+}
+
+
 }

@@ -47,7 +47,7 @@
             <div class="btn-action-group">
 
                 <!-- XEM LỊCH TRÌNH -->
-                <a href="?act=hdvLichTrinh&id=<?= $doanDetail['MaTour'] ?>">
+                <a href="?act=hdvLichTrinh&id=<?= $doanDetail['MaDoan'] ?>">
                     <button class="btn-action btn-schedule">
                         <i class="fas fa-calendar-alt"></i> Xem Lịch Trình
                     </button>

@@ -79,4 +79,14 @@ class huongDanVienModel
         // Trả về 0 hoặc null nếu chưa đăng nhập
         return 0; 
     }
+    // BỔ SUNG: Hàm lấy lịch trình (nếu bạn muốn dùng trực tiếp tại đây)
+    public function getLichTrinhByTourId($maTour)
+{
+    $sql = "SELECT * FROM LichTrinh WHERE MaTour = :maTour ORDER BY NgayThu ASC";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bindParam(':maTour', $maTour, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll();
+}
+
 }
