@@ -26,12 +26,13 @@ class tourController
     }
 
     // Hiển thị form thêm tour
-    public function addTour() {
+    public function addTour()
+    {
         $listDanhMuc = $this->modelTour->getDanhMucTour();
         // Khởi tạo biến để tránh lỗi Undefined variable ở View
         $errors = [];
         $oldData = [];
-        
+
         $viewFile = './views/tour/addtour.php';
         include './views/layout.php';
     }
@@ -40,7 +41,7 @@ class tourController
     public function addTourProcess()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            
+
             // 1. LẤY DỮ LIỆU TỪ FORM
             $post = $_POST;
             $MaCodeTour = trim($post['MaCodeTour'] ?? '');
@@ -68,12 +69,12 @@ class tourController
             }
 
             // --- 2c. Check Ngày / Đêm (Logic nghiệp vụ) ---
-            
+
             // Check số ngày
             if ($SoNgay < 0) {
                 $errors['SoNgay'] = "Số ngày không được để trống hoặc âm.";
             }
-            
+
             // Check số đêm
             if ($SoDem < 0) {
                 $errors['SoDem'] = "Số đêm không được để trống hoặc âm.";
@@ -82,8 +83,8 @@ class tourController
             // Check logic chênh lệch (nếu đã nhập số dương)
             if ($SoNgay >= 0 && $SoDem >= 0) {
                 if ($SoNgay == 0 && $SoDem == 0) {
-                     $errors['SoNgay'] = "Thời gian tour phải lớn hơn 0.";
-                     $errors['SoDem']  = "Thời gian tour phải lớn hơn 0.";
+                    $errors['SoNgay'] = "Thời gian tour phải lớn hơn 0.";
+                    $errors['SoDem']  = "Thời gian tour phải lớn hơn 0.";
                 } elseif (abs($SoNgay - $SoDem) > 1) {
                     // Ví dụ: 3N1Đ -> |3-1|=2 (Lỗi)
                     $msg = "Lịch trình bất hợp lý ($SoNgay ngày $SoDem đêm).";
@@ -96,7 +97,7 @@ class tourController
             if (!empty($errors)) {
                 $oldData = $post; // Giữ lại dữ liệu vừa nhập để điền lại form
                 $listDanhMuc = $this->modelTour->getDanhMucTour();
-                
+
                 // Include lại view addtour để hiện lỗi
                 $viewFile = './views/tour/addtour.php';
                 include './views/layout.php';
@@ -118,12 +119,22 @@ class tourController
                 $this->modelTour->conn->beginTransaction();
 
                 $id = $this->modelTour->addTour(
-                    $MaCodeTour, $TenTour, $MaDanhMuc, 
-                    $SoNgay, $SoDem, $post['DiemKhoiHanh'], $post['MoTa'], 
-                    $post['GiaVonDuKien'], $post['GiaBanMacDinh'], 
-                    $LinkAnhBia, $post['ChinhSachBaoGom'], $post['ChinhSachKhongBaoGom'], 
-                    $post['ChinhSachHuy'], $post['ChinhSachHoanTien'], 
-                    $post['DuongDanDatTour'], $post['TrangThai']
+                    $MaCodeTour,
+                    $TenTour,
+                    $MaDanhMuc,
+                    $SoNgay,
+                    $SoDem,
+                    $post['DiemKhoiHanh'],
+                    $post['MoTa'],
+                    $post['GiaVonDuKien'],
+                    $post['GiaBanMacDinh'],
+                    $LinkAnhBia,
+                    $post['ChinhSachBaoGom'],
+                    $post['ChinhSachKhongBaoGom'],
+                    $post['ChinhSachHuy'],
+                    $post['ChinhSachHoanTien'],
+                    $post['DuongDanDatTour'],
+                    $post['TrangThai']
                 );
 
                 // Thêm giá và dự toán
@@ -131,10 +142,9 @@ class tourController
                 $this->modelTour->addDuToanBulk($id, $post['dutoan'] ?? []);
 
                 $this->modelTour->conn->commit();
-                
+
                 header("Location: ?act=tour&success=add");
                 exit();
-
             } catch (Exception $e) {
                 if ($this->modelTour->conn->inTransaction()) {
                     $this->modelTour->conn->rollBack();
@@ -151,16 +161,31 @@ class tourController
     // Hiển thị form sửa tour
     public function editTour()
     {
-        $id = $_GET['id'];
+        $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        if ($id <= 0) {
+            header("Location: ?act=tour&error=invalid_id");
+            exit;
+        }
+
         $tour = $this->modelTour->getOneTourEdit($id);
+        if (!$tour) {
+            header("Location: ?act=tour&error=not_found");
+            exit;
+        }
+
         $listDanhMuc = $this->modelTour->getDanhMucTour();
 
-        $giaTour = $this->modelTour->getGiaTourByTourId($id);
-        $duToan  = $this->modelTour->getDuToanByTourId($id);
+        // Đảm bảo là mảng tuần tự 0,1,2,... để JS đọc được
+        $giaTourRaw = $this->modelTour->getGiaTourByTourId($id);
+        $duToanRaw  = $this->modelTour->getDuToanByTourId($id);
+
+        $giaTour = array_values($giaTourRaw ?: []);
+        $duToan  = array_values($duToanRaw ?: []);
 
         $viewFile = './views/tour/suaTour.php';
         include './views/layout.php';
     }
+
 
     // --- SỬA LOGIC NGHIỆP VỤ GIỐNG ADD ---
     public function editTourProcess()
@@ -187,7 +212,7 @@ class tourController
                 // Tuy nhiên, vì model không có, ta dùng lại logic cũ và sẽ gặp lỗi nếu người dùng không đổi mã
                 // Tạm thời, tôi sẽ chỉ kiểm tra trường hợp Mã rỗng. Logic phức tạp hơn cần update model.
                 // Giả định model đã có hàm checkMaTourExists(MaCode, ExcludeId)
-                
+
                 // Vì không có ExcludeId trong Model, tôi sẽ dùng checkMaTourExists() 
                 // và chấp nhận logic này: nếu mã trùng với bản ghi khác (không phải bản ghi hiện tại), 
                 // ta sẽ cần logic phức tạp hơn, nhưng nếu chỉ là mã rỗng/tên rỗng:
@@ -219,8 +244,8 @@ class tourController
             }
             if ($SoNgay >= 0 && $SoDem >= 0) {
                 if ($SoNgay == 0 && $SoDem == 0) {
-                     $errors['SoNgay'] = "Thời gian tour phải lớn hơn 0.";
-                     $errors['SoDem']  = "Thời gian tour phải lớn hơn 0.";
+                    $errors['SoNgay'] = "Thời gian tour phải lớn hơn 0.";
+                    $errors['SoDem']  = "Thời gian tour phải lớn hơn 0.";
                 } elseif (abs($SoNgay - $SoDem) > 1) {
                     $msg = "Lịch trình bất hợp lý ($SoNgay ngày $SoDem đêm).";
                     $errors['SoNgay'] = $msg;
@@ -241,7 +266,7 @@ class tourController
 
                 $viewFile = './views/tour/suaTour.php';
                 include './views/layout.php';
-                return; 
+                return;
             }
 
             // 4. KHÔNG LỖI -> TIẾN HÀNH UPDATE VÀO DB
@@ -300,7 +325,7 @@ class tourController
                 if ($this->modelTour->conn->inTransaction()) {
                     $this->modelTour->conn->rollBack();
                 }
-                
+
                 // Tái tạo lại view để hiển thị lỗi hệ thống
                 $errors['system'] = "Lỗi hệ thống: " . $e->getMessage();
                 $tour = $this->modelTour->getOneTourEdit($MaTour);
@@ -308,7 +333,7 @@ class tourController
                 $giaTour = $this->modelTour->getGiaTourByTourId($MaTour);
                 $duToan  = $this->modelTour->getDuToanByTourId($MaTour);
                 $tour = array_merge($tour, $post);
-                
+
                 $viewFile = './views/tour/suaTour.php';
                 include './views/layout.php';
             }
@@ -320,14 +345,14 @@ class tourController
     public function deleteTour()
     {
         $id = $_GET['id'];
-        
+
         // [BỔ SUNG LOGIC] Kiểm tra ràng buộc Booking/Đoàn trước khi xóa cứng
         if ($this->modelTour->checkIfUsedByBooking($id)) {
             // Nếu có Booking hoặc Đoàn đang sử dụng, redirect với thông báo lỗi
             header("Location: ?act=tour&error=in_use");
             exit();
         }
-        
+
         $this->modelTour->deleteTour($id);
         header("Location: ?act=tour&success=delete");
         exit();
@@ -346,4 +371,3 @@ class tourController
         include './views/layout.php';
     }
 }
-?>
