@@ -88,6 +88,26 @@ class DoanKhoiHanhController
     public function editDoanProcess()
     {
         $MaDoan = $_POST['MaDoan'];
+        $MaTourMoi = $_POST['MaTour']; // Mã tour người dùng chọn
+        
+        // --- BẮT ĐẦU ĐOẠN CODE KIỂM TRA LOGIC SỬA TOUR ---
+        
+        // 1. Lấy thông tin đoàn cũ để biết MaTour cũ
+        $doanCu = $this->model->getOneDoan($MaDoan);
+        $MaTourCu = $doanCu['MaTour'];
+
+        // 2. Kiểm tra xem đoàn đã có booking hay chưa
+        // Hàm checkBookingByDoan trả về true nếu có ít nhất 1 booking
+        $daCoBooking = $this->model->checkBookingByDoan($MaDoan); 
+
+        // 3. Nếu đã có booking MÀ người dùng cố tình đổi sang Tour khác -> Chặn lại
+        if ($daCoBooking && $MaTourMoi != $MaTourCu) {
+            // Chuyển hướng lại trang sửa và báo lỗi
+            header("Location: ?act=editDoan&MaDoan=" . urlencode($MaDoan) . "&error=cannot_change_tour_has_booking");
+            exit();
+        }
+        // --- KẾT THÚC ĐOẠN CODE KIỂM TRA ---
+
         $NgayKhoiHanh = $_POST['NgayKhoiHanh'] ?? null;
         $MaHuongDanVien = $_POST['MaHuongDanVien'] ?? '';
         $MaTaiXe = $_POST['MaTaiXe'] ?? '';
@@ -96,7 +116,6 @@ class DoanKhoiHanhController
         $busyIds = $this->model->getBusyNhanVienIdsByDate($NgayKhoiHanh);
 
         // Nếu nhân viên bận vì đoàn khác -> chặn
-        // (đơn giản: kiểm tra "bận" theo lịch làm việc; nếu lịch làm việc do chính đoàn này tạo thì bạn cần loại trừ theo MaDoan ở model)
         if (!empty($MaHuongDanVien) && in_array((int)$MaHuongDanVien, array_map('intval', $busyIds), true)) {
             header("Location: ?act=editDoan&MaDoan=" . urlencode($MaDoan) . "&error=busy&role=hdv");
             exit();
@@ -114,7 +133,7 @@ class DoanKhoiHanhController
             ':NgayVe' => $_POST['NgayVe'],
             ':DiemTapTrung' => $_POST['DiemTapTrung'],
             ':SoChoToiDa' => $_POST['SoChoToiDa'],
-            ':SoChoConTrong' => $_POST['SoChoConTrong'],
+            ':SoChoConTrong' => $_POST['SoChoConTrong'], // Lưu ý: logic gốc của bạn đang lấy từ POST, cần đảm bảo tính đúng đắn khi update
             ':MaHuongDanVien' => $_POST['MaHuongDanVien'],
             ':MaTaiXe' => $_POST['MaTaiXe'],
             ':ThongTinXe' => $_POST['ThongTinXe']
@@ -128,8 +147,22 @@ class DoanKhoiHanhController
     public function deleteDoan()
     {
         $id = $_GET['MaDoan'];
-        $this->model->deleteDoan($id);
-        header("Location: ?act=listDoan&success=delete");
+
+        // 1. Kiểm tra ràng buộc nghiệp vụ: Có booking thì không được xóa
+        if ($this->model->checkBookingByDoan($id)) {
+            // Chuyển hướng về trang danh sách kèm thông báo lỗi
+            header("Location: ?act=listDoan&error=cannot_delete_has_booking");
+            exit();
+        }
+
+        // 2. Nếu không có booking, thực hiện xóa (có thể dùng try-catch để an toàn hơn với các bảng khác như diemdanh, lichlamviec)
+        try {
+            $this->model->deleteDoan($id);
+            header("Location: ?act=listDoan&success=delete");
+        } catch (Exception $e) {
+            // Bắt lỗi nếu còn ràng buộc ở các bảng khác (ví dụ: điểm danh, lịch làm việc...)
+            header("Location: ?act=listDoan&error=system_error");
+        }
         exit();
     }
 }

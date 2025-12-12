@@ -141,4 +141,15 @@ class DoanKhoiHanhModel
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+    public function checkBookingByDoan($id)
+    {
+        // Đếm số lượng booking liên quan đến đoàn này
+        $sql = "SELECT COUNT(*) as total FROM booking WHERE MaDoan = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        // Trả về true nếu có ít nhất 1 booking
+        return $result['total'] > 0;
+    }
 }

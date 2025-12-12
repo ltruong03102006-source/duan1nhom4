@@ -96,6 +96,34 @@
         .btn-back:hover {
             background: #5a6268;
         }
+
+        /* --- CSS CHO THÔNG BÁO LỖI (VALIDATE) --- */
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        
+        .alert-icon {
+            margin-right: 10px;
+            font-size: 18px;
+        }
     </style>
 </head>
 
@@ -106,6 +134,35 @@
 
         <h2>Sửa Đoàn Khởi Hành</h2>
 
+        <?php if (isset($_GET['error'])): ?>
+            <div class="alert alert-danger">
+                <span class="alert-icon">⚠️</span>
+                <span>
+                    <?php
+                    switch ($_GET['error']) {
+                        case 'cannot_change_tour_has_booking':
+                            echo "<b>Không thể đổi Tour!</b> Đoàn này đã có khách đặt (Booking). Vui lòng hủy các Booking trước khi đổi Tour.";
+                            break;
+                        case 'busy':
+                            $role = isset($_GET['role']) && $_GET['role'] == 'hdv' ? 'Hướng dẫn viên' : 'Tài xế';
+                            echo "<b>Lịch trình bị trùng!</b> $role bạn chọn đã bận trong ngày khởi hành này.";
+                            break;
+                        case 'system_error':
+                            echo "Lỗi hệ thống, vui lòng thử lại sau.";
+                            break;
+                        default:
+                            echo "Đã có lỗi xảy ra.";
+                    }
+                    ?>
+                </span>
+            </div>
+        <?php endif; ?>
+
+        <?php if (isset($_GET['success']) && $_GET['success'] == 'update'): ?>
+            <div class="alert alert-success">
+                <span class="alert-icon">✅</span> Cập nhật thông tin đoàn thành công!
+            </div>
+        <?php endif; ?>
         <form action="?act=editDoanProcess" method="POST">
 
             <input type="hidden" name="MaDoan" value="<?= $doan['MaDoan'] ?>">
@@ -120,6 +177,9 @@
                         </option>
                     <?php endforeach; ?>
                 </select>
+                <small style="color: #666; font-size: 12px; margin-top: 5px;">
+                    * Lưu ý: Không thể đổi Tour nếu đoàn đã có booking.
+                </small>
             </div>
 
             <div class="form-row">
@@ -163,12 +223,14 @@
                             $isSelected = ($h['MaNhanVien'] == ($doan['MaHuongDanVien'] ?? ''));
                             $isBusy = in_array($h['MaNhanVien'], $busyIds ?? []);
                             // Nếu đang selected thì vẫn cho chọn (không disable)
+                            // Nếu muốn chặn luôn trên giao diện thì bỏ !$isSelected
                             $disabled = ($isBusy && !$isSelected) ? 'disabled' : '';
                             ?>
                             <option value="<?= $h['MaNhanVien'] ?>"
                                 <?= $isSelected ? 'selected' : '' ?>
-                                <?= $disabled ?>>
-                                <?= htmlspecialchars($h['HoTen']) ?> <?= ($isBusy && !$isSelected) ? '(Bận)' : '' ?>
+                                <?= $disabled ?> 
+                                style="<?= ($isBusy && !$isSelected) ? 'color: red;' : '' ?>">
+                                <?= htmlspecialchars($h['HoTen']) ?> <?= ($isBusy && !$isSelected) ? '(Đang bận)' : '' ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -186,15 +248,14 @@
                             ?>
                             <option value="<?= $x['MaNhanVien'] ?>"
                                 <?= $isSelected ? 'selected' : '' ?>
-                                <?= $disabled ?>>
-                                <?= htmlspecialchars($x['HoTen']) ?> <?= ($isBusy && !$isSelected) ? '(Bận)' : '' ?>
+                                <?= $disabled ?>
+                                style="<?= ($isBusy && !$isSelected) ? 'color: red;' : '' ?>">
+                                <?= htmlspecialchars($x['HoTen']) ?> <?= ($isBusy && !$isSelected) ? '(Đang bận)' : '' ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
             </div>
-
-
 
             <div class="form-group">
                 <label>Thông tin xe</label>
@@ -205,5 +266,4 @@
         </form>
     </div>
 </body>
-
 </html>

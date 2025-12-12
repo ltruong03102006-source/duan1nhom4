@@ -345,6 +345,20 @@
     </div>
 
     <div class="container">
+        <?php
+        if (isset($_GET['error']) && $_GET['error'] == 'cannot_delete_has_booking') {
+            echo '<div class="alert alert-danger">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    Không thể xóa đoàn này vì đã có Khách hàng đặt tour (Booking). Hãy hủy Booking trước hoặc chỉ cập nhật trạng thái đoàn.
+                  </div>';
+        }
+        if (isset($_GET['success']) && $_GET['success'] == 'delete') {
+            echo '<div class="alert alert-success">
+                    <i class="fa-solid fa-check-circle"></i>
+                    Xóa đoàn thành công!
+                  </div>';
+        }
+        ?>
         <div class="toolbar">
             <div class="actions-left">
                 <a href="?act=tour" class="btn btn-outline">
