@@ -119,7 +119,7 @@
             background-color: #d4edda;
             border-color: #c3e6cb;
         }
-        
+
         .alert-icon {
             margin-right: 10px;
             font-size: 18px;
@@ -133,6 +133,34 @@
         <a href="?act=listDoan" class="btn-back">⬅ Quay lại danh sách đoàn</a>
 
         <h2>Sửa Đoàn Khởi Hành</h2>
+        <?php if (isset($_GET['error']) && $_GET['error'] == 'capacity_exceeded'): ?>
+            <div style="padding: 15px; margin-bottom: 20px; background: #f8d7da; color: #721c24; border: 1px solid #f5c2c7; border-radius: 6px;">
+                ❌ Lỗi: Số chỗ tối đa không được nhỏ hơn số khách đã đặt (<b><?= $doan['DaDat'] ?? 0 ?></b> khách). Vui lòng tăng số chỗ tối đa!
+            </div>
+        <?php endif; ?>
+
+        <form action="?act=editDoanProcess" method="POST">
+
+            <input type="hidden" name="MaDoan" value="<?= $doan['MaDoan'] ?>">
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Số chỗ tối đa *</label>
+                    <input type="number" name="SoChoToiDa" value="<?= $doan['SoChoToiDa'] ?>" min="<?= $doan['DaDat'] ?? 0 ?>" required>
+                    <small style="color: #ef4444; margin-top: 5px;">
+                        Khách đã đặt: <b><?= $doan['DaDat'] ?? 0 ?></b>.
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label>Số chỗ còn trống (Tự tính)</label>
+                    <input type="number" value="<?= $doan['SoChoConTrong'] ?? 0 ?>" disabled style="background-color: #f3f4f6; color: #10b981; font-weight: bold;">
+                    <small style="color: #10b981; margin-top: 5px;">
+                        (Tự tính: Tối đa - Đã đặt)
+                    </small>
+                </div>
+            </div>
+
+        </form>
 
         <?php if (isset($_GET['error'])): ?>
             <div class="alert alert-danger">
@@ -228,7 +256,7 @@
                             ?>
                             <option value="<?= $h['MaNhanVien'] ?>"
                                 <?= $isSelected ? 'selected' : '' ?>
-                                <?= $disabled ?> 
+                                <?= $disabled ?>
                                 style="<?= ($isBusy && !$isSelected) ? 'color: red;' : '' ?>">
                                 <?= htmlspecialchars($h['HoTen']) ?> <?= ($isBusy && !$isSelected) ? '(Đang bận)' : '' ?>
                             </option>
@@ -266,4 +294,5 @@
         </form>
     </div>
 </body>
+
 </html>
