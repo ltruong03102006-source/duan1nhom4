@@ -167,7 +167,12 @@ class BookingModel
 
     public function getKhachTrongBooking($MaBooking)
     {
-        $stmt = $this->conn->prepare("SELECT * FROM KhachTrongBooking WHERE MaBooking = :id");
+        // Lấy thông tin khách và kiểm tra xem có bất kỳ bản ghi điểm danh nào trong bảng diemdanh chưa
+        $sql = "SELECT k.*, 
+                       (SELECT COUNT(MaDiemDanh) FROM diemdanh d WHERE d.MaKhachTrongBooking = k.MaKhachTrongBooking) AS HasAttended
+                FROM KhachTrongBooking k 
+                WHERE MaBooking = :id";
+        $stmt = $this->conn->prepare($sql);
         $stmt->execute([':id' => $MaBooking]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

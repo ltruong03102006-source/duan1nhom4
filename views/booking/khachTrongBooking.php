@@ -88,7 +88,7 @@
                 <td><?= nl2br(htmlspecialchars($k['GhiChuDacBiet'])) ?></td>
                 <td><?= $k['LoaiPhong'] ?></td>
                 <td>
-                    <?php if (isset($k['TrangThaiDiemDanh']) && $k['TrangThaiDiemDanh'] !== null): ?>
+                    <?php if ((int)($k['HasAttended'] ?? 0) > 0): ?>
                         <span class="badge-dd dd-yes">Đã DD</span>
                     <?php else: ?>
                         <span class="badge-dd dd-no">Chưa DD</span>
