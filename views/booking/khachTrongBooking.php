@@ -61,28 +61,6 @@
 
 <div class="container">
 
-    <div class="info-box">
-        <div><strong>Tour:</strong> <?= htmlspecialchars($booking['TenTour'] ?? '') ?></div>
-        <div>
-            <strong>Đoàn:</strong>
-            <?php if (!empty($booking['NgayKhoiHanh'])): ?>
-                Khởi hành <?= date('d/m/Y', strtotime($booking['NgayKhoiHanh'])) ?>
-                <?php if (!empty($booking['NgayVe'])): ?>
-                    - Về <?= date('d/m/Y', strtotime($booking['NgayVe'])) ?>
-                <?php endif; ?>
-            <?php else: ?>
-                Chưa gán đoàn
-            <?php endif; ?>
-        </div>
-        <div><strong>Điểm tập trung:</strong> <?= htmlspecialchars($booking['DiemTapTrung'] ?? '---') ?></div>
-        <div><strong>Yêu cầu đặc biệt:</strong> <?= nl2br(htmlspecialchars($booking['YeuCauDacBiet'] ?? '---')) ?></div>
-    </div>
-
-    <a href="?act=listBooking" class="btn-back">⬅ Quay lại Booking</a>
-    <a href="?act=addKhachTrongBooking&MaBooking=<?= $booking['MaBooking'] ?>" class="btn-add">+ Thêm khách</a>
-
-    <br><br>
-
     <table>
         <thead>
         <tr>
@@ -93,7 +71,7 @@
             <th>SĐT</th>
             <th>Yêu cầu đặc biệt</th>
             <th>Loại phòng</th>
-            <th>Điểm danh</th>
+            <th>Điểm danh</th> 
             <th>Hành động</th>
         </tr>
         </thead>
@@ -108,10 +86,10 @@
                 <td><?= nl2br(htmlspecialchars($k['GhiChuDacBiet'])) ?></td>
                 <td><?= $k['LoaiPhong'] ?></td>
                 <td>
-                    <?php if ($k['TrangThaiDiemDanh']): ?>
-                        <span class="badge-dd dd-yes">Đã điểm danh</span>
+                    <?php if (isset($k['TrangThaiDiemDanh']) && $k['TrangThaiDiemDanh'] !== null): ?>
+                        <span class="badge-dd dd-yes">Đã DD</span>
                     <?php else: ?>
-                        <span class="badge-dd dd-no">Chưa điểm danh</span>
+                        <span class="badge-dd dd-no">Chưa DD</span>
                     <?php endif; ?>
                 </td>
                 <td class="actions">
@@ -124,7 +102,70 @@
         <?php endforeach; ?>
         </tbody>
     </table>
+
+    <br><br>
+
+    <?php if ($booking['MaDoan'] && !empty($listKhach)): ?>
+    <div class="info-box" style="margin-top: 30px; border-left: 5px solid #1e88e5;">
+        <strong>LỊCH SỬ ĐIỂM DANH TOÀN CHUYẾN (Đoàn #<?= $booking['MaDoan'] ?>)</strong>
+    </div>
+
+    <div class="table-responsive" style="margin-bottom: 30px;">
+        <table style="width: 100%;" class="table table-bordered table-striped text-center">
+            <thead style="background-color: #f8f9fa;">
+                <tr>
+                    <th class="text-start" style="width: 150px; background: #0d47a1; color: white; padding: 10px;">Khách hàng / Ngày</th>
+                    <?php if(!empty($matrixDates)): ?>
+                        <?php foreach($matrixDates as $dateLabel): ?>
+                            <th style="background: #0d47a1; color: white; padding: 10px;"><?= $dateLabel ?></th>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <th style="background: #0d47a1; color: white; padding: 10px;">Chưa có dữ liệu lịch sử</th>
+                    <?php endif; ?>
+                </tr>
+            </thead>
+            <tbody>
+<?php foreach ($listKhach as $khach): ?>
+                <tr>
+                    <td class="text-start" style="font-weight: bold;"><?= htmlspecialchars($khach['HoTen']) ?></td>
+                    
+                    <?php if(!empty($matrixDates)): ?>
+                        <?php foreach($matrixDates as $dateLabel): ?>
+                            <td>
+                                <?php 
+                                    // Lấy trạng thái từ mảng matrixData
+                                    $cell = $matrixData[$khach['MaKhachTrongBooking']][$dateLabel] ?? null;
+                                ?>
+                                <?php if($cell): ?>
+                                    <?php if($cell['status'] == 1): ?>
+                                        <span style="color: #2e7d32;" title="<?= htmlspecialchars($cell['note']) ?>">
+                                            <i class="fas fa-check-circle"></i>
+                                        </span>
+                                    <?php else: ?>
+                                        <span style="color: #c62828; font-weight: bold;" title="<?= htmlspecialchars($cell['note']) ?>">
+                                            VẮNG
+                                        </span>
+                                    <?php endif; ?>
+                                <?php else: ?>
+                                    <span style="color: #999; font-size: 11px;">-</span>
+                                <?php endif; ?>
+                            </td>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <td></td>
+                    <?php endif; ?>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+        <div style="font-size: 12px; color: #6c757d; margin-top: 10px;">
+            * Bảng này hiển thị lịch sử điểm danh của toàn bộ khách trong đoàn.
+        </div>
+    </div>
+    <?php endif; ?>
+
 </div>
+
 
 </body>
 </html>

@@ -199,12 +199,38 @@ class BookingController
         }
 
         $booking   = $this->bookingModel->getBookingDetailWithDoan($MaBooking);
+        
+        // 1. Lấy danh sách khách
         $listKhach = $this->bookingModel->getKhachTrongBooking($MaBooking);
+        
+        // --- BỔ SUNG LOGIC MA TRẬN ĐIỂM DANH ---
+        $MaDoan = $booking['MaDoan'] ?? null;
+        $matrixDates = [];
+        $matrixData = [];
+
+        if ($MaDoan) {
+            // Lấy toàn bộ lịch sử điểm danh của Đoàn (để xem tổng quát)
+            $historyRaw = $this->bookingModel->getHistoryDiemDanh($MaDoan);
+            
+            // Xử lý dữ liệu ma trận (Pivot Data)
+            foreach ($historyRaw as $row) {
+                // Định dạng ngày ngắn gọn (ví dụ: 12/12)
+                $d = date('d/m', strtotime($row['NgayDiemDanh']));
+                $matrixDates[$d] = $d;
+                $matrixData[$row['MaKhachTrongBooking']][$d] = [
+                    'status' => $row['TrangThai'],
+                    'note' => $row['GhiChu']
+                ];
+            }
+            ksort($matrixDates); // Sắp xếp ngày theo thứ tự tăng dần
+        }
+        // --- KẾT THÚC BỔ SUNG ---
 
         // Nếu cần re-check trạng thái đoàn thì lấy từ $booking
         $this->bookingModel->updateTrangThaiDoanBySoKhach($booking['MaDoan'] ?? null);
 
         $viewFile = './views/booking/khachTrongBooking.php';
+        // Truyền thêm các biến mới vào view
         include './views/layout.php';
     }
     // ====== KHÁCH TRONG BOOKING DÀNH CHO HDV ======
