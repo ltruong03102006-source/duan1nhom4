@@ -60,7 +60,9 @@
 <div class="header">Khách trong Booking #<?= $booking['MaCodeBooking'] ?></div>
 
 <div class="container">
-
+<br>
+    <a href="?act=listBooking" class="btn-back">⬅ Quay lại Booking</a>
+    <a href="?act=addKhachTrongBooking&MaBooking=<?= $booking['MaBooking'] ?>" class="btn-add">+ Thêm khách</a>
     <table>
         <thead>
         <tr>
