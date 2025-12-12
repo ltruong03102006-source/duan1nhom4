@@ -10,135 +10,119 @@
     button:hover { background:#1565c0; }
     .btn-back { background:#777; margin-left: 10px; }
     .btn-back:hover { background:#555; }
-    .file-note { font-size: 0.9em; color: #555; }
 </style>
 
 <div class="container-fluid px-4">
-    <h1 class="mt-4">Chỉnh Sửa Nhà Cung Cấp</h1>
+    <h1 class="mt-4">Thêm Nhà Cung Cấp</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="?act=listNhaCungCap">Nhà Cung Cấp</a></li>
-        <li class="breadcrumb-item active">Chỉnh sửa (ID: <?= $ncc['MaNhaCungCap'] ?>)</li>
+        <li class="breadcrumb-item active">Thêm mới</li>
     </ol>
 
+    <?php if (!empty($_GET['error'])): ?>
+        <div style="padding:12px 14px; border-radius:6px; margin-bottom:14px; border:1px solid #f5c2c7; background:#f8d7da; color:#842029;">
+            <?php
+                $err = $_GET['error'];
+                if ($err === 'missing_type') {
+                    echo 'Vui lòng chọn ít nhất 1 loại nhà cung cấp.';
+                } elseif ($err === 'invalid_contract_date') {
+                    echo 'Ngày kết thúc hợp đồng phải lớn hơn hoặc bằng ngày bắt đầu.';
+                } elseif ($err === 'duplicate_macode') {
+                    echo 'Mã Code NCC đã tồn tại. Vui lòng nhập mã khác.';
+                } elseif ($err === 'upload_failed') {
+                    echo 'Upload file hợp đồng thất bại. Vui lòng thử lại.';
+                } else {
+                    echo 'Có lỗi xảy ra. Vui lòng thử lại.';
+                }
+            ?>
+        </div>
+    <?php endif; ?>
+
     <div class="card">
-        <form action="?act=updateNhaCungCapProcess" method="POST" enctype="multipart/form-data">
-            
-            <input type="hidden" name="MaNhaCungCap" value="<?= $ncc['MaNhaCungCap'] ?>">
-            <input type="hidden" name="duongDanFileCu" value="<?= $ncc['FileHopDong'] ?>">
+        <form action="?act=addNhaCungCapProcess" method="POST" enctype="multipart/form-data">
 
             <div class="form-row">
                 <div class="form-group">
                     <label>Mã Code NCC (*):</label>
-                    <input type="text" name="MaCodeNCC" value="<?= $ncc['MaCodeNCC'] ?>" required>
+                    <input type="text" name="MaCodeNCC" required>
                 </div>
                 <div class="form-group">
                     <label>Tên Nhà Cung Cấp (*):</label>
-                    <input type="text" name="TenNhaCungCap" value="<?= $ncc['TenNhaCungCap'] ?>" required>
+                    <input type="text" name="TenNhaCungCap" required>
                 </div>
-                
                 <div class="form-group">
-                    <label>Loại NCC (*):</label>
-                    <?php
-                        // Chuyển chuỗi lưu trong DB thành mảng để kiểm tra (ví dụ: "khach_san,visa")
-                        $selectedTypes = !empty($ncc['LoaiNhaCungCap']) ? explode(',', $ncc['LoaiNhaCungCap']) : [];
-                    ?>
-                    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">
-                        <label style="font-weight: normal; display: flex; align-items: center; gap: 5px;">
-                            <input type="checkbox" name="LoaiNhaCungCap[]" value="khach_san" style="width: auto;" 
-                            <?= in_array('khach_san', $selectedTypes) ? 'checked' : '' ?>> Khách sạn
-                        </label>
-                        
-                        <label style="font-weight: normal; display: flex; align-items: center; gap: 5px;">
-                            <input type="checkbox" name="LoaiNhaCungCap[]" value="nha_hang" style="width: auto;" 
-                            <?= in_array('nha_hang', $selectedTypes) ? 'checked' : '' ?>> Nhà hàng
-                        </label>
-                        
-                        <label style="font-weight: normal; display: flex; align-items: center; gap: 5px;">
-                            <input type="checkbox" name="LoaiNhaCungCap[]" value="van_chuyen" style="width: auto;" 
-                            <?= in_array('van_chuyen', $selectedTypes) ? 'checked' : '' ?>> Vận chuyển
-                        </label>
-                        
-                        <label style="font-weight: normal; display: flex; align-items: center; gap: 5px;">
-                            <input type="checkbox" name="LoaiNhaCungCap[]" value="visa" style="width: auto;" 
-                            <?= in_array('visa', $selectedTypes) ? 'checked' : '' ?>> Visa
-                        </label>
-                        
-                        <label style="font-weight: normal; display: flex; align-items: center; gap: 5px;">
-                            <input type="checkbox" name="LoaiNhaCungCap[]" value="bao_hiem" style="width: auto;" 
-                            <?= in_array('bao_hiem', $selectedTypes) ? 'checked' : '' ?>> Bảo hiểm
-                        </label>
-                        
-                        <label style="font-weight: normal; display: flex; align-items: center; gap: 5px;">
-                            <input type="checkbox" name="LoaiNhaCungCap[]" value="khac" style="width: auto;" 
-                            <?= in_array('khac', $selectedTypes) ? 'checked' : '' ?>> Khác
-                        </label>
-                    </div>
-                </div>
-                </div>
+    <label>Loại NCC (*):</label>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px;">
+        <label style="font-weight: normal;"><input type="checkbox" name="LoaiNhaCungCap[]" value="khach_san"> Khách sạn</label>
+        <label style="font-weight: normal;"><input type="checkbox" name="LoaiNhaCungCap[]" value="nha_hang"> Nhà hàng</label>
+        <label style="font-weight: normal;"><input type="checkbox" name="LoaiNhaCungCap[]" value="van_chuyen"> Vận chuyển</label>
+        <label style="font-weight: normal;"><input type="checkbox" name="LoaiNhaCungCap[]" value="visa"> Visa</label>
+        <label style="font-weight: normal;"><input type="checkbox" name="LoaiNhaCungCap[]" value="bao_hiem"> Bảo hiểm</label>
+        <label style="font-weight: normal;"><input type="checkbox" name="LoaiNhaCungCap[]" value="khac"> Khác</label>
+    </div>
+</div>
+            </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label>Người Liên Hệ:</label>
-                    <input type="text" name="NguoiLienHe" value="<?= $ncc['NguoiLienHe'] ?>">
+                    <input type="text" name="NguoiLienHe">
                 </div>
                 <div class="form-group">
                     <label>Số Điện Thoại:</label>
-                    <input type="tel" name="SoDienThoai" value="<?= $ncc['SoDienThoai'] ?>">
+                    <input type="tel" name="SoDienThoai">
                 </div>
                 <div class="form-group">
                     <label>Email:</label>
-                    <input type="email" name="Email" value="<?= $ncc['Email'] ?>">
+                    <input type="email" name="Email">
                 </div>
             </div>
             
             <div class="form-group" style="padding: 0 10px;">
                 <label>Địa Chỉ:</label>
-                <input type="text" name="DiaChi" value="<?= $ncc['DiaChi'] ?>">
+                <input type="text" name="DiaChi">
             </div>
 
             <div class="form-group" style="padding: 0 10px;">
                 <label>Dịch Vụ Cung Cấp:</label>
-                <textarea name="DichVuCungCap"><?= $ncc['DichVuCungCap'] ?></textarea>
+                <textarea name="DichVuCungCap"></textarea>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>File Hợp Đồng (Để trống nếu không thay đổi):</label>
+                    <label>File Hợp Đồng (PDF, DOC, Ảnh...):</label>
                     <input type="file" name="FileHopDong">
-                    <?php if (!empty($ncc['FileHopDong'])): ?>
-                        <p class="file-note">File hiện tại: <a href="<?= $ncc['FileHopDong'] ?>" target="_blank"><?= $ncc['FileHopDong'] ?></a></p>
-                    <?php endif; ?>
                 </div>
                 <div class="form-group">
                     <label>Ngày Bắt Đầu Hợp Đồng:</label>
-                    <input type="date" name="NgayBatDauHopDong" value="<?= $ncc['NgayBatDauHopDong'] ?>">
+                    <input type="date" name="NgayBatDauHopDong">
                 </div>
                 <div class="form-group">
                     <label>Ngày Kết Thúc Hợp Đồng:</label>
-                    <input type="date" name="NgayKetThucHopDong" value="<?= $ncc['NgayKetThucHopDong'] ?>">
+                    <input type="date" name="NgayKetThucHopDong">
                 </div>
             </div>
 
              <div class="form-row">
                 <div class="form-group">
                     <label>Đánh Giá (0-5):</label>
-                    <input type="number" name="DanhGia" step="0.1" min="0" max="5" value="<?= $ncc['DanhGia'] ?>">
+                    <input type="number" name="DanhGia" step="0.1" min="0" max="5">
                 </div>
                 <div class="form-group">
                     <label>Trạng Thái:</label>
                     <select name="TrangThai">
-                        <option value="hoat_dong" <?= $ncc['TrangThai'] == 'hoat_dong' ? 'selected' : '' ?>>Hoạt động</option>
-                        <option value="khong_hoat_dong" <?= $ncc['TrangThai'] == 'khong_hoat_dong' ? 'selected' : '' ?>>Không hoạt động</option>
+                        <option value="hoat_dong">Hoạt động</option>
+                        <option value="khong_hoat_dong">Không hoạt động</option>
                     </select>
                 </div>
             </div>
 
             <div class="form-group" style="padding: 0 10px;">
                 <label>Ghi Chú:</label>
-                <textarea name="GhiChu"><?= $ncc['GhiChu'] ?></textarea>
+                <textarea name="GhiChu"></textarea>
             </div>
 
-            <button type="submit">Cập Nhật</button>
+            <button type="submit">Thêm Nhà Cung Cấp</button>
             <a href="?act=listNhaCungCap"><button type="button" class="btn-back">Quay lại</button></a>
         </form>
     </div>

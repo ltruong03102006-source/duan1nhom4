@@ -153,7 +153,37 @@ switch ($act) {
         onlyAdmin();
         (new tourController())->deleteTour();
         break;
-    
+    // ---- ẢNH TOUR ----
+case 'anhTour':
+    onlyAdmin();
+    (new AnhTourController())->anhTour();
+    break;
+
+case 'addAnhTour':
+    onlyAdmin();
+    (new AnhTourController())->addAnhTour();
+    break;
+
+case 'addAnhTourProcess':
+    onlyAdmin();
+    (new AnhTourController())->addAnhTourProcess();
+    break;
+
+case 'editAnhTour':
+    onlyAdmin();
+    (new AnhTourController())->editAnhTour();
+    break;
+
+case 'editAnhTourProcess':
+    onlyAdmin();
+    (new AnhTourController())->editAnhTourProcess();
+    break;
+
+case 'deleteAnhTour':
+    onlyAdmin();
+    (new AnhTourController())->deleteAnhTour();
+    break;
+
     // ---- LỊCH TRÌNH ----
     case 'lichTour':
         onlyAdmin();

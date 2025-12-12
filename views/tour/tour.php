@@ -379,6 +379,9 @@
         <a href="?act=editTour&id=<?= $tour['MaTour'] ?>" class="btn btn-outline-warning" title="Sửa">
             <i class="fas fa-edit"></i>
         </a>
+<a href="?act=anhTour&MaTour=<?= $tour['MaTour'] ?>" class="btn btn-outline-success" title="Quản lý ảnh">
+    <i class="fas fa-images"></i>
+</a>
 
         <a href="?act=lichTour&maTour=<?= $tour['MaTour'] ?>" class="btn btn-outline-info" title="Lịch trình">
             <i class="fas fa-calendar-alt"></i>

@@ -29,13 +29,26 @@ class nhaCungCapController
     {
         $data = $_POST;
 
-        // --- XỬ LÝ LOẠI NCC (CHECKBOX) ---
-        if (isset($data['LoaiNhaCungCap']) && is_array($data['LoaiNhaCungCap'])) {
-            $data['LoaiNhaCungCap'] = implode(',', $data['LoaiNhaCungCap']);
-        } else {
-            $data['LoaiNhaCungCap'] = ''; // Để trống nếu không chọn gì
+        // 1) VALIDATE: Loại NCC (*): bắt buộc chọn ít nhất 1 loại
+        if (empty($data['LoaiNhaCungCap']) || !is_array($data['LoaiNhaCungCap'])) {
+            header("Location: ?act=addNhaCungCap&error=missing_type");
+            exit();
         }
-        // ---------------------------------
+        $data['LoaiNhaCungCap'] = implode(',', $data['LoaiNhaCungCap']);
+
+        // 2) VALIDATE: Ngày hợp đồng (nếu nhập đủ 2 ngày thì end >= start)
+        $start = $data['NgayBatDauHopDong'] ?? null;
+        $end   = $data['NgayKetThucHopDong'] ?? null;
+        if (!empty($start) && !empty($end) && strtotime($end) < strtotime($start)) {
+            header("Location: ?act=addNhaCungCap&error=invalid_contract_date");
+            exit();
+        }
+
+        // 3) CHECK TRÙNG (để báo lỗi đẹp trước khi DB throw)
+        if (!empty($data['MaCodeNCC']) && $this->modelNCC->isMaCodeNccExists($data['MaCodeNCC'])) {
+            header("Location: ?act=addNhaCungCap&error=duplicate_macode");
+            exit();
+        }
         
         // Xử lý upload file
         $file = $_FILES['FileHopDong'] ?? null;
@@ -57,7 +70,18 @@ class nhaCungCapController
         // Gán giá trị mặc định nếu không nhập
         $data['DanhGia'] = empty($data['DanhGia']) ? 0.00 : $data['DanhGia'];
 
-        $this->modelNCC->addNhaCungCap($data);
+        try {
+            $this->modelNCC->addNhaCungCap($data);
+        } catch (PDOException $e) {
+            // Unique/constraint lỗi => báo lỗi thân thiện
+            $msg = $e->getMessage();
+            if (stripos($msg, 'MaCodeNCC') !== false || stripos($msg, 'Duplicate') !== false) {
+                header("Location: ?act=addNhaCungCap&error=duplicate_macode");
+                exit();
+            }
+            header("Location: ?act=addNhaCungCap&error=db_error");
+            exit();
+        }
         
         header("Location: ?act=listNhaCungCap");
         exit();
@@ -83,13 +107,20 @@ class nhaCungCapController
     {
         $data = $_POST;
 
-        // --- XỬ LÝ LOẠI NCC (CHECKBOX) ---
-        if (isset($data['LoaiNhaCungCap']) && is_array($data['LoaiNhaCungCap'])) {
-            $data['LoaiNhaCungCap'] = implode(',', $data['LoaiNhaCungCap']);
-        } else {
-            $data['LoaiNhaCungCap'] = '';
+        // 1) VALIDATE: Loại NCC (*): bắt buộc chọn ít nhất 1 loại
+        if (empty($data['LoaiNhaCungCap']) || !is_array($data['LoaiNhaCungCap'])) {
+            header("Location: ?act=editNhaCungCap&id=" . urlencode($data['MaNhaCungCap']) . "&error=missing_type");
+            exit();
         }
-        // ---------------------------------
+        $data['LoaiNhaCungCap'] = implode(',', $data['LoaiNhaCungCap']);
+
+        // 2) VALIDATE: Ngày hợp đồng
+        $start = $data['NgayBatDauHopDong'] ?? null;
+        $end   = $data['NgayKetThucHopDong'] ?? null;
+        if (!empty($start) && !empty($end) && strtotime($end) < strtotime($start)) {
+            header("Location: ?act=editNhaCungCap&id=" . urlencode($data['MaNhaCungCap']) . "&error=invalid_contract_date");
+            exit();
+        }
 
         $id = $data['MaNhaCungCap'];
         $pathFile = $data['duongDanFileCu'] ?? ''; // Lấy lại đường dẫn file cũ
@@ -98,20 +129,40 @@ class nhaCungCapController
 
         if ($file && $file['size'] > 0) {
             // Upload file mới
-            $folderToSave = 'uploads/contracts/'; 
-            $pathFile = uploadFile($file, $folderToSave);
-
-            // Xóa file cũ (nếu có)
+            $folderToSave = 'uploads/contracts/';
+            $newPath = uploadFile($file, $folderToSave);
+            if ($newPath === null) {
+                header("Location: ?act=editNhaCungCap&id=" . urlencode($id) . "&error=upload_failed");
+                exit();
+            }
+            // Chỉ xóa file cũ khi upload mới thành công
             if (!empty($data['duongDanFileCu'])) {
                 deleteFile($data['duongDanFileCu']);
             }
+            $pathFile = $newPath;
         }
         
         $data['FileHopDong'] = $pathFile;
         // Gán giá trị mặc định nếu không nhập
         $data['DanhGia'] = empty($data['DanhGia']) ? 0.00 : $data['DanhGia'];
         
-        $this->modelNCC->updateNhaCungCap($data);
+        // 3) CHECK TRÙNG MaCodeNCC (bỏ qua chính nó)
+        if (!empty($data['MaCodeNCC']) && $this->modelNCC->isMaCodeNccExists($data['MaCodeNCC'], $id)) {
+            header("Location: ?act=editNhaCungCap&id=" . urlencode($id) . "&error=duplicate_macode");
+            exit();
+        }
+
+        try {
+            $this->modelNCC->updateNhaCungCap($data);
+        } catch (PDOException $e) {
+            $msg = $e->getMessage();
+            if (stripos($msg, 'MaCodeNCC') !== false || stripos($msg, 'Duplicate') !== false) {
+                header("Location: ?act=editNhaCungCap&id=" . urlencode($id) . "&error=duplicate_macode");
+                exit();
+            }
+            header("Location: ?act=editNhaCungCap&id=" . urlencode($id) . "&error=db_error");
+            exit();
+        }
         
         header("Location: ?act=listNhaCungCap&success=updated");
         exit();
@@ -121,17 +172,29 @@ class nhaCungCapController
     public function deleteNhaCungCap()
     {
         $id = $_GET['id'];
+
+        // Chặn xóa nếu NCC đang được sử dụng
+        if ($this->modelNCC->isNccInUse($id)) {
+            header("Location: ?act=listNhaCungCap&error=in_use");
+            exit();
+        }
         
         // 1. Lấy thông tin NCC để lấy đường dẫn file
         $ncc = $this->modelNCC->getNhaCungCapById($id);
 
-        if ($ncc && !empty($ncc['FileHopDong'])) {
-            // 2. Xóa file vật lý
-            deleteFile($ncc['FileHopDong']);
+        // 2. Xóa bản ghi trong DB trước (đảm bảo không lỗi rồi mới xóa file)
+        try {
+            $this->modelNCC->deleteNhaCungCap($id);
+        } catch (PDOException $e) {
+            // Nếu vì lý do nào đó vẫn bị FK/constraint
+            header("Location: ?act=listNhaCungCap&error=delete_failed");
+            exit();
         }
 
-        // 3. Xóa bản ghi trong DB
-        $this->modelNCC->deleteNhaCungCap($id);
+        // 3. Xóa file vật lý sau khi xóa DB thành công
+        if ($ncc && !empty($ncc['FileHopDong'])) {
+            deleteFile($ncc['FileHopDong']);
+        }
         
         header("Location: ?act=listNhaCungCap&success=deleted");
         exit();

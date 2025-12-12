@@ -19,6 +19,23 @@
         <li class="breadcrumb-item active">Nhà Cung Cấp</li>
     </ol>
 
+    <?php if (!empty($_GET['error'])): ?>
+        <div style="padding:12px 14px; border-radius:6px; margin-bottom:14px; border:1px solid #f5c2c7; background:#f8d7da; color:#842029;">
+            <?php
+                $err = $_GET['error'];
+                if ($err === 'in_use') {
+                    echo 'Không thể xóa: Nhà cung cấp đang được sử dụng trong dịch vụ của đoàn.';
+                } elseif ($err === 'delete_failed') {
+                    echo 'Xóa thất bại: Vui lòng kiểm tra ràng buộc dữ liệu và thử lại.';
+                } elseif ($err === 'not_found') {
+                    echo 'Không tìm thấy nhà cung cấp.';
+                } else {
+                    echo 'Có lỗi xảy ra. Vui lòng thử lại.';
+                }
+            ?>
+        </div>
+    <?php endif; ?>
+
     <a href="?act=addNhaCungCap">
         <button class="btn-add">
             <i class="fas fa-plus"></i> Thêm Nhà Cung Cấp
@@ -79,7 +96,7 @@
                                 <a href="?act=editNhaCungCap&id=<?= $ncc['MaNhaCungCap'] ?>" class="btn-edit">Sửa</a>
                                 <a href="?act=deleteNhaCungCap&id=<?= $ncc['MaNhaCungCap'] ?>" 
                                    class="btn-delete"
-                                   onclick="return confirm('Bạn có chắc muốn xóa NCC này? (Hành động này sẽ xóa cả file hợp đồng!)');">Xóa</a>
+                                   onclick="return confirm('Bạn có chắc muốn xóa NCC này? (Nếu xóa thành công sẽ xóa cả file hợp đồng!)');">Xóa</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

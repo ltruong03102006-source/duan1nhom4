@@ -19,6 +19,25 @@
         <li class="breadcrumb-item active">Thêm mới</li>
     </ol>
 
+    <?php if (!empty($_GET['error'])): ?>
+        <div style="padding:12px 14px; border-radius:6px; margin-bottom:14px; border:1px solid #f5c2c7; background:#f8d7da; color:#842029;">
+            <?php
+                $err = $_GET['error'];
+                if ($err === 'missing_type') {
+                    echo 'Vui lòng chọn ít nhất 1 loại nhà cung cấp.';
+                } elseif ($err === 'invalid_contract_date') {
+                    echo 'Ngày kết thúc hợp đồng phải lớn hơn hoặc bằng ngày bắt đầu.';
+                } elseif ($err === 'duplicate_macode') {
+                    echo 'Mã Code NCC đã tồn tại. Vui lòng nhập mã khác.';
+                } elseif ($err === 'upload_failed') {
+                    echo 'Upload file hợp đồng thất bại. Vui lòng thử lại.';
+                } else {
+                    echo 'Có lỗi xảy ra. Vui lòng thử lại.';
+                }
+            ?>
+        </div>
+    <?php endif; ?>
+
     <div class="card">
         <form action="?act=addNhaCungCapProcess" method="POST" enctype="multipart/form-data">
 

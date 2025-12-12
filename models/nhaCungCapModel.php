@@ -103,4 +103,31 @@ class nhaCungCapModel
         $stmt->bindParam(':id', $id);
         return $stmt->execute();
     }
+
+    // 6. Kiểm tra NCC có đang được sử dụng ở bảng dichvucuadoan hay không
+    public function isNccInUse($id)
+    {
+        $sql = "SELECT COUNT(*) FROM dichvucuadoan WHERE MaNhaCungCap = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return ((int)$stmt->fetchColumn()) > 0;
+    }
+
+    // 7. Kiểm tra trùng MaCodeNCC (dùng cho add/update)
+    // $excludeId: dùng khi update để bỏ qua bản ghi hiện tại
+    public function isMaCodeNccExists($maCode, $excludeId = null)
+    {
+        $sql = "SELECT COUNT(*) FROM nhacungcap WHERE MaCodeNCC = :ma";
+        if ($excludeId !== null) {
+            $sql .= " AND MaNhaCungCap <> :excludeId";
+        }
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':ma', $maCode);
+        if ($excludeId !== null) {
+            $stmt->bindParam(':excludeId', $excludeId);
+        }
+        $stmt->execute();
+        return ((int)$stmt->fetchColumn()) > 0;
+    }
 }

@@ -56,4 +56,12 @@ class AnhTourModel
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute([':MaAnh' => $MaAnh]);
     }
+    public function getMaxThuTu($MaTour)
+{
+    $sql = "SELECT COALESCE(MAX(ThuTuHienThi), 0) AS maxTT FROM AnhTour WHERE MaTour = :MaTour";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([':MaTour' => $MaTour]);
+    return (int)$stmt->fetchColumn();
+}
+
 }
