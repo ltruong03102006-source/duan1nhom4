@@ -2,10 +2,11 @@
 class BookingController
 {
     public $bookingModel;
-
+    public $doanModel;
     public function __construct()
     {
         $this->bookingModel = new BookingModel();
+        $this->doanModel = new DoanKhoiHanhModel();
     }
 
     // ====== DANH SÁCH BOOKING ======
@@ -51,6 +52,23 @@ class BookingController
             $TongNguoiLon = (int)($_POST['TongNguoiLon'] ?? 0);
             $TongTreEm = (int)($_POST['TongTreEm'] ?? 0);
             $TongEmBe = (int)($_POST['TongEmBe'] ?? 0);
+            
+            // Tính tổng số khách mới
+            $newHeadCount = $TongNguoiLon + $TongTreEm + $TongEmBe;
+
+            // ===== START: CAPACITY CHECK LOGIC CHO THÊM MỚI =====
+            if (!empty($MaDoan)) {
+                $capacityInfo = $this->doanModel->getCapacityInfo($MaDoan);
+                $soChoToiDa = (int)($capacityInfo['SoChoToiDa'] ?? 0);
+                $daDat = (int)($capacityInfo['DaDat'] ?? 0);
+
+                if ($soChoToiDa > 0 && $newHeadCount + $daDat > $soChoToiDa) {
+                    $_SESSION['error_booking'] = "Đoàn #$MaDoan chỉ còn trống " . max(0, $soChoToiDa - $daDat) . " chỗ. Không thể thêm $newHeadCount khách.";
+                    header("Location: ?act=addBooking&error=capacity");
+                    exit();
+                }
+            }
+            // ===== END: CAPACITY CHECK LOGIC CHO THÊM MỚI =====
 
             $TongTien = (float)($_POST['TongTien'] ?? 0);
             $SoTienDaCoc = (float)($_POST['SoTienDaCoc'] ?? 0);
@@ -89,7 +107,6 @@ class BookingController
             exit();
         }
     }
-
     // ====== SỬA BOOKING ======
     public function editBooking()
     {
@@ -115,16 +132,44 @@ class BookingController
 
             $oldBooking  = $this->bookingModel->getOneBooking($MaBooking);
             $TrangThaiCu = $oldBooking['TrangThai'] ?? 'cho_coc';
-            $oldMaDoan   = $oldBooking['MaDoan'] ?? null; // <-- cần dòng này
+            $oldMaDoan   = $oldBooking['MaDoan'] ?? null; 
 
             $MaTour       = $_POST['MaTour'] ?: null;
-            $MaDoan       = $_POST['MaDoan'] ?: null;
+            $MaDoan       = $_POST['MaDoan'] ?: null; 
             $MaKhachHang  = $_POST['MaKhachHang'] ?: null;
             $LoaiBooking  = $_POST['LoaiBooking'] ?? 'ca_nhan';
 
             $TongNguoiLon = (int)($_POST['TongNguoiLon'] ?? 0);
             $TongTreEm    = (int)($_POST['TongTreEm'] ?? 0);
             $TongEmBe     = (int)($_POST['TongEmBe'] ?? 0);
+
+            // Tính tổng số khách mới
+            $newHeadCount = $TongNguoiLon + $TongTreEm + $TongEmBe;
+
+            // ===== START: CAPACITY CHECK LOGIC CHO SỬA =====
+            if (!empty($MaDoan)) {
+                $capacityInfo = $this->doanModel->getCapacityInfo($MaDoan);
+                $soChoToiDa = (int)($capacityInfo['SoChoToiDa'] ?? 0);
+                $daDat = (int)($capacityInfo['DaDat'] ?? 0);
+                
+                // Số khách của booking hiện tại trong DB
+                $bookedOfCurrentBooking = (int)($oldBooking['TongNguoiLon'] ?? 0) + (int)($oldBooking['TongTreEm'] ?? 0) + (int)($oldBooking['TongEmBe'] ?? 0);
+
+                // Tính tổng số khách đã đặt của đoàn, loại trừ số khách của booking đang sửa
+                $currentBookedWithoutThisBooking = $daDat;
+                if ($MaDoan === $oldMaDoan) {
+                     // Nếu vẫn là đoàn cũ, ta phải loại trừ số khách CŨ của booking này khỏi tổng Đã Đặt
+                     $currentBookedWithoutThisBooking = $daDat - $bookedOfCurrentBooking;
+                }
+                
+                // Kiểm tra xem tổng khách mới + tổng khách còn lại có vượt quá không
+                if ($soChoToiDa > 0 && $newHeadCount + $currentBookedWithoutThisBooking > $soChoToiDa) {
+                     $_SESSION['error_booking'] = "Đoàn #$MaDoan chỉ còn trống " . max(0, $soChoToiDa - $currentBookedWithoutThisBooking) . " chỗ. Không thể cập nhật thành $newHeadCount khách.";
+                    header("Location: ?act=editBooking&MaBooking=$MaBooking&error=capacity");
+                    exit();
+                }
+            }
+            // ===== END: CAPACITY CHECK LOGIC CHO SỬA =====
 
             $TongTien     = (float)($_POST['TongTien'] ?? 0);
             $SoTienDaCoc  = (float)($_POST['SoTienDaCoc'] ?? 0);
@@ -136,7 +181,7 @@ class BookingController
 
             $data = [
                 ':MaBooking'     => $MaBooking,
-                ':MaTour'        => $MaTour,
+':MaTour'        => $MaTour,
                 ':MaDoan'        => $MaDoan,
                 ':MaKhachHang'   => $MaKhachHang,
                 ':LoaiBooking'   => $LoaiBooking,
@@ -171,23 +216,6 @@ class BookingController
             exit();
         }
     }
-
-
-    // ====== XÓA BOOKING ======
-     public function deleteBooking()
-    {
-        $MaBooking = $_GET['MaBooking'] ?? null;
-        if ($MaBooking) {
-            $bk = $this->bookingModel->getOneBooking($MaBooking); // lấy MaDoan trước khi xóa
-            $this->bookingModel->deleteBooking($MaBooking);
-            if (!empty($bk['MaDoan'])) {
-                $this->bookingModel->updateTrangThaiDoanBySoKhach($bk['MaDoan']);
-            }
-        }
-        header("Location: ?act=listBooking");
-        exit();
-    }
-
 
     // ====== KHÁCH TRONG BOOKING ======
     public function khachTrongBooking()

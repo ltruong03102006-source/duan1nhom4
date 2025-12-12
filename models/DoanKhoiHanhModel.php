@@ -125,4 +125,20 @@ class DoanKhoiHanhModel
         // Tận dụng luôn hàm getOneDoan đã có sẵn để đỡ phải viết lại SQL
         return $this->getOneDoan($MaDoan);
     }
+    public function getCapacityInfo($MaDoan)
+    {
+        $sql = "SELECT dk.MaDoan, dk.SoChoToiDa,
+            (
+                SELECT COALESCE(SUM(b.TongNguoiLon + b.TongTreEm + b.TongEmBe), 0)
+                FROM Booking b
+                WHERE b.MaDoan = dk.MaDoan AND b.TrangThai != 'da_huy'
+            ) AS DaDat
+            FROM DoanKhoiHanh dk
+            WHERE dk.MaDoan = :MaDoan";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(":MaDoan", $MaDoan);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }
