@@ -11,9 +11,9 @@ class BookingModel
     // ================== BOOKING ==================
 
     // Danh sách booking + tên tour + tên khách
-    public function getAllBooking()
+ public function getAllBooking()
     {
-        $sql = "SELECT b.*, t.TenTour, d.NgayKhoiHanh, k.HoTen AS TenKhach
+        $sql = "SELECT b.*, t.TenTour, d.NgayKhoiHanh, d.DiemTapTrung, k.HoTen AS TenKhach
                 FROM Booking b
                 LEFT JOIN Tour t ON b.MaTour = t.MaTour
                 LEFT JOIN DoanKhoiHanh d ON b.MaDoan = d.MaDoan
@@ -21,7 +21,6 @@ class BookingModel
                 ORDER BY b.MaBooking DESC";
         return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
-
     public function getAllTour()
     {
         $sql = "
