@@ -46,9 +46,10 @@ class LichLamViecModel
     }
 
     // Lấy danh sách Đoàn Khởi Hành (Chỉ lấy đoàn đang hoạt động hoặc chưa hoàn thành)
+    // ĐÃ THÊM dk.DiemTapTrung ĐỂ KHẮC PHỤC LỖI TRƯỚC
     public function getAllDoanKhoiHanh()
     {
-        $sql = "SELECT dk.MaDoan, dk.NgayKhoiHanh, dk.NgayVe, t.TenTour, t.MaCodeTour 
+        $sql = "SELECT dk.MaDoan, dk.NgayKhoiHanh, dk.NgayVe, dk.DiemTapTrung, t.TenTour, t.MaCodeTour 
                 FROM DoanKhoiHanh dk
                 JOIN Tour t ON dk.MaTour = t.MaTour
                 WHERE dk.TrangThai IN ('con_cho', 'het_cho')

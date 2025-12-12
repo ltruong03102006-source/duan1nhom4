@@ -144,7 +144,7 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>Số chỗ tối đa</label>
+                    <label>Số thành viên đoàn</label>
                     <input type="number" name="SoChoToiDa" value="<?= $doan['SoChoToiDa'] ?>">
                 </div>
                 <div class="form-group">

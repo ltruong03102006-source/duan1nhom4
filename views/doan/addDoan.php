@@ -141,7 +141,7 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>Số chỗ tối đa *</label>
+                    <label>Số thành viên đoàn</label>
                     <input type="number" name="SoChoToiDa" min="1" required>
                 </div>
             </div>

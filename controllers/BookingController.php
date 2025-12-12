@@ -46,6 +46,7 @@ class BookingController
             $MaDoan = $_POST['MaDoan'] ?: null;
             $MaKhachHang = $_POST['MaKhachHang'] ?: null;
             $LoaiBooking = $_POST['LoaiBooking'] ?? 'ca_nhan';
+            
 
             $TongNguoiLon = (int)($_POST['TongNguoiLon'] ?? 0);
             $TongTreEm = (int)($_POST['TongTreEm'] ?? 0);

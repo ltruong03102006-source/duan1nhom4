@@ -309,14 +309,19 @@
 
                     <div class="mb-3" id="doanSelect" style="display: none;">
                         <label class="form-label">Chọn Đoàn Tour (Nếu Bận)</label>
-                        <select name="MaDoan" class="form-select">
+                        <select name="MaDoan" id="MaDoanSelect" class="form-select">
                             <option value="">-- Không chọn Đoàn (Bận việc cá nhân) --</option>
                             <?php foreach ($listDoan as $doan): ?>
-                                <option value="<?= $doan['MaDoan'] ?>">
+                                <option 
+                                    value="<?= $doan['MaDoan'] ?>"
+                                    data-diemkhoihanh="<?= htmlspecialchars($doan['DiemTapTrung'] ?? 'Chưa xác định') ?>"
+                                >
                                     [<?= $doan['MaCodeTour'] ?>] <?= htmlspecialchars($doan['TenTour']) ?> (KH: <?= date('d/m', strtotime($doan['NgayKhoiHanh'])) ?>)
                                 </option>
                             <?php endforeach; ?>
                         </select>
+                        
+                        <div id="DiemKhoiHanhDoan" class="form-text"></div>
                         <div class="form-text">Chỉ chọn khi trạng thái là **Bận (Đi Tour)**.</div>
 
                     </div>
@@ -443,4 +448,55 @@
     tuNgay && tuNgay.addEventListener('change', syncDateRange);
     denNgay && denNgay.addEventListener('change', syncDateRange);
     syncDateRange();
+    document.addEventListener('DOMContentLoaded', function() {
+        const trangThaiSelect = document.getElementById('TrangThai');
+        const doanSelectDiv = document.getElementById('doanSelect');
+        const maDoanSelect = document.getElementById('MaDoanSelect');
+        const diemKhoiHanhDiv = document.getElementById('DiemKhoiHanhDoan');
+
+        function updateDiemKhoiHanhDisplay() {
+            const selectedOption = maDoanSelect.options[maDoanSelect.selectedIndex];
+            // Lấy dữ liệu từ thuộc tính data-diemkhoihanh
+            const diemKhoiHanh = selectedOption.dataset.diemkhoihanh;
+            
+            if (diemKhoiHanh && maDoanSelect.value) {
+                diemKhoiHanhDiv.innerHTML = `<strong>📍 Điểm đón/tập trung:</strong> ${diemKhoiHanh}`;
+            } else {
+                diemKhoiHanhDiv.innerHTML = ``;
+            }
+        }
+
+        function toggleDoanSelect() {
+            if (trangThaiSelect.value === 'ban') {
+                doanSelectDiv.style.display = 'block';
+            } else {
+                doanSelectDiv.style.display = 'none';
+                // Đảm bảo không gửi MaDoan nếu không phải trạng thái bận
+                maDoanSelect.value = "";
+            }
+        }
+        
+        // Gắn sự kiện thay đổi cho dropdown Đoàn
+        maDoanSelect.addEventListener('change', updateDiemKhoiHanhDisplay);
+
+        trangThaiSelect.addEventListener('change', toggleDoanSelect);
+
+        // Khởi tạo trạng thái ban đầu
+        toggleDoanSelect();
+        updateDiemKhoiHanhDisplay(); // Cập nhật lần đầu
+        
+        const tuNgay = document.getElementById('TuNgay');
+        const denNgay = document.getElementById('DenNgay');
+
+        function syncDateRange() {
+            if (!tuNgay || !denNgay) return;
+            denNgay.min = tuNgay.value || '';
+            if (tuNgay.value && denNgay.value && denNgay.value < tuNgay.value) {
+                denNgay.value = tuNgay.value;
+            }
+        }
+        tuNgay && tuNgay.addEventListener('change', syncDateRange);
+        denNgay && denNgay.addEventListener('change', syncDateRange);
+        syncDateRange();
+    });
 </script>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,64 +8,192 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
-    *{box-sizing:border-box;font-family:'Inter',sans-serif}
-    body{margin:0;background:linear-gradient(180deg,#f6f9ff 0%, #f4f6f8 55%, #f7f7fb 100%);color:#111827}
-
-    .header{
-      background:linear-gradient(90deg,#0d47a1,#1e88e5);
-      padding:16px 20px;color:#fff;font-size:20px;font-weight:800;
-      display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap
+    * {
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif
     }
 
-    .container{
-      width:95%;max-width:1000px;margin:22px auto;background:#fff;
-      padding:22px;border-radius:14px;border:1px solid #eef2f7;
-      box-shadow:0 10px 30px rgba(17,24,39,.06)
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #f6f9ff 0%, #f4f6f8 55%, #f7f7fb 100%);
+      color: #111827
     }
 
-    .top-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
-    .title{margin:0;font-size:22px;font-weight:900;color:#0d47a1}
-
-    .btn{
-      padding:10px 14px;border:none;border-radius:12px;cursor:pointer;font-weight:900;font-size:14px;
-      display:inline-flex;align-items:center;gap:8px;text-decoration:none;transition:.15s transform,.15s filter
-    }
-    .btn:active{transform:translateY(1px)}
-    .btn-secondary{background:#607d8b;color:#fff}
-    .btn-secondary:hover{filter:brightness(.95)}
-    .btn-warning{background:#ff9800;color:#fff}
-    .btn-warning:hover{filter:brightness(.95)}
-
-    form{display:flex;flex-direction:column;gap:14px;margin-top:12px}
-
-    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    @media (max-width: 900px){
-      .grid,.grid-3{grid-template-columns:1fr}
+    .header {
+      background: linear-gradient(90deg, #0d47a1, #1e88e5);
+      padding: 16px 20px;
+      color: #fff;
+      font-size: 20px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap
     }
 
-    .field label{display:block;font-weight:800;margin-bottom:6px;color:#374151;font-size:13px}
-    .field input,.field select,.field textarea{
-      width:100%;padding:10px 12px;border:1px solid #dcdde1;border-radius:10px;font-size:14px;outline:none;
-      transition:.15s border-color,.15s box-shadow;background:#fff
-    }
-    .field input:focus,.field select:focus,.field textarea:focus{
-      border-color:#1e88e5;box-shadow:0 0 0 3px rgba(30,136,229,.15)
-    }
-    textarea{resize:vertical;min-height:84px}
-
-    .readonly{
-      background:#f3f4f6 !important;color:#6b7280;border-color:#e5e7eb !important
+    .container {
+      width: 95%;
+      max-width: 1000px;
+      margin: 22px auto;
+      background: #fff;
+      padding: 22px;
+      border-radius: 14px;
+      border: 1px solid #eef2f7;
+      box-shadow: 0 10px 30px rgba(17, 24, 39, .06)
     }
 
-    .card{
-      border:1px solid #eef2f7;border-radius:14px;padding:14px;background:#fafbff
+    .top-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px
     }
-    .card h3{margin:0 0 10px;font-size:14px;color:#0d47a1;font-weight:900}
 
-    .money{font-weight:900;color:#e53935}
-    .hint{font-size:12px;color:#6b7280;margin-top:6px}
-    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-top:8px}
+    .title {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 900;
+      color: #0d47a1
+    }
+
+    .btn {
+      padding: 10px 14px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 900;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: .15s transform, .15s filter
+    }
+
+    .btn:active {
+      transform: translateY(1px)
+    }
+
+    .btn-secondary {
+      background: #607d8b;
+      color: #fff
+    }
+
+    .btn-secondary:hover {
+      filter: brightness(.95)
+    }
+
+    .btn-warning {
+      background: #ff9800;
+      color: #fff
+    }
+
+    .btn-warning:hover {
+      filter: brightness(.95)
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 12px
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px
+    }
+
+    @media (max-width: 900px) {
+
+      .grid,
+      .grid-3 {
+        grid-template-columns: 1fr
+      }
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: #374151;
+      font-size: 13px
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #dcdde1;
+      border-radius: 10px;
+      font-size: 14px;
+      outline: none;
+      transition: .15s border-color, .15s box-shadow;
+      background: #fff
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: #1e88e5;
+      box-shadow: 0 0 0 3px rgba(30, 136, 229, .15)
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 84px
+    }
+
+    .readonly {
+      background: #f3f4f6 !important;
+      color: #6b7280;
+      border-color: #e5e7eb !important
+    }
+
+    .card {
+      border: 1px solid #eef2f7;
+      border-radius: 14px;
+      padding: 14px;
+      background: #fafbff
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      color: #0d47a1;
+      font-weight: 900
+    }
+
+    .money {
+      font-weight: 900;
+      color: #e53935
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 6px
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px
+    }
   </style>
 </head>
 
@@ -97,10 +226,10 @@
           <div class="field">
             <label>Trạng thái</label>
             <select name="TrangThai">
-              <option value="cho_coc" <?= ($booking['TrangThai'] ?? '')=='cho_coc'?'selected':'' ?>>Chờ cọc</option>
-              <option value="da_coc" <?= ($booking['TrangThai'] ?? '')=='da_coc'?'selected':'' ?>>Đã cọc</option>
-              <option value="hoan_tat" <?= ($booking['TrangThai'] ?? '')=='hoan_tat'?'selected':'' ?>>Hoàn tất</option>
-              <option value="da_huy" <?= ($booking['TrangThai'] ?? '')=='da_huy'?'selected':'' ?>>Đã hủy</option>
+              <option value="cho_coc" <?= ($booking['TrangThai'] ?? '') == 'cho_coc' ? 'selected' : '' ?>>Chờ cọc</option>
+              <option value="da_coc" <?= ($booking['TrangThai'] ?? '') == 'da_coc' ? 'selected' : '' ?>>Đã cọc</option>
+              <option value="hoan_tat" <?= ($booking['TrangThai'] ?? '') == 'hoan_tat' ? 'selected' : '' ?>>Hoàn tất</option>
+              <option value="da_huy" <?= ($booking['TrangThai'] ?? '') == 'da_huy' ? 'selected' : '' ?>>Đã hủy</option>
             </select>
           </div>
         </div>
@@ -120,8 +249,7 @@
                   data-price-nl="<?= (float)($t['GiaNguoiLon'] ?? 0) ?>"
                   data-price-te="<?= (float)($t['GiaTreEm'] ?? 0) ?>"
                   data-price-eb="<?= (float)($t['GiaEmBe'] ?? 0) ?>"
-                  <?= ((int)$t['MaTour'] === (int)$booking['MaTour']) ? 'selected' : '' ?>
-                >
+                  <?= ((int)$t['MaTour'] === (int)$booking['MaTour']) ? 'selected' : '' ?>>
                   <?= htmlspecialchars($t['TenTour']) ?>
                 </option>
               <?php endforeach; ?>
@@ -135,24 +263,35 @@
             <label>Đoàn khởi hành</label>
             <select name="MaDoan" id="MaDoan">
               <option value="">-- Chọn đoàn --</option>
-              <?php foreach ($listDoan as $d): ?>
-                <option value="<?= (int)$d['MaDoan'] ?>"
-                  <?= ((int)($booking['MaDoan'] ?? 0) === (int)$d['MaDoan']) ? 'selected' : '' ?>
-                >
+              <?php foreach ($listDoan as $d):
+                // BẮT BUỘC có $d['MaTour'] để auto-sync Tour. Nếu chưa có, JOIN thêm từ DB.
+                $g = $giaMap[$d['MaTour']] ?? ['nl' => 0, 'te' => 0, 'eb' => 0];
+                // ✅ Đã sửa: Sử dụng cột 'DiemTapTrung' là tên cột trong bảng DoanKhoiHanh
+                $diemKH = $d['DiemTapTrung'] ?? '';
+              ?>
+                <option
+                  value="<?= (int)$d['MaDoan'] ?>"
+                  data-diemkhoihanh="<?= htmlspecialchars($d['DiemTapTrung'] ?? '') ?>"
+                  <?= ((int)($booking['MaDoan'] ?? 0) === (int)$d['MaDoan']) ? 'selected' : '' ?>>
                   [#<?= (int)$d['MaDoan'] ?>] <?= htmlspecialchars($d['TenTour']) ?> -
                   <?= date('d/m/Y', strtotime($d['NgayKhoiHanh'])) ?>
                 </option>
               <?php endforeach; ?>
             </select>
+
+            <!-- dòng hiển thị điểm khởi hành -->
+            <div id="doanDiemKh" class="hint" style="margin-top:8px;padding:10px 12px;border:1px dashed #dbeafe;border-radius:10px;background:#fff;">
+              📍 Chưa có thông tin điểm khởi hành.
+            </div>
           </div>
+
 
           <div class="field">
             <label>Khách hàng (đại diện) *</label>
             <select name="MaKhachHang" required>
               <?php foreach ($listKhachHang as $kh): ?>
                 <option value="<?= (int)$kh['MaKhachHang'] ?>"
-                  <?= ((int)$kh['MaKhachHang'] === (int)$booking['MaKhachHang']) ? 'selected' : '' ?>
-                >
+                  <?= ((int)$kh['MaKhachHang'] === (int)$booking['MaKhachHang']) ? 'selected' : '' ?>>
                   [<?= htmlspecialchars($kh['MaCodeKhachHang']) ?>] <?= htmlspecialchars($kh['HoTen']) ?> - <?= htmlspecialchars($kh['SoDienThoai']) ?>
                 </option>
               <?php endforeach; ?>
@@ -169,8 +308,8 @@
           <div class="field">
             <label>Loại booking</label>
             <select name="LoaiBooking" id="LoaiBooking">
-              <option value="ca_nhan" <?= ($booking['LoaiBooking'] ?? '')=='ca_nhan'?'selected':'' ?>>Cá nhân</option>
-              <option value="nhom" <?= ($booking['LoaiBooking'] ?? '')=='nhom'?'selected':'' ?>>Nhóm</option>
+              <option value="ca_nhan" <?= ($booking['LoaiBooking'] ?? '') == 'ca_nhan' ? 'selected' : '' ?>>Cá nhân</option>
+              <option value="nhom" <?= ($booking['LoaiBooking'] ?? '') == 'nhom' ? 'selected' : '' ?>>Nhóm</option>
             </select>
           </div>
 
@@ -192,7 +331,7 @@
           <div class="field">
             <label>Tổng tiền (VNĐ)</label>
             <input id="TongTien" type="number" name="TongTien" min="0" step="1000"
-                   value="<?= (float)($booking['TongTien'] ?? 0) ?>" readonly class="readonly">
+              value="<?= (float)($booking['TongTien'] ?? 0) ?>" readonly class="readonly">
             <div class="hint">
               Tự tính = NL×GiáNL + TE×GiáTE + EB×GiáEB
             </div>
@@ -227,69 +366,96 @@
     </form>
   </div>
 
-<script>
-  const selTour = document.getElementById('MaTour');
-  const nlEl = document.getElementById('TongNguoiLon');
-  const teEl = document.getElementById('TongTreEm');
-  const ebEl = document.getElementById('TongEmBe');
-  const tongTienEl = document.getElementById('TongTien');
+  <script>
+    const selTour = document.getElementById('MaTour');
+    const nlEl = document.getElementById('TongNguoiLon');
+    const teEl = document.getElementById('TongTreEm');
+    const ebEl = document.getElementById('TongEmBe');
+    const tongTienEl = document.getElementById('TongTien');
 
-  const pNL = document.getElementById('pNL');
-  const pTE = document.getElementById('pTE');
-  const pEB = document.getElementById('pEB');
+    const pNL = document.getElementById('pNL');
+    const pTE = document.getElementById('pTE');
+    const pEB = document.getElementById('pEB');
 
-  function toNum(v){
-    const n = Number(v);
-    return isNaN(n) ? 0 : n;
-  }
-  function fmt(n){
-    try { return Number(n||0).toLocaleString('vi-VN'); } catch(e){ return n; }
-  }
+    function toNum(v) {
+      const n = Number(v);
+      return isNaN(n) ? 0 : n;
+    }
 
-  function getPrices(){
-    const opt = selTour.options[selTour.selectedIndex];
-    return {
-      nl: toNum(opt.dataset.priceNl),
-      te: toNum(opt.dataset.priceTe),
-      eb: toNum(opt.dataset.priceEb),
-    };
-  }
+    function fmt(n) {
+      try {
+        return Number(n || 0).toLocaleString('vi-VN');
+      } catch (e) {
+        return n;
+      }
+    }
 
-  function renderPrices(){
-    const pr = getPrices();
-    pNL.textContent = fmt(pr.nl);
-    pTE.textContent = fmt(pr.te);
-    pEB.textContent = fmt(pr.eb);
-  }
+    function getPrices() {
+      const opt = selTour.options[selTour.selectedIndex];
+      return {
+        nl: toNum(opt.dataset.priceNl),
+        te: toNum(opt.dataset.priceTe),
+        eb: toNum(opt.dataset.priceEb),
+      };
+    }
 
-  function calcTongTien(){
-    const pr = getPrices();
-    const nl = toNum(nlEl.value);
-    const te = toNum(teEl.value);
-    const eb = toNum(ebEl.value);
+    function renderPrices() {
+      const pr = getPrices();
+      pNL.textContent = fmt(pr.nl);
+      pTE.textContent = fmt(pr.te);
+      pEB.textContent = fmt(pr.eb);
+    }
 
-    let total = nl * pr.nl + te * pr.te + eb * pr.eb;
-    if (total < 0) total = 0;
+    function calcTongTien() {
+      const pr = getPrices();
+      const nl = toNum(nlEl.value);
+      const te = toNum(teEl.value);
+      const eb = toNum(ebEl.value);
 
-    // step 1000 => làm tròn cho đẹp (tuỳ bạn, có thể bỏ)
-    total = Math.round(total / 1000) * 1000;
+      let total = nl * pr.nl + te * pr.te + eb * pr.eb;
+      if (total < 0) total = 0;
 
-    tongTienEl.value = total;
-  }
+      // step 1000 => làm tròn cho đẹp (tuỳ bạn, có thể bỏ)
+      total = Math.round(total / 1000) * 1000;
 
-  function refresh(){
-    renderPrices();
-    calcTongTien();
-  }
+      tongTienEl.value = total;
+    }
 
-  selTour.addEventListener('change', refresh);
-  nlEl.addEventListener('input', calcTongTien);
-  teEl.addEventListener('input', calcTongTien);
-  ebEl.addEventListener('input', calcTongTien);
+    function refresh() {
+      renderPrices();
+      calcTongTien();
+    }
 
-  // init
-  refresh();
-</script>
+    selTour.addEventListener('change', refresh);
+    nlEl.addEventListener('input', calcTongTien);
+    teEl.addEventListener('input', calcTongTien);
+    ebEl.addEventListener('input', calcTongTien);
+
+    // init
+    refresh();
+
+    // --- HIỂN THỊ ĐIỂM KHỞI HÀNH CỦA ĐOÀN ---
+    const doanEl = document.getElementById('MaDoan');
+    const doanDiemKh = document.getElementById('doanDiemKh');
+
+    function updateDoanInfo() {
+      if (!doanEl || !doanDiemKh) return;
+      const opt = doanEl.options[doanEl.selectedIndex];
+      if (!opt || !opt.value) {
+        doanDiemKh.textContent = '📍 Chưa có thông tin điểm khởi hành.';
+        return;
+      }
+      const dk = opt.dataset.diemkhoihanh || '';
+      doanDiemKh.textContent = dk ? `📍 Khởi hành tại: ${dk}` : '📍 Chưa có thông tin điểm khởi hành.';
+    }
+
+    if (doanEl) {
+      doanEl.addEventListener('change', updateDoanInfo);
+      // chạy lần đầu khi mở trang để hiển thị đúng đoàn đang được chọn
+      updateDoanInfo();
+    }
+  </script>
 
 </body>
+
 </html>

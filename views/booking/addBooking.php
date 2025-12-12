@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
     <meta charset="UTF-8">
     <title>Thêm Booking</title>
@@ -46,6 +45,12 @@
             padding: 6px 10px; border-radius: 999px; background: #f1f3f5; border: 1px solid #e5e7eb;
         }
         .money { font-weight: 700; color: #e53935; }
+
+        /* Nhẹ nhàng highlight dòng thông tin đoàn */
+        #doanKhoiHanhInfo {
+            margin-top: 6px; color: #2c3e50; font-size: 13px;
+            background: #f8fafc; border: 1px dashed #cbd5e1; padding: 8px 10px; border-radius: 8px;
+        }
     </style>
 </head>
 
@@ -58,6 +63,7 @@
 
         <div class="note">
             💡 Tổng tiền sẽ tự tính theo <b>giá Tour</b> (Người lớn/Trẻ em/Em bé) và số lượng bạn chọn.
+            Nếu bạn chọn <b>Đoàn</b>, hệ thống sẽ tự khớp Tour của đoàn, dùng <b>giá theo đoàn</b> (nếu cung cấp) và hiện điểm khởi hành.
         </div>
 
         <form action="?act=addBookingProcess" method="POST">
@@ -73,10 +79,11 @@
                     <select name="MaTour" id="MaTour" required>
                         <option value="">-- Chọn tour --</option>
                         <?php foreach ($listTour as $t):
+                            // $giaMap phải là map kiểu: $giaMap[MaTour] = ['nl'=>..., 'te'=>..., 'eb'=>...]
                             $g = $giaMap[$t['MaTour']] ?? ['nl'=>0,'te'=>0,'eb'=>0];
                         ?>
                             <option
-                                value="<?= $t['MaTour'] ?>"
+                                value="<?= (int)$t['MaTour'] ?>"
                                 data-nl="<?= (float)$g['nl'] ?>"
                                 data-te="<?= (float)$g['te'] ?>"
                                 data-eb="<?= (float)$g['eb'] ?>"
@@ -97,13 +104,27 @@
                     <label>Đoàn khởi hành</label>
                     <select name="MaDoan" id="MaDoan">
                         <option value="">-- Chọn đoàn --</option>
-                        <?php foreach ($listDoan as $d): ?>
-                            <option value="<?= $d['MaDoan'] ?>">
-                                [#<?= $d['MaDoan'] ?>] <?= htmlspecialchars($d['TenTour']) ?> -
+                        <?php foreach ($listDoan as $d):
+                            // BẮT BUỘC có $d['MaTour'] để auto-sync Tour. Nếu chưa có, JOIN thêm từ DB.
+                            $g = $giaMap[$d['MaTour']] ?? ['nl'=>0,'te'=>0,'eb'=>0];
+                            // ✅ Đã sửa: Sử dụng cột 'DiemTapTrung' là tên cột trong bảng DoanKhoiHanh
+                            $diemKH = $d['DiemTapTrung'] ?? '';
+                        ?>
+                            <option
+                                value="<?= (int)$d['MaDoan'] ?>"
+                                data-matour="<?= (int)$d['MaTour'] ?>"
+                                data-diemkhoihanh="<?= htmlspecialchars($diemKH) ?>"
+                                data-nl="<?= (float)$g['nl'] ?>"
+                                data-te="<?= (float)$g['te'] ?>"
+                                data-eb="<?= (float)$g['eb'] ?>"
+                            >
+                                [#<?= (int)$d['MaDoan'] ?>] <?= htmlspecialchars($d['TenTour']) ?> -
                                 <?= date('d/m/Y', strtotime($d['NgayKhoiHanh'])) ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
+
+                    <div id="doanKhoiHanhInfo"></div>
                 </div>
             </div>
 
@@ -112,7 +133,7 @@
                 <select name="MaKhachHang" required>
                     <option value="">-- Chọn khách hàng --</option>
                     <?php foreach ($listKhachHang as $kh): ?>
-                        <option value="<?= $kh['MaKhachHang'] ?>">
+                        <option value="<?= (int)$kh['MaKhachHang'] ?>">
                             [<?= htmlspecialchars($kh['MaCodeKhachHang']) ?>] <?= htmlspecialchars($kh['HoTen']) ?> - <?= htmlspecialchars($kh['SoDienThoai']) ?>
                         </option>
                     <?php endforeach; ?>
@@ -162,6 +183,9 @@
 
     <script>
         const tourEl = document.getElementById('MaTour');
+        const doanEl = document.getElementById('MaDoan');
+        const doanInfoEl = document.getElementById('doanKhoiHanhInfo');
+
         const nlEl = document.getElementById('TongNguoiLon');
         const teEl = document.getElementById('TongTreEm');
         const ebEl = document.getElementById('TongEmBe');
@@ -172,20 +196,20 @@
         const giaTE = document.getElementById('giaTE');
         const giaEB = document.getElementById('giaEB');
 
-        function toInt(v){
-            const n = parseInt(v, 10);
-            return isNaN(n) ? 0 : n;
-        }
-        function toMoney(v){
-            const n = parseFloat(v);
-            return isNaN(n) ? 0 : n;
-        }
-        function formatVN(n){
-            try { return Number(n||0).toLocaleString('vi-VN'); }
-            catch(e){ return n; }
-        }
+        function toInt(v){ const n = parseInt(v, 10); return isNaN(n) ? 0 : n; }
+        function toMoney(v){ const n = parseFloat(v); return isNaN(n) ? 0 : n; }
+        function formatVN(n){ try { return Number(n||0).toLocaleString('vi-VN'); } catch(e){ return n; } }
 
-        function updateGiaPreview(){
+        // Cho phép override giá (khi chọn Đoàn) — nếu không có override thì lấy theo Tour
+        function updateGiaPreview(pricesOverride = null){
+            if (pricesOverride){
+                giaPreview.style.display = 'flex';
+                giaNL.innerText = formatVN(pricesOverride.nl);
+                giaTE.innerText = formatVN(pricesOverride.te);
+                giaEB.innerText = formatVN(pricesOverride.eb);
+                return pricesOverride;
+            }
+
             const opt = tourEl.options[tourEl.selectedIndex];
             if (!opt || !opt.value){
                 giaPreview.style.display = 'none';
@@ -206,25 +230,72 @@
             return { nl, te, eb };
         }
 
+        // Nếu đang chọn Đoàn => ưu tiên giá của Đoàn để tính tổng
         function calcTongTien(){
-            const prices = updateGiaPreview();
+            let prices = null;
+
+            const doanOpt = doanEl?.options[doanEl.selectedIndex];
+            if (doanOpt && doanOpt.value){
+                prices = {
+                    nl: toMoney(doanOpt.dataset.nl),
+                    te: toMoney(doanOpt.dataset.te),
+                    eb: toMoney(doanOpt.dataset.eb),
+                };
+            }
+
+            const finalPrices = updateGiaPreview(prices);
 
             const soNL = toInt(nlEl.value);
             const soTE = toInt(teEl.value);
             const soEB = toInt(ebEl.value);
 
-            const tong = (soNL * prices.nl) + (soTE * prices.te) + (soEB * prices.eb);
-
-            // Làm tròn theo step 1000 cho đẹp (nếu không thích thì bỏ dòng này)
+            const tong = (soNL * finalPrices.nl) + (soTE * finalPrices.te) + (soEB * finalPrices.eb);
             tongTienEl.value = Math.round(tong / 1000) * 1000;
         }
 
-        tourEl.addEventListener('change', calcTongTien);
+        // Chọn Đoàn -> tự set Tour theo đoàn, khoá chọn Tour, hiện điểm khởi hành, cập nhật giá/tổng
+        function updateDoanInfoAndSyncTour(){
+            const opt = doanEl.options[doanEl.selectedIndex];
+            if (!opt || !opt.value){
+                doanInfoEl.textContent = '';
+                tourEl.disabled = false; // cho phép chọn tour lại khi bỏ chọn đoàn
+                calcTongTien();
+                return;
+            }
+
+            // hiện điểm khởi hành
+            const diem = (opt.dataset.diemkhoihanh || '').trim();
+            doanInfoEl.textContent = diem ? `📍 Khởi hành tại: ${diem}` : '📍 Chưa có thông tin điểm khởi hành.';
+
+            // auto set Tour theo đoàn + khoá để tránh lệch dữ liệu
+            const maTour = opt.dataset.matour;
+            if (maTour){
+                tourEl.value = maTour;
+                tourEl.disabled = true;
+            }
+
+            calcTongTien();
+        }
+
+        // Khi đổi Tour thủ công ⇒ reset đoàn (tránh sai lệch)
+        tourEl.addEventListener('change', () => {
+            if (doanEl && doanEl.value){
+                doanEl.value = '';
+                doanInfoEl.textContent = '';
+                tourEl.disabled = false;
+            }
+            calcTongTien();
+        });
+
+        doanEl.addEventListener('change', updateDoanInfoAndSyncTour);
+
         nlEl.addEventListener('input', calcTongTien);
         teEl.addEventListener('input', calcTongTien);
         ebEl.addEventListener('input', calcTongTien);
 
-        calcTongTien();
+        // Khởi tạo
+        updateDoanInfoAndSyncTour(); // sẽ gọi calcTongTien() bên trong
+        if (!doanEl.value) calcTongTien();
     </script>
 
 </body>
