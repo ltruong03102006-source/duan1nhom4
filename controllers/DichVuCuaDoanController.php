@@ -43,32 +43,61 @@ class DichVuCuaDoanController
     }
 
     // 3. Xử lý thêm dịch vụ
+    // 3. Xử lý thêm dịch vụ (Nhiều dòng cùng lúc)
     public function addDichVuProcess()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // 1. Lấy thông tin chung
             $maDoan = $_POST['MaDoan'];
-            $soLuong = (int)$_POST['SoLuong'];
-            $donGia = (float)$_POST['DonGia'];
-            $tongTien = $soLuong * $donGia; // Tính tổng tiền
+            $maNhaCungCap = !empty($_POST['MaNhaCungCap']) ? $_POST['MaNhaCungCap'] : null;
+            $ngayDat = !empty($_POST['NgayDat']) ? $_POST['NgayDat'] : null;
+            $trangThaiXacNhan = $_POST['TrangThaiXacNhan'];
 
-            $data = [
-                ':MaDoan' => $maDoan,
-                ':LoaiDichVu' => $_POST['LoaiDichVu'],
-                ':MaNhaCungCap' => $_POST['MaNhaCungCap'] ?: null,
-                ':TenDichVu' => $_POST['TenDichVu'],
-                ':NgayDat' => $_POST['NgayDat'] ?: null,
-                ':NgaySuDung' => $_POST['NgaySuDung'],
-                ':SoLuong' => $soLuong,
-                ':DonGia' => $donGia,
-                ':TongTien' => $tongTien,
-                ':TrangThaiXacNhan' => $_POST['TrangThaiXacNhan'],
-                ':GhiChu' => $_POST['GhiChu'] ?? null
-            ];
+            // 2. Lấy các mảng dữ liệu chi tiết
+            // Lưu ý: Các biến này sẽ là Array do form đặt tên có [] (VD: name="TenDichVu[]")
+            $loaiDichVuArr = $_POST['LoaiDichVu']; 
+            $tenDichVuArr  = $_POST['TenDichVu'];
+            $ngaySuDungArr = $_POST['NgaySuDung'];
+            $soLuongArr    = $_POST['SoLuong'];
+            $donGiaArr     = $_POST['DonGia'];
+            $ghiChuArr     = $_POST['GhiChu'] ?? []; // Có thể null
 
-            $result = $this->model->addDichVu($data);
+            // Biến kiểm tra kết quả
+            $successCount = 0;
+            $totalItems = count($loaiDichVuArr);
+
+            // 3. Vòng lặp duyệt qua từng dòng để insert
+            for ($i = 0; $i < $totalItems; $i++) {
+                // Tính toán dữ liệu cho dòng thứ $i
+                $soLuong = (int)$soLuongArr[$i];
+                $donGia = (float)$donGiaArr[$i];
+                $tongTien = $soLuong * $donGia;
+
+                $data = [
+                    ':MaDoan' => $maDoan,
+                    ':LoaiDichVu' => $loaiDichVuArr[$i],
+                    ':MaNhaCungCap' => $maNhaCungCap, // Dùng chung
+                    ':TenDichVu' => $tenDichVuArr[$i],
+                    ':NgayDat' => $ngayDat,           // Dùng chung
+                    ':NgaySuDung' => $ngaySuDungArr[$i],
+                    ':SoLuong' => $soLuong,
+                    ':DonGia' => $donGia,
+                    ':TongTien' => $tongTien,
+                    ':TrangThaiXacNhan' => $trangThaiXacNhan, // Dùng chung
+                    ':GhiChu' => $ghiChuArr[$i] ?? null
+                ];
+
+                // Gọi Model để thêm dòng này
+                if ($this->model->addDichVu($data)) {
+                    $successCount++;
+                }
+            }
+
+            // 4. Chuyển hướng sau khi xử lý xong
             $location = "?act=listDichVu&maDoan=$maDoan";
-            if ($result) {
-                header("Location: $location&success=add");
+            if ($successCount > 0) {
+                // Nếu thêm được ít nhất 1 cái thì báo thành công
+                header("Location: $location&success=add_multi&count=$successCount");
             } else {
                 header("Location: $location&error=add_failed");
             }

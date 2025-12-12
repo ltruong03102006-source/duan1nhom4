@@ -86,12 +86,13 @@ class DoanKhoiHanhModel
 
     // Lấy danh sách tour
     public function getListTour()
-    {
-        $sql = "SELECT MaTour, TenTour FROM Tour WHERE TrangThai='hoat_dong'";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+{
+    // Lấy thêm cột SoNgay để phục vụ tính toán ngày về
+    $sql = "SELECT MaTour, TenTour, SoNgay FROM Tour WHERE TrangThai='hoat_dong'";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
     // Danh sách HDV
     public function getListHDV()

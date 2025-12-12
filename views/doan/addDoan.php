@@ -111,27 +111,28 @@
 
             <div class="form-group">
                 <label>Tour *</label>
-                <select name="MaTour" required>
-                    <option value="">-- Chọn tour --</option>
-                    <?php foreach ($listTour as $t): ?>
-                        <option value="<?= $t['MaTour'] ?>"><?= $t['TenTour'] ?></option>
-                    <?php endforeach; ?>
-                </select>
+                <select name="MaTour" id="selectTour" required onchange="calculateNgayVe()">
+    <option value="" data-songay="0">-- Chọn tour --</option>
+    <?php foreach ($listTour as $t): ?>
+        <option value="<?= $t['MaTour'] ?>" data-songay="<?= $t['SoNgay'] ?>">
+            <?= $t['TenTour'] ?> (<?= $t['SoNgay'] ?> ngày)
+        </option>
+    <?php endforeach; ?>
+</select>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>Ngày khởi hành *</label>
-                    <input type="date" name="NgayKhoiHanh" required>
-                </div>
+    <label>Ngày khởi hành *</label>
+    <input type="date" name="NgayKhoiHanh" id="ngayKhoiHanh" required onchange="calculateNgayVe()">
+</div>
                 <div class="form-group">
                     <label>Giờ khởi hành</label>
                     <input type="time" name="GioKhoiHanh">
                 </div>
                 <div class="form-group">
-                    <label>Ngày về</label>
-                    <input type="date" name="NgayVe">
-                </div>
+    <label>Ngày về</label>
+    <input type="date" name="NgayVe" id="ngayVe"> </div>
             </div>
 
             <div class="form-group">
@@ -186,3 +187,39 @@
 </body>
 
 </html>
+<script>
+    function calculateNgayVe() {
+        // 1. Lấy đối tượng DOM
+        var tourSelect = document.getElementById('selectTour');
+        var ngayKhoiHanhInput = document.getElementById('ngayKhoiHanh');
+        var ngayVeInput = document.getElementById('ngayVe');
+
+        // 2. Lấy giá trị
+        // Lấy số ngày từ attribute data-songay của option đang được chọn
+        var selectedOption = tourSelect.options[tourSelect.selectedIndex];
+        var soNgayTour = parseInt(selectedOption.getAttribute('data-songay')) || 0;
+        
+        var ngayKhoiHanhVal = ngayKhoiHanhInput.value;
+
+        // 3. Kiểm tra nếu có đủ dữ liệu thì tính
+        if (soNgayTour > 0 && ngayKhoiHanhVal) {
+            var date = new Date(ngayKhoiHanhVal);
+            
+            // Logic: Ngày về = Ngày khởi hành + (Số ngày tour - 1)
+            // Ví dụ: Tour 3 ngày, đi ngày 1 thì về ngày 3 (1 + 3 - 1)
+            if (soNgayTour >= 1) {
+                date.setDate(date.getDate() + (soNgayTour - 1));
+            }
+
+            // 4. Format lại thành chuỗi yyyy-mm-dd để gán vào input type=date
+            var year = date.getFullYear();
+            var month = ("0" + (date.getMonth() + 1)).slice(-2);
+            var day = ("0" + date.getDate()).slice(-2);
+
+            var ngayVeMoi = `${year}-${month}-${day}`;
+            
+            // Gán giá trị
+            ngayVeInput.value = ngayVeMoi;
+        }
+    }
+</script>

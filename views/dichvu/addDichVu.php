@@ -1,146 +1,128 @@
 <style>
-    /* CSS đồng bộ với các form khác */
     :root {
         --primary-color: #2563eb;
-        --primary-hover: #1d4ed8;
-        --bg-color: #f1f5f9;
-        --card-bg: #ffffff;
-        --text-main: #1e293b;
-        --border-color: #e2e8f0;
         --success-color: #10b981;
         --danger-color: #ef4444;
+        --border-color: #e2e8f0;
     }
     .form-container {
-        max-width: 900px;
+        max-width: 1000px; /* Tăng chiều rộng để chứa bảng */
         margin: 40px auto;
         padding: 30px;
-        background: var(--card-bg);
+        background: #ffffff;
         border-radius: 12px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
-    h2 { color: var(--primary-color); text-align: center; margin-bottom: 25px; font-size: 24px; }
+    h2 { color: var(--primary-color); text-align: center; margin-bottom: 25px; }
     .doan-info { background: #e0f2f1; padding: 15px; border-radius: 6px; margin-bottom: 20px; border-left: 5px solid var(--success-color); }
-    .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; margin-bottom: 5px; font-weight: 500; color: var(--text-main); }
-    .form-control, .form-select {
-        width: 100%;
-        padding: 8px 12px;
-        border: 1px solid var(--border-color);
-        border-radius: 4px;
-        font-size: 14px;
-        transition: border-color 0.2s;
-    }
-    .form-row { display: flex; gap: 15px; }
-    .form-row .form-group { flex: 1; }
-    .form-actions { margin-top: 25px; display: flex; justify-content: flex-end; gap: 10px; }
-    .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
-    .btn-primary { background-color: var(--success-color); color: white; }
-    .btn-primary:hover { background-color: #0b9e6f; }
-    .btn-secondary { background-color: #6c757d; color: white; }
-    .required { color: var(--danger-color); }
-    .calc-info { font-size: 12px; color: var(--text-secondary); margin-top: 5px; }
+    .common-section { background: #f8fafc; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--border-color); }
+    .table-responsive { overflow-x: auto; }
+    .table th { white-space: nowrap; background-color: #f1f5f9; }
+    .table td { vertical-align: middle; }
+    .form-control, .form-select { font-size: 14px; }
+    .btn-remove { color: var(--danger-color); cursor: pointer; }
 </style>
 
 <div class="form-container">
-    <h2><i class="fas fa-plus-circle me-1"></i> Thêm Dịch Vụ Cho Đoàn</h2>
+    <h2><i class="fas fa-plus-circle me-1"></i> Thêm Dịch Vụ Cho Đoàn (Nhiều dòng)</h2>
 
     <div class="doan-info">
         <p><strong>Tour:</strong> <?= htmlspecialchars($doan['TenTour']) ?> (<?= htmlspecialchars($doan['MaCodeTour']) ?>)</p>
         <p><strong>Ngày khởi hành:</strong> <?= date('d/m/Y', strtotime($doan['NgayKhoiHanh'])) ?></p>
     </div>
 
-    <form action="?act=addDichVuProcess" method="POST">
+    <form action="?act=addDichVuProcess" method="POST" id="formAddDichVu">
         <input type="hidden" name="MaDoan" value="<?= $doan['MaDoan'] ?>">
 
-        <div class="form-row">
-            <div class="form-group">
-                <label>Nhà Cung Cấp</label>
-                <select name="MaNhaCungCap" id="MaNhaCungCap" class="form-select" onchange="capNhatLoaiDichVu()">
-                    <option value="" data-dichvu="">-- Chọn NCC (Nếu có) --</option>
-                    <?php foreach ($listNhaCungCap as $ncc): ?>
-                        <option value="<?= $ncc['MaNhaCungCap'] ?>" 
-                                data-dichvu="<?= htmlspecialchars($ncc['LoaiNhaCungCap']) ?>">
-                            <?= htmlspecialchars($ncc['TenNhaCungCap']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label>Loại Dịch Vụ <span class="required">*</span></label>
-                <select name="LoaiDichVu" id="LoaiDichVu" class="form-select" required>
-                    <option value="">-- Vui lòng chọn NCC trước --</option>
-                </select>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label>Tên Dịch Vụ <span class="required">*</span></label>
-            <input type="text" name="TenDichVu" class="form-control" required placeholder="VD: Bữa trưa tại Nhà hàng ABC">
-        </div>
-        
-        <div class="form-row">
-            <div class="form-group">
-                <label>Ngày Sử Dụng <span class="required">*</span></label>
-                <input type="date" name="NgaySuDung" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label>Ngày Đặt</label>
-                <input type="date" name="NgayDat" class="form-control">
+        <div class="common-section">
+            <h5 class="mb-3 text-primary"><i class="fas fa-info-circle"></i> Thông tin chung</h5>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-bold">Nhà Cung Cấp</label>
+                    <select name="MaNhaCungCap" id="MaNhaCungCap" class="form-select" onchange="capNhatLoaiDichVuChoTatCaDong()">
+                        <option value="" data-dichvu="">-- Chọn NCC --</option>
+                        <?php foreach ($listNhaCungCap as $ncc): ?>
+                            <option value="<?= $ncc['MaNhaCungCap'] ?>" 
+                                    data-dichvu="<?= htmlspecialchars($ncc['LoaiNhaCungCap']) ?>">
+                                <?= htmlspecialchars($ncc['TenNhaCungCap']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-bold">Ngày Đặt</label>
+                    <input type="date" name="NgayDat" class="form-control" value="<?= date('Y-m-d') ?>">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-bold">Trạng Thái</label>
+                    <select name="TrangThaiXacNhan" class="form-select">
+                        <option value="cho_xac_nhan">Chờ xác nhận</option>
+                        <option value="da_xac_nhan">Đã xác nhận</option>
+                    </select>
+                </div>
             </div>
         </div>
 
-        <div class="form-row">
-            <div class="form-group">
-                <label>Số Lượng <span class="required">*</span></label>
-                <input type="number" name="SoLuong" id="soLuong" class="form-control" min="1" value="1" required oninput="calculateTotal()">
-            </div>
-            <div class="form-group">
-                <label>Đơn Giá (VNĐ) <span class="required">*</span></label>
-                <input type="number" name="DonGia" id="donGia" class="form-control" min="0" step="1000" required value="0" oninput="calculateTotal()">
-                <div id="tongTienDisplay" class="calc-info">Tổng tiền: 0 đ</div>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label>Trạng Thái Xác Nhận <span class="required">*</span></label>
-            <select name="TrangThaiXacNhan" class="form-select" required>
-                <option value="cho_xac_nhan">Chờ xác nhận</option>
-                <option value="da_xac_nhan">Đã xác nhận</option>
-                <option value="da_huy">Đã hủy</option>
-            </select>
+        <h5 class="mb-3 text-primary"><i class="fas fa-list"></i> Danh sách dịch vụ chi tiết</h5>
+        <div class="table-responsive">
+            <table class="table table-bordered" id="tableDichVu">
+                <thead>
+                    <tr>
+                        <th style="width: 15%">Loại DV <span class="text-danger">*</span></th>
+                        <th style="width: 20%">Tên Dịch Vụ <span class="text-danger">*</span></th>
+                        <th style="width: 12%">Ngày dùng <span class="text-danger">*</span></th>
+                        <th style="width: 10%">SL <span class="text-danger">*</span></th>
+                        <th style="width: 15%">Đơn Giá</th>
+                        <th style="width: 15%">Thành Tiền</th>
+                        <th style="width: 5%">Xóa</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyDichVu">
+                    <tr class="service-row">
+                        <td>
+                            <select name="LoaiDichVu[]" class="form-select loai-dich-vu-select" required>
+                                <option value="">-- Chọn --</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" name="TenDichVu[]" class="form-control" required placeholder="Tên dịch vụ">
+                        </td>
+                        <td>
+                            <input type="date" name="NgaySuDung[]" class="form-control" required>
+                        </td>
+                        <td>
+                            <input type="number" name="SoLuong[]" class="form-control so-luong" min="1" value="1" required oninput="tinhTongTienRow(this)">
+                        </td>
+                        <td>
+                            <input type="number" name="DonGia[]" class="form-control don-gia" min="0" value="0" required oninput="tinhTongTienRow(this)">
+                        </td>
+                        <td>
+                            <input type="text" class="form-control thanh-tien" readonly value="0">
+                            <input type="hidden" name="GhiChu[]" value=""> 
+                        </td>
+                        <td class="text-center">
+                            <i class="fas fa-trash-alt btn-remove" onclick="xoaDong(this)"></i>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
-        <div class="form-group">
-            <label>Ghi Chú</label>
-            <textarea name="GhiChu" class="form-control" rows="3"></textarea>
-        </div>
-
-        <div class="form-actions">
-            <a href="?act=listDichVu&maDoan=<?= $doan['MaDoan'] ?>" class="btn btn-secondary">
-                <i class="fas fa-times"></i> Hủy
-            </a>
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save"></i> Thêm Dịch Vụ
+        <div class="mb-4">
+            <button type="button" class="btn btn-success btn-sm" onclick="themDongMoi()">
+                <i class="fas fa-plus"></i> Thêm dòng dịch vụ
             </button>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+            <a href="?act=listDichVu&maDoan=<?= $doan['MaDoan'] ?>" class="btn btn-secondary">Hủy bỏ</a>
+            <button type="submit" class="btn btn-primary">Lưu tất cả</button>
         </div>
     </form>
 </div>
 
 <script>
-    function formatCurrency(amount) {
-        return amount.toLocaleString('vi-VN') + ' đ';
-    }
-
-    function calculateTotal() {
-        const soLuong = parseInt(document.getElementById('soLuong').value) || 0;
-        const donGia = parseFloat(document.getElementById('donGia').value) || 0;
-        const tongTien = soLuong * donGia;
-        
-        document.getElementById('tongTienDisplay').innerText = 'Tổng tiền: ' + formatCurrency(tongTien);
-    }
-
-    // Danh sách map từ database sang tiếng Việt hiển thị
+    // 1. Danh sách loại dịch vụ map
     const danhSachDichVu = {
         'van_chuyen': 'Vận chuyển',
         'khach_san': 'Khách sạn',
@@ -152,41 +134,91 @@
         'khac': 'Khác'
     };
 
-    function capNhatLoaiDichVu() {
+    // 2. Hàm lấy danh sách option dựa trên NCC đang chọn
+    function getOptionsForSelect() {
         const selectNCC = document.getElementById('MaNhaCungCap');
-        const selectDichVu = document.getElementById('LoaiDichVu');
-        
-        // Lấy option đang được chọn
         const selectedOption = selectNCC.options[selectNCC.selectedIndex];
         const rawDichVu = selectedOption.getAttribute('data-dichvu');
         
-        // Reset option
-        selectDichVu.innerHTML = '';
+        let html = '<option value="">-- Chọn --</option>';
 
         if (!rawDichVu || selectNCC.value === "") {
-            // Không có NCC hoặc NCC ko có dữ liệu -> Hiện tất cả
-            selectDichVu.innerHTML += '<option value="">-- Chọn loại dịch vụ --</option>';
+            // Nếu không có NCC hoặc NCC ko có loại -> Hiện full
             for (const [key, label] of Object.entries(danhSachDichVu)) {
-                selectDichVu.innerHTML += `<option value="${key}">${label}</option>`;
+                html += `<option value="${key}">${label}</option>`;
             }
         } else {
-            // Có NCC -> Lọc
+            // Lọc theo NCC
             const dichVuArr = rawDichVu.split(',');
-            selectDichVu.innerHTML += '<option value="">-- Chọn dịch vụ của NCC này --</option>';
-            
             dichVuArr.forEach(key => {
                 key = key.trim();
                 if (danhSachDichVu[key]) {
-                    selectDichVu.innerHTML += `<option value="${key}">${danhSachDichVu[key]}</option>`;
+                    html += `<option value="${key}">${danhSachDichVu[key]}</option>`;
                 }
             });
-            // Luôn thêm "Khác" để dự phòng
-            selectDichVu.innerHTML += `<option value="khac">Khác (Ngoài danh mục)</option>`;
+            html += `<option value="khac">Khác</option>`;
+        }
+        return html;
+    }
+
+    // 3. Cập nhật lại tất cả các dòng khi đổi NCC (Reset lại select box)
+    function capNhatLoaiDichVuChoTatCaDong() {
+        const optionsHtml = getOptionsForSelect();
+        const selects = document.querySelectorAll('.loai-dich-vu-select');
+        selects.forEach(sel => {
+            sel.innerHTML = optionsHtml;
+        });
+    }
+
+    // 4. Thêm dòng mới
+    function themDongMoi() {
+        const tbody = document.getElementById('tbodyDichVu');
+        const newRow = document.createElement('tr');
+        newRow.className = 'service-row';
+        
+        // Lấy options hiện tại
+        const optionsHtml = getOptionsForSelect();
+
+        newRow.innerHTML = `
+            <td>
+                <select name="LoaiDichVu[]" class="form-select loai-dich-vu-select" required>
+                    ${optionsHtml}
+                </select>
+            </td>
+            <td><input type="text" name="TenDichVu[]" class="form-control" required placeholder="Tên dịch vụ"></td>
+            <td><input type="date" name="NgaySuDung[]" class="form-control" required></td>
+            <td><input type="number" name="SoLuong[]" class="form-control so-luong" min="1" value="1" required oninput="tinhTongTienRow(this)"></td>
+            <td><input type="number" name="DonGia[]" class="form-control don-gia" min="0" value="0" required oninput="tinhTongTienRow(this)"></td>
+            <td>
+                <input type="text" class="form-control thanh-tien" readonly value="0">
+                <input type="hidden" name="GhiChu[]" value="">
+            </td>
+            <td class="text-center"><i class="fas fa-trash-alt btn-remove" onclick="xoaDong(this)"></i></td>
+        `;
+        tbody.appendChild(newRow);
+    }
+
+    // 5. Xóa dòng
+    function xoaDong(btn) {
+        const tbody = document.getElementById('tbodyDichVu');
+        if (tbody.rows.length > 1) {
+            btn.closest('tr').remove();
+        } else {
+            alert('Cần ít nhất một dòng dịch vụ!');
         }
     }
-    
+
+    // 6. Tính tiền từng dòng
+    function tinhTongTienRow(input) {
+        const row = input.closest('tr');
+        const soLuong = parseFloat(row.querySelector('.so-luong').value) || 0;
+        const donGia = parseFloat(row.querySelector('.don-gia').value) || 0;
+        const thanhTien = soLuong * donGia;
+        row.querySelector('.thanh-tien').value = thanhTien.toLocaleString('vi-VN');
+    }
+
+    // Khởi chạy ban đầu
     document.addEventListener('DOMContentLoaded', function() {
-        calculateTotal();
-        capNhatLoaiDichVu(); // Chạy lần đầu để load danh sách đầy đủ (vì mặc định chưa chọn NCC)
+        capNhatLoaiDichVuChoTatCaDong();
     });
 </script>

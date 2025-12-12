@@ -107,5 +107,13 @@ class DichVuCuaDoanModel
         $stmt->bindParam(':maDichVu', $maDichVu);
         return $stmt->execute();
     }
+    // Ví dụ hàm insert chuẩn:
+public function insertDichVu($ma_ncc, $loai_dich_vu, $chi_phi, $ghi_chu) {
+    // Câu SQL giả định
+    $sql = "INSERT INTO dichvucuadoan (MaNhaCungCap, LoaiDichVu, ChiPhi, GhiChu) 
+            VALUES (?, ?, ?, ?)";
+    // Thực thi câu lệnh với pdo...
+    // ...
+}
     
 }
