@@ -327,6 +327,12 @@
                                         <span style="margin-left: 6px">• Đoàn #<?= (int)$b['MaDoan'] ?></span>
                                     <?php endif; ?>
                                 </div>
+                                <?php if (!empty($b['DiemTapTrung'])): ?>
+                                <div class="text-sm" style="margin-top: 4px;">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                    Đón: <?= htmlspecialchars($b['DiemTapTrung']) ?>
+                                </div>
+                                <?php endif; ?>
                             </td>
 
                             <td>
