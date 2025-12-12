@@ -66,6 +66,15 @@
             Nếu bạn chọn <b>Đoàn</b>, hệ thống sẽ tự khớp Tour của đoàn, dùng <b>giá theo đoàn</b> (nếu cung cấp) và hiện điểm khởi hành.
         </div>
 
+        <?php 
+        // Hiển thị thông báo lỗi nếu có
+        if (isset($_SESSION['error_booking'])): ?>
+            <div style="background-color: #f8d7da; color: #721c24; border: 1px solid #f5c2c7; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                ❌ Lỗi đặt chỗ: <?= $_SESSION['error_booking']; ?>
+            </div>
+            <?php unset($_SESSION['error_booking']); // Xóa session error sau khi hiển thị ?>
+        <?php endif; ?>
+
         <form action="?act=addBookingProcess" method="POST">
 
             <div class="form-group">
