@@ -54,27 +54,22 @@
 
         <div class="form-row">
             <div class="form-group">
-                <label>Loại Dịch Vụ <span class="required">*</span></label>
-                <select name="LoaiDichVu" class="form-select" required>
-                    <option value="">-- Chọn loại --</option>
-                    <option value="van_chuyen">Vận chuyển</option>
-                    <option value="khach_san">Khách sạn</option>
-                    <option value="nha_hang">Nhà hàng</option>
-                    <option value="ve_tham_quan">Vé tham quan</option>
-                    <option value="huong_dan_vien">Hướng dẫn viên</option>
-                    <option value="bao_hiem">Bảo hiểm</option>
-                    <option value="khac">Khác</option>
-                </select>
-            </div>
-            <div class="form-group">
                 <label>Nhà Cung Cấp</label>
-                <select name="MaNhaCungCap" class="form-select">
-                    <option value="">-- Chọn NCC (Nếu có) --</option>
+                <select name="MaNhaCungCap" id="MaNhaCungCap" class="form-select" onchange="capNhatLoaiDichVu()">
+                    <option value="" data-dichvu="">-- Chọn NCC (Nếu có) --</option>
                     <?php foreach ($listNhaCungCap as $ncc): ?>
-                        <option value="<?= $ncc['MaNhaCungCap'] ?>">
-                            <?= htmlspecialchars($ncc['TenNhaCungCap']) ?> (<?= htmlspecialchars($ncc['LoaiNhaCungCap']) ?>)
+                        <option value="<?= $ncc['MaNhaCungCap'] ?>" 
+                                data-dichvu="<?= htmlspecialchars($ncc['LoaiNhaCungCap']) ?>">
+                            <?= htmlspecialchars($ncc['TenNhaCungCap']) ?>
                         </option>
                     <?php endforeach; ?>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Loại Dịch Vụ <span class="required">*</span></label>
+                <select name="LoaiDichVu" id="LoaiDichVu" class="form-select" required>
+                    <option value="">-- Vui lòng chọn NCC trước --</option>
                 </select>
             </div>
         </div>
@@ -144,6 +139,54 @@
         
         document.getElementById('tongTienDisplay').innerText = 'Tổng tiền: ' + formatCurrency(tongTien);
     }
+
+    // Danh sách map từ database sang tiếng Việt hiển thị
+    const danhSachDichVu = {
+        'van_chuyen': 'Vận chuyển',
+        'khach_san': 'Khách sạn',
+        'nha_hang': 'Nhà hàng',
+        've_tham_quan': 'Vé tham quan',
+        'huong_dan_vien': 'Hướng dẫn viên',
+        'bao_hiem': 'Bảo hiểm',
+        'visa': 'Visa / Hộ chiếu',
+        'khac': 'Khác'
+    };
+
+    function capNhatLoaiDichVu() {
+        const selectNCC = document.getElementById('MaNhaCungCap');
+        const selectDichVu = document.getElementById('LoaiDichVu');
+        
+        // Lấy option đang được chọn
+        const selectedOption = selectNCC.options[selectNCC.selectedIndex];
+        const rawDichVu = selectedOption.getAttribute('data-dichvu');
+        
+        // Reset option
+        selectDichVu.innerHTML = '';
+
+        if (!rawDichVu || selectNCC.value === "") {
+            // Không có NCC hoặc NCC ko có dữ liệu -> Hiện tất cả
+            selectDichVu.innerHTML += '<option value="">-- Chọn loại dịch vụ --</option>';
+            for (const [key, label] of Object.entries(danhSachDichVu)) {
+                selectDichVu.innerHTML += `<option value="${key}">${label}</option>`;
+            }
+        } else {
+            // Có NCC -> Lọc
+            const dichVuArr = rawDichVu.split(',');
+            selectDichVu.innerHTML += '<option value="">-- Chọn dịch vụ của NCC này --</option>';
+            
+            dichVuArr.forEach(key => {
+                key = key.trim();
+                if (danhSachDichVu[key]) {
+                    selectDichVu.innerHTML += `<option value="${key}">${danhSachDichVu[key]}</option>`;
+                }
+            });
+            // Luôn thêm "Khác" để dự phòng
+            selectDichVu.innerHTML += `<option value="khac">Khác (Ngoài danh mục)</option>`;
+        }
+    }
     
-    document.addEventListener('DOMContentLoaded', calculateTotal); // Tính toán lần đầu khi load trang
+    document.addEventListener('DOMContentLoaded', function() {
+        calculateTotal();
+        capNhatLoaiDichVu(); // Chạy lần đầu để load danh sách đầy đủ (vì mặc định chưa chọn NCC)
+    });
 </script>

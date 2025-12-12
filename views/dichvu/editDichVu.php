@@ -56,27 +56,23 @@
 
         <div class="form-row">
             <div class="form-group">
-                <label>Loại Dịch Vụ <span class="required">*</span></label>
-                <select name="LoaiDichVu" class="form-select" required>
-                    <?php 
-                    $options = ['van_chuyen', 'khach_san', 'nha_hang', 've_tham_quan', 'huong_dan_vien', 'bao_hiem', 'khac'];
-                    foreach ($options as $opt): ?>
-                        <option value="<?= $opt ?>" <?= $dichVu['LoaiDichVu'] == $opt ? 'selected' : '' ?>>
-                            <?= ucfirst(str_replace('_', ' ', $opt)) ?>
+                <label>Nhà Cung Cấp</label>
+                <select name="MaNhaCungCap" id="MaNhaCungCap" class="form-select" onchange="capNhatLoaiDichVu()">
+                    <option value="" data-dichvu="">-- Chọn NCC (Nếu có) --</option>
+                    <?php foreach ($listNhaCungCap as $ncc): ?>
+                        <option value="<?= $ncc['MaNhaCungCap'] ?>" 
+                                data-dichvu="<?= htmlspecialchars($ncc['LoaiNhaCungCap']) ?>"
+                                <?= (isset($dichVu['MaNhaCungCap']) && $dichVu['MaNhaCungCap'] == $ncc['MaNhaCungCap']) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($ncc['TenNhaCungCap']) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
             </div>
+
             <div class="form-group">
-                <label>Nhà Cung Cấp</label>
-                <select name="MaNhaCungCap" class="form-select">
-                    <option value="">-- Chọn NCC (Nếu có) --</option>
-                    <?php foreach ($listNhaCungCap as $ncc): ?>
-                        <option value="<?= $ncc['MaNhaCungCap'] ?>" <?= $dichVu['MaNhaCungCap'] == $ncc['MaNhaCungCap'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($ncc['TenNhaCungCap']) ?> (<?= htmlspecialchars($ncc['LoaiNhaCungCap']) ?>)
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+                <label>Loại Dịch Vụ <span class="required">*</span></label>
+                <select name="LoaiDichVu" id="LoaiDichVu" class="form-select" required>
+                    </select>
             </div>
         </div>
         
@@ -145,6 +141,62 @@
         
         document.getElementById('tongTienDisplay').innerText = 'Tổng tiền: ' + formatCurrency(tongTien);
     }
+
+    const danhSachDichVu = {
+        'van_chuyen': 'Vận chuyển',
+        'khach_san': 'Khách sạn',
+        'nha_hang': 'Nhà hàng',
+        've_tham_quan': 'Vé tham quan',
+        'huong_dan_vien': 'Hướng dẫn viên',
+        'bao_hiem': 'Bảo hiểm',
+        'visa': 'Visa / Hộ chiếu',
+        'khac': 'Khác'
+    };
+
+    function capNhatLoaiDichVu() {
+        const selectNCC = document.getElementById('MaNhaCungCap');
+        const selectDichVu = document.getElementById('LoaiDichVu');
+        
+        const selectedOption = selectNCC.options[selectNCC.selectedIndex];
+        const rawDichVu = selectedOption.getAttribute('data-dichvu');
+        
+        // Lưu lại giá trị cũ (nếu có) trước khi xóa options để giữ lại nếu người dùng đổi ý hoặc load trang
+        const currentValue = selectDichVu.value;
+
+        selectDichVu.innerHTML = '';
+
+        if (!rawDichVu || selectNCC.value === "") {
+            selectDichVu.innerHTML += '<option value="">-- Chọn loại dịch vụ --</option>';
+            for (const [key, label] of Object.entries(danhSachDichVu)) {
+                selectDichVu.innerHTML += `<option value="${key}">${label}</option>`;
+            }
+        } else {
+            const dichVuArr = rawDichVu.split(',');
+            selectDichVu.innerHTML += '<option value="">-- Chọn dịch vụ của NCC này --</option>';
+            
+            dichVuArr.forEach(key => {
+                key = key.trim();
+                if (danhSachDichVu[key]) {
+                    selectDichVu.innerHTML += `<option value="${key}">${danhSachDichVu[key]}</option>`;
+                }
+            });
+            selectDichVu.innerHTML += `<option value="khac">Khác (Ngoài danh mục)</option>`;
+        }
+    }
     
-    document.addEventListener('DOMContentLoaded', calculateTotal);
+    document.addEventListener('DOMContentLoaded', function() {
+        calculateTotal();
+        
+        // 1. Sinh danh sách option dựa trên NCC hiện tại
+        capNhatLoaiDichVu(); 
+        
+        // 2. Chọn lại đúng loại dịch vụ đang sửa
+        <?php if(isset($dichVu['LoaiDichVu'])): ?>
+            const oldDichVu = "<?= $dichVu['LoaiDichVu'] ?>";
+            const selectDichVu = document.getElementById('LoaiDichVu');
+            // Kiểm tra xem option cũ có nằm trong list mới sinh ra không
+            // Nếu NCC thay đổi loại hình KD thì có thể option cũ không còn, ta vẫn nên gán thử
+            selectDichVu.value = oldDichVu; 
+        <?php endif; ?>
+    });
 </script>
