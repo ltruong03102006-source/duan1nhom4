@@ -208,7 +208,14 @@
       <h2 class="title">Cập nhật thông tin booking</h2>
       <button form="editBookingForm" type="submit" class="btn btn-warning">✅ Lưu thay đổi</button>
     </div>
-
+ <?php 
+    // Hiển thị thông báo lỗi nếu có
+    if (isset($_SESSION['error_booking'])): ?>
+        <div style="background-color: #f8d7da; color: #721c24; border: 1px solid #f5c2c7; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+            ❌ Lỗi cập nhật: <?= $_SESSION['error_booking']; ?>
+        </div>
+        <?php unset($_SESSION['error_booking']); // Xóa session error sau khi hiển thị ?>
+    <?php endif; ?>
     <form id="editBookingForm" action="?act=editBookingProcess" method="POST">
       <input type="hidden" name="MaBooking" value="<?= (int)$booking['MaBooking'] ?>">
 
