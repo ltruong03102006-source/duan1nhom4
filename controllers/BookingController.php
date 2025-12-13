@@ -301,33 +301,43 @@ class BookingController
         include './views/layout.php';
     }
 
-    public function addKhachTrongBookingProcess()
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $MaBooking = $_POST['MaBooking'];
+   public function addKhachTrongBookingProcess()
+{
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $MaBooking = $_POST['MaBooking'] ?? null;
+        $listKhach = $_POST['khach'] ?? [];
+
+        foreach ($listKhach as $k) {
+            $hoTen = trim($k['HoTen'] ?? '');
+            if ($hoTen === '') continue;
+
+            $soGiayTo = trim($k['SoGiayTo'] ?? '');
+            $ghiChu   = trim($k['GhiChuDacBiet'] ?? '');
 
             $data = [
-                ':MaBooking' => $MaBooking,
-                ':HoTen' => $_POST['HoTen'],
-                ':GioiTinh' => $_POST['GioiTinh'] ?? null,
-                ':NgaySinh' => $_POST['NgaySinh'] ?: null,
-                ':SoGiayTo' => $_POST['SoGiayTo'] ?? null,
-                ':SoDienThoai' => $_POST['SoDienThoai'] ?? null,
-                ':GhiChuDacBiet' => $_POST['GhiChuDacBiet'] ?? null,
-                ':LoaiPhong' => $_POST['LoaiPhong'] ?? null,
+                ':MaBooking'      => $MaBooking,
+                ':HoTen'          => $hoTen,
+                ':GioiTinh'       => $k['GioiTinh'] ?? null,
+                ':NgaySinh'       => !empty($k['NgaySinh']) ? $k['NgaySinh'] : null,
+
+                // ✅ không nhập thì để NULL
+                ':SoGiayTo'       => ($soGiayTo !== '') ? $soGiayTo : null,
+                ':GhiChuDacBiet'  => ($ghiChu !== '') ? $ghiChu : null,
+
+                ':SoDienThoai'    => !empty($k['SoDienThoai']) ? trim($k['SoDienThoai']) : null,
+                ':LoaiPhong'      => $k['LoaiPhong'] ?? null,
             ];
 
             $this->bookingModel->addKhachTrongBooking($data);
-            
-            // cập nhật trạng thái đoàn theo số khách mới
-            $bk = $this->bookingModel->getOneBooking($MaBooking);
-            $this->bookingModel->updateTrangThaiDoanBySoKhach($bk['MaDoan'] ?? null);
-
-
-            header("Location: ?act=khachTrongBooking&MaBooking=" . $MaBooking);
-            exit();
         }
+
+        $bk = $this->bookingModel->getOneBooking($MaBooking);
+        $this->bookingModel->updateTrangThaiDoanBySoKhach($bk['MaDoan'] ?? null);
+
+        header("Location: ?act=khachTrongBooking&MaBooking=$MaBooking");
+        exit();
     }
+}
 
     public function deleteKhachTrongBooking()
     {

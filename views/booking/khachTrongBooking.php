@@ -63,6 +63,61 @@
 <br>
     <a href="?act=listBooking" class="btn-back">⬅ Quay lại Booking</a>
     <a href="?act=addKhachTrongBooking&MaBooking=<?= $booking['MaBooking'] ?>" class="btn-add">+ Thêm khách</a>
+    <br>
+    <form action="?act=addKhachTrongBookingProcess" method="POST">
+  <input type="hidden" name="MaBooking" value="<?= (int)$booking['MaBooking'] ?>">
+
+  <table id="tblKhach" border="1" width="100%" cellpadding="6">
+    <thead>
+      <tr>
+        <th>Họ tên</th>
+        <th>Giới tính</th>
+        <th>Ngày sinh</th>
+        <th>Số giấy tờ</th>
+        <th>SĐT</th>
+        <th>Loại phòng</th>
+        <th>Ghi chú đặc biệt</th>
+        <th>Xoá</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Dòng đầu -->
+      <tr>
+        <td><input name="khach[0][HoTen]" required></td>
+
+        <td>
+          <select name="khach[0][GioiTinh]">
+            <option value="Nam">Nam</option>
+            <option value="Nu">Nữ</option>
+          </select>
+        </td>
+
+        <td><input type="date" name="khach[0][NgaySinh]"></td>
+
+        <td><input name="khach[0][SoGiayTo]" placeholder="CCCD/Passport..."></td>
+
+        <td><input name="khach[0][SoDienThoai]"></td>
+
+        <td>
+          <select name="khach[0][LoaiPhong]">
+            <option value="don">Đơn</option>
+            <option value="doi">Đôi</option>
+            <option value="ba">Ba</option>
+          </select>
+        </td>
+
+        <td><input name="khach[0][GhiChuDacBiet]" placeholder="Ăn chay, dị ứng..."></td>
+
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <br>
+  <button type="button" onclick="addRow()">+ Thêm khách</button>
+  <button type="submit">💾 Lưu tất cả</button>
+</form>
+
     <table>
         <thead>
         <tr>
@@ -167,7 +222,34 @@
     <?php endif; ?>
 
 </div>
+<script>
+        let idx = 1;
 
+        function addRow() {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+        <td><input name="khach[${idx}][HoTen]" required></td>
+        <td>
+            <select name="khach[${idx}][GioiTinh]">
+                <option value="Nam">Nam</option>
+                <option value="Nu">Nữ</option>
+            </select>
+        </td>
+        <td><input type="date" name="khach[${idx}][NgaySinh]"></td>
+        <td><input name="khach[${idx}][SoDienThoai]"></td>
+        <td>
+            <select name="khach[${idx}][LoaiPhong]">
+                <option value="don">Đơn</option>
+                <option value="doi">Đôi</option>
+                <option value="ba">Ba</option>
+            </select>
+        </td>
+        <td><button type="button" onclick="this.closest('tr').remove()">X</button></td>
+    `;
+            document.querySelector('#tblKhach tbody').appendChild(tr);
+            idx++;
+        }
+    </script>
 
 </body>
 </html>

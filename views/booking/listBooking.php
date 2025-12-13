@@ -330,7 +330,7 @@
                                 <?php if (!empty($b['DiemTapTrung'])): ?>
                                 <div class="text-sm" style="margin-top: 4px;">
                                     <i class="fa-solid fa-location-dot"></i>
-                                    Đón: <?= htmlspecialchars($b['DiemTapTrung']) ?>
+                                    Khởi Hành: <?= htmlspecialchars($b['DiemTapTrung']) ?>
                                 </div>
                                 <?php endif; ?>
                             </td>

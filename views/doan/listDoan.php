@@ -398,7 +398,7 @@
                                     <span class="tour-name"><?= htmlspecialchars($d['TenTour']) ?></span>
                                     <div class="location-info">
                                         <i class="fa-solid fa-location-dot"></i>
-                                        Đón: <?= htmlspecialchars($d['DiemTapTrung']) ?>
+                                        Khởi hành: <?= htmlspecialchars($d['DiemTapTrung']) ?>
                                     </div>
                                 </td>
 
