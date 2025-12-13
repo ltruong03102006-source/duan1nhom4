@@ -47,12 +47,12 @@ class BookingController
             $MaDoan = $_POST['MaDoan'] ?: null;
             $MaKhachHang = $_POST['MaKhachHang'] ?: null;
             $LoaiBooking = $_POST['LoaiBooking'] ?? 'ca_nhan';
-            
+
 
             $TongNguoiLon = (int)($_POST['TongNguoiLon'] ?? 0);
             $TongTreEm = (int)($_POST['TongTreEm'] ?? 0);
             $TongEmBe = (int)($_POST['TongEmBe'] ?? 0);
-            
+
             // Tính tổng số khách mới
             $newHeadCount = $TongNguoiLon + $TongTreEm + $TongEmBe;
 
@@ -100,7 +100,7 @@ class BookingController
             ];
 
             $this->bookingModel->addBooking($data);
-            
+
             $this->bookingModel->updateTrangThaiDoanBySoKhach($MaDoan);
 
             header("Location: ?act=listBooking");
@@ -125,17 +125,17 @@ class BookingController
         include './views/layout.php';
     }
 
-   public function editBookingProcess()
+    public function editBookingProcess()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $MaBooking = $_POST['MaBooking'];
 
             $oldBooking  = $this->bookingModel->getOneBooking($MaBooking);
             $TrangThaiCu = $oldBooking['TrangThai'] ?? 'cho_coc';
-            $oldMaDoan   = $oldBooking['MaDoan'] ?? null; 
+            $oldMaDoan   = $oldBooking['MaDoan'] ?? null;
 
             $MaTour       = $_POST['MaTour'] ?: null;
-            $MaDoan       = $_POST['MaDoan'] ?: null; 
+            $MaDoan       = $_POST['MaDoan'] ?: null;
             $MaKhachHang  = $_POST['MaKhachHang'] ?: null;
             $LoaiBooking  = $_POST['LoaiBooking'] ?? 'ca_nhan';
 
@@ -151,20 +151,20 @@ class BookingController
                 $capacityInfo = $this->doanModel->getCapacityInfo($MaDoan);
                 $soChoToiDa = (int)($capacityInfo['SoChoToiDa'] ?? 0);
                 $daDat = (int)($capacityInfo['DaDat'] ?? 0);
-                
+
                 // Số khách của booking hiện tại trong DB
                 $bookedOfCurrentBooking = (int)($oldBooking['TongNguoiLon'] ?? 0) + (int)($oldBooking['TongTreEm'] ?? 0) + (int)($oldBooking['TongEmBe'] ?? 0);
 
                 // Tính tổng số khách đã đặt của đoàn, loại trừ số khách của booking đang sửa
                 $currentBookedWithoutThisBooking = $daDat;
                 if ($MaDoan === $oldMaDoan) {
-                     // Nếu vẫn là đoàn cũ, ta phải loại trừ số khách CŨ của booking này khỏi tổng Đã Đặt
-                     $currentBookedWithoutThisBooking = $daDat - $bookedOfCurrentBooking;
+                    // Nếu vẫn là đoàn cũ, ta phải loại trừ số khách CŨ của booking này khỏi tổng Đã Đặt
+                    $currentBookedWithoutThisBooking = $daDat - $bookedOfCurrentBooking;
                 }
-                
+
                 // Kiểm tra xem tổng khách mới + tổng khách còn lại có vượt quá không
                 if ($soChoToiDa > 0 && $newHeadCount + $currentBookedWithoutThisBooking > $soChoToiDa) {
-                     $_SESSION['error_booking'] = "Đoàn #$MaDoan chỉ còn trống " . max(0, $soChoToiDa - $currentBookedWithoutThisBooking) . " chỗ. Không thể cập nhật thành $newHeadCount khách.";
+                    $_SESSION['error_booking'] = "Đoàn #$MaDoan chỉ còn trống " . max(0, $soChoToiDa - $currentBookedWithoutThisBooking) . " chỗ. Không thể cập nhật thành $newHeadCount khách.";
                     header("Location: ?act=editBooking&MaBooking=$MaBooking&error=capacity");
                     exit();
                 }
@@ -181,7 +181,7 @@ class BookingController
 
             $data = [
                 ':MaBooking'     => $MaBooking,
-':MaTour'        => $MaTour,
+                ':MaTour'        => $MaTour,
                 ':MaDoan'        => $MaDoan,
                 ':MaKhachHang'   => $MaKhachHang,
                 ':LoaiBooking'   => $LoaiBooking,
@@ -216,6 +216,20 @@ class BookingController
             exit();
         }
     }
+    // ====== XÓA BOOKING ======
+    public function deleteBooking()
+    {
+        $MaBooking = $_GET['MaBooking'] ?? null;
+        if ($MaBooking) {
+            $bk = $this->bookingModel->getOneBooking($MaBooking); // lấy MaDoan trước khi xóa
+            $this->bookingModel->deleteBooking($MaBooking);
+            if (!empty($bk['MaDoan'])) {
+                $this->bookingModel->updateTrangThaiDoanBySoKhach($bk['MaDoan']);
+            }
+        }
+        header("Location: ?act=listBooking");
+        exit();
+    }
 
     // ====== KHÁCH TRONG BOOKING ======
     public function khachTrongBooking()
@@ -227,10 +241,10 @@ class BookingController
         }
 
         $booking   = $this->bookingModel->getBookingDetailWithDoan($MaBooking);
-        
+
         // 1. Lấy danh sách khách
         $listKhach = $this->bookingModel->getKhachTrongBooking($MaBooking);
-        
+
         // --- BỔ SUNG LOGIC MA TRẬN ĐIỂM DANH ---
         $MaDoan = $booking['MaDoan'] ?? null;
         $matrixDates = [];
@@ -239,7 +253,7 @@ class BookingController
         if ($MaDoan) {
             // Lấy toàn bộ lịch sử điểm danh của Đoàn (để xem tổng quát)
             $historyRaw = $this->bookingModel->getHistoryDiemDanh($MaDoan);
-            
+
             // Xử lý dữ liệu ma trận (Pivot Data)
             foreach ($historyRaw as $row) {
                 // Định dạng ngày ngắn gọn (ví dụ: 12/12)
@@ -301,43 +315,43 @@ class BookingController
         include './views/layout.php';
     }
 
-   public function addKhachTrongBookingProcess()
-{
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $MaBooking = $_POST['MaBooking'] ?? null;
-        $listKhach = $_POST['khach'] ?? [];
+    public function addKhachTrongBookingProcess()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $MaBooking = $_POST['MaBooking'] ?? null;
+            $listKhach = $_POST['khach'] ?? [];
 
-        foreach ($listKhach as $k) {
-            $hoTen = trim($k['HoTen'] ?? '');
-            if ($hoTen === '') continue;
+            foreach ($listKhach as $k) {
+                $hoTen = trim($k['HoTen'] ?? '');
+                if ($hoTen === '') continue;
 
-            $soGiayTo = trim($k['SoGiayTo'] ?? '');
-            $ghiChu   = trim($k['GhiChuDacBiet'] ?? '');
+                $soGiayTo = trim($k['SoGiayTo'] ?? '');
+                $ghiChu   = trim($k['GhiChuDacBiet'] ?? '');
 
-            $data = [
-                ':MaBooking'      => $MaBooking,
-                ':HoTen'          => $hoTen,
-                ':GioiTinh'       => $k['GioiTinh'] ?? null,
-                ':NgaySinh'       => !empty($k['NgaySinh']) ? $k['NgaySinh'] : null,
+                $data = [
+                    ':MaBooking'      => $MaBooking,
+                    ':HoTen'          => $hoTen,
+                    ':GioiTinh'       => $k['GioiTinh'] ?? null,
+                    ':NgaySinh'       => !empty($k['NgaySinh']) ? $k['NgaySinh'] : null,
 
-                // ✅ không nhập thì để NULL
-                ':SoGiayTo'       => ($soGiayTo !== '') ? $soGiayTo : null,
-                ':GhiChuDacBiet'  => ($ghiChu !== '') ? $ghiChu : null,
+                    // ✅ không nhập thì để NULL
+                    ':SoGiayTo'       => ($soGiayTo !== '') ? $soGiayTo : null,
+                    ':GhiChuDacBiet'  => ($ghiChu !== '') ? $ghiChu : null,
 
-                ':SoDienThoai'    => !empty($k['SoDienThoai']) ? trim($k['SoDienThoai']) : null,
-                ':LoaiPhong'      => $k['LoaiPhong'] ?? null,
-            ];
+                    ':SoDienThoai'    => !empty($k['SoDienThoai']) ? trim($k['SoDienThoai']) : null,
+                    ':LoaiPhong'      => $k['LoaiPhong'] ?? null,
+                ];
 
-            $this->bookingModel->addKhachTrongBooking($data);
+                $this->bookingModel->addKhachTrongBooking($data);
+            }
+
+            $bk = $this->bookingModel->getOneBooking($MaBooking);
+            $this->bookingModel->updateTrangThaiDoanBySoKhach($bk['MaDoan'] ?? null);
+
+            header("Location: ?act=khachTrongBooking&MaBooking=$MaBooking");
+            exit();
         }
-
-        $bk = $this->bookingModel->getOneBooking($MaBooking);
-        $this->bookingModel->updateTrangThaiDoanBySoKhach($bk['MaDoan'] ?? null);
-
-        header("Location: ?act=khachTrongBooking&MaBooking=$MaBooking");
-        exit();
     }
-}
 
     public function deleteKhachTrongBooking()
     {
@@ -345,7 +359,7 @@ class BookingController
         $MaBooking = $_GET['MaBooking'] ?? null;
 
         if ($MaKhachTrongBooking) {
-                        // lấy MaDoan trước khi xóa
+            // lấy MaDoan trước khi xóa
             $bk = $this->bookingModel->getBookingByKhachTrongBooking($MaKhachTrongBooking);
             $this->bookingModel->deleteKhachTrongBooking($MaKhachTrongBooking);
         }
@@ -371,42 +385,43 @@ class BookingController
     }
     // ====== HDV: TRANG ĐIỂM DANH RIÊNG THEO ĐOÀN ======
     // File: controllers/BookingController.php
-// Trong hàm hdvDiemDanh()
+    // Trong hàm hdvDiemDanh()
 
-public function hdvDiemDanh() {
-    onlyHDV();
-    $MaDoan = $_GET['MaDoan'] ?? null;
-    $NgayDiemDanh = $_GET['date'] ?? date('Y-m-d');
+    public function hdvDiemDanh()
+    {
+        onlyHDV();
+        $MaDoan = $_GET['MaDoan'] ?? null;
+        $NgayDiemDanh = $_GET['date'] ?? date('Y-m-d');
 
-    if ($MaDoan) {
-        $doanModel = new DoanKhoiHanhModel();
-        $thongTinDoan = $doanModel->getDetail($MaDoan);
-        
-        // 1. Lấy danh sách check-in cho ngày đang chọn (Code cũ)
-        $danhSachKhach = $this->bookingModel->getDanhSachKhachVaDiemDanh($MaDoan, $NgayDiemDanh);
+        if ($MaDoan) {
+            $doanModel = new DoanKhoiHanhModel();
+            $thongTinDoan = $doanModel->getDetail($MaDoan);
 
-        // 2. [MỚI] Lấy toàn bộ lịch sử để vẽ bảng ma trận
-        $historyRaw = $this->bookingModel->getHistoryDiemDanh($MaDoan);
-        
-        // Xử lý dữ liệu ma trận (Pivot Data)
-        $matrixDates = []; // Mảng chứa các ngày đã điểm danh
-        $matrixData = [];  // Mảng chứa dữ liệu [MaKhach][Ngay] = Trạng thái
+            // 1. Lấy danh sách check-in cho ngày đang chọn (Code cũ)
+            $danhSachKhach = $this->bookingModel->getDanhSachKhachVaDiemDanh($MaDoan, $NgayDiemDanh);
 
-        foreach ($historyRaw as $row) {
-            $d = date('d/m', strtotime($row['NgayDiemDanh'])); // Lấy ngày tháng ngắn gọn
-            $matrixDates[$d] = $d; // Lưu key để không trùng
-            $matrixData[$row['MaKhachTrongBooking']][$d] = [
-                'status' => $row['TrangThai'],
-                'note' => $row['GhiChu']
-            ];
+            // 2. [MỚI] Lấy toàn bộ lịch sử để vẽ bảng ma trận
+            $historyRaw = $this->bookingModel->getHistoryDiemDanh($MaDoan);
+
+            // Xử lý dữ liệu ma trận (Pivot Data)
+            $matrixDates = []; // Mảng chứa các ngày đã điểm danh
+            $matrixData = [];  // Mảng chứa dữ liệu [MaKhach][Ngay] = Trạng thái
+
+            foreach ($historyRaw as $row) {
+                $d = date('d/m', strtotime($row['NgayDiemDanh'])); // Lấy ngày tháng ngắn gọn
+                $matrixDates[$d] = $d; // Lưu key để không trùng
+                $matrixData[$row['MaKhachTrongBooking']][$d] = [
+                    'status' => $row['TrangThai'],
+                    'note' => $row['GhiChu']
+                ];
+            }
+            ksort($matrixDates); // Sắp xếp ngày tăng dần
+
+            require_once 'views/hdv/diemdanh.php';
+        } else {
+            header("Location: ?act=homeHDV");
         }
-        ksort($matrixDates); // Sắp xếp ngày tăng dần
-
-        require_once 'views/hdv/diemdanh.php';
-    } else {
-        header("Location: ?act=homeHDV");
     }
-}
 
     public function hdvDiemDanhProcess()
     {
@@ -414,13 +429,13 @@ public function hdvDiemDanh() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $MaDoan = $_POST['MaDoan'];
             $NgayDiemDanh = $_POST['NgayDiemDanh']; // Ngày được chọn từ form
-            
+
             $statuses = $_POST['status'] ?? []; // Mảng trạng thái [MaKhach => 1/0]
             $notes = $_POST['note'] ?? [];      // Mảng ghi chú [MaKhach => 'text']
 
             foreach ($statuses as $MaKhach => $TrangThai) {
                 $GhiChu = $notes[$MaKhach] ?? '';
-                
+
                 // Gọi model để lưu vào bảng diemdanh
                 $this->bookingModel->saveDiemDanh($MaDoan, $MaKhach, $NgayDiemDanh, $TrangThai, $GhiChu);
             }
@@ -432,22 +447,23 @@ public function hdvDiemDanh() {
     }
     // Thêm hàm này vào BookingController
 
-public function hdvUpdateInfoKhach() {
-    onlyHDV();
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $MaDoan = $_POST['MaDoan'];
-        $MaKhach = $_POST['MaKhach'];
-        $GhiChu = $_POST['GhiChuDacBiet'];
-        $LoaiPhong = $_POST['LoaiPhong'];
-        $currentDate = $_POST['currentDate'];
+    public function hdvUpdateInfoKhach()
+    {
+        onlyHDV();
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $MaDoan = $_POST['MaDoan'];
+            $MaKhach = $_POST['MaKhach'];
+            $GhiChu = $_POST['GhiChuDacBiet'];
+            $LoaiPhong = $_POST['LoaiPhong'];
+            $currentDate = $_POST['currentDate'];
 
-        // Gọi Model cập nhật
-        $sql = "UPDATE KhachTrongBooking SET GhiChuDacBiet = ?, LoaiPhong = ? WHERE MaKhachTrongBooking = ?";
-        $stmt = $this->bookingModel->conn->prepare($sql);
-        $stmt->execute([$GhiChu, $LoaiPhong, $MaKhach]);
+            // Gọi Model cập nhật
+            $sql = "UPDATE KhachTrongBooking SET GhiChuDacBiet = ?, LoaiPhong = ? WHERE MaKhachTrongBooking = ?";
+            $stmt = $this->bookingModel->conn->prepare($sql);
+            $stmt->execute([$GhiChu, $LoaiPhong, $MaKhach]);
 
-        // Quay lại trang cũ
-        header("Location: ?act=hdvDiemDanh&MaDoan=$MaDoan&date=$currentDate&msg=update_ok");
+            // Quay lại trang cũ
+            header("Location: ?act=hdvDiemDanh&MaDoan=$MaDoan&date=$currentDate&msg=update_ok");
+        }
     }
-}
 }
